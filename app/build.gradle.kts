@@ -1,18 +1,21 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
+    id("com.google.devtools.ksp")
 }
 
 android {
     namespace = "com.btl.buddybudget"
-    compileSdk = 35
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
 
     defaultConfig {
         applicationId = "com.btl.buddybudget"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -54,7 +57,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+    implementation("androidx.room:room-runtime:2.8.4")
+    ksp("androidx.room:room-compiler:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
 }
