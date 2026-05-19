@@ -8,8 +8,8 @@ data class Vi(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,
-    val SoDuBanDau: Double = 0.0,
-    val DonVi: String = "VND",
+    val soDuBanDau: Double = 0.0,
+    val donVi: String = "VND",
     val iconName: String = "ti-wallet",
     val colorHex: String = "#0A5C32",
     /** Ẩn ví khỏi danh sách (thay vì xoá cứng) */

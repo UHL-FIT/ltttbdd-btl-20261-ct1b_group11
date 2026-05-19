@@ -38,17 +38,17 @@ interface DAOVi {
             vi.name,
             vi.iconName,
             vi.colorHex,
-            vi.DonVi,
-            vi.SoDuBanDau,
+            vi.donVi,
+            vi.soDuBanDau,
             vi.isArchived,
             vi.sortOrder,
             COALESCE(
                     vi.SoDuBanDau
                 + SUM(CASE WHEN gd.type = 'INCOME'  THEN  gd.amount ELSE 0 END)
                 - SUM(CASE WHEN gd.type = 'EXPENSE' THEN  gd.amount ELSE 0 END),
-                vi.SoDuBanDau
+                vi.soDuBanDau
             ) 
-            AS SoDuHienTai,
+            AS soDuHienTai,
             COUNT(gd.id) AS transactionCount
         FROM tbVi vi
         LEFT JOIN tbGiaoDich gd ON gd.idVi = vi.id

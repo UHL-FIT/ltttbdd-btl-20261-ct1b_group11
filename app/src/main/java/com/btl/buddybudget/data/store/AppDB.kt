@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
         Vi::class          // <-- thêm Wallet
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -76,8 +76,8 @@ private suspend fun seedDefaultCategories(dao: DAODanhMuc   ) {
 private suspend fun seedDefaultWallets(dao: DAOVi) {
     if (dao.layViChuaXoaCount() > 0) return
     dao.insertAll(listOf(
-        Vi(name = "Tiền mặt",    iconName = "ti-cash",           colorHex = "#22C55E", SoDuBanDau = 0.0, sortOrder = 0),
-        Vi(name = "Ngân hàng",   iconName = "ti-building-bank",  colorHex = "#3B82F6", SoDuBanDau = 0.0, sortOrder = 1),
-        Vi(name = "Ví điện tử",  iconName = "ti-device-mobile",  colorHex = "#8B5CF6", SoDuBanDau = 0.0, sortOrder = 2),
+        Vi(name = "Tiền mặt",    iconName = "ti-cash",           colorHex = "#22C55E", soDuBanDau = 0.0, sortOrder = 0),
+        Vi(name = "Ngân hàng",   iconName = "ti-building-bank",  colorHex = "#3B82F6", soDuBanDau = 0.0, sortOrder = 1),
+        Vi(name = "Ví điện tử",  iconName = "ti-device-mobile",  colorHex = "#8B5CF6", soDuBanDau = 0.0, sortOrder = 2),
     ))
 }
