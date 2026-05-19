@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BuddyBudgetTheme {
-                Homescreen()
+               Homescreen()
                 }
             }
         }
@@ -35,6 +35,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     BuddyBudgetTheme {
-        Greeting("Android")
+        Homescreen()
     }
 }
