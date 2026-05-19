@@ -40,6 +40,8 @@ fun MyWallet(){
             Spacer(modifier = Modifier.height(16.dp))
 
             walletrow(name = "Tiền mặt", amount = "1,000,000đ")
+            Spacer(modifier = Modifier.height(16.dp))
+            walletrow(name = "Ví tín dụng", amount = "1,000,000đ")
         }
     }
 }
@@ -56,7 +58,8 @@ fun walletrow(name: String, amount: String){
                 .background(Color(0xFF333333), shape = RoundedCornerShape(20.dp)),
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Text(text = name, color = Color.White, fontSize = 16.sp)
+        Text(text = name, color = Color.White, fontSize = 16.sp,
+            modifier = Modifier.padding(start = 10.dp))
         Spacer(modifier = Modifier.weight(1f))
         Text(text = amount, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
     }

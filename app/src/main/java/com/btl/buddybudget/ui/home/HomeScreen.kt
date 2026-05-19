@@ -37,14 +37,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.btl.buddybudget.ui.danhmuc.DanhMucScreen
+import com.btl.buddybudget.ui.gioithieu.AboutScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Homescreen() {
-    // 1. Khởi tạo bộ điều hướng Navigation
     val navController = rememberNavController()
 
-    // 2. Lấy thông tin màn hình hiện tại đang hiển thị để đổi màu nút tương ứng
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
@@ -82,7 +82,6 @@ fun Homescreen() {
                         )
                     )
 
-                    // TAB THỐNG KÊ
                     NavigationBarItem(
                         selected = currentRoute == Screen.Statistics.route,
                         onClick = {
@@ -99,7 +98,6 @@ fun Homescreen() {
                         )
                     )
 
-                    // NÚT GIỮA GIẢ LẬP KHOẢNG TRỐNG CHO FAB
                     NavigationBarItem(
                         selected = false,
                         onClick = { },
@@ -107,7 +105,6 @@ fun Homescreen() {
                         enabled = false
                     )
 
-                    // TAB NGÂN SÁCH
                     NavigationBarItem(
                         selected = currentRoute == Screen.Budget.route,
                         onClick = {
@@ -124,12 +121,11 @@ fun Homescreen() {
                         )
                     )
 
-                    // TAB TÀI KHOẢN
                     NavigationBarItem(
-                        selected = currentRoute == Screen.Profile.route,
+                        selected = currentRoute == Screen.About.route,
                         onClick = {
-                            if (currentRoute != Screen.Profile.route) {
-                                navController.navigate(Screen.Profile.route)
+                            if (currentRoute != Screen.About.route) {
+                                navController.navigate(Screen.About.route)
                             }
                         },
                         icon = { Icon(imageVector = Icons.Default.Person, contentDescription = "Tài khoản", modifier = Modifier.size(32.dp)) },
@@ -147,7 +143,6 @@ fun Homescreen() {
             FloatingActionButton(
                 modifier = Modifier.offset(y = (65).dp),
                 onClick = {
-                    // Chuyển hẳn sang màn hình nhập giao dịch mới
                     navController.navigate(Screen.AddTransaction.route)
                 },
                 containerColor = Color(0xFF4CAF50),
@@ -160,20 +155,18 @@ fun Homescreen() {
         floatingActionButtonPosition = FabPosition.Center
     ) { innerPadding ->
 
-        // 3. Sử dụng NavHost làm "vùng chứa" để chuyển đổi các màn hình chính thức
         NavHost(
             navController = navController,
-            startDestination = Screen.Overview.route, // Màn hình mặc định khi mở app
+            startDestination = Screen.Overview.route,
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black)
                 .padding(innerPadding)
         ) {
-            // Cấu hình định tuyến cho từng Route
             composable(Screen.Overview.route) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item { Spacer(modifier = Modifier.height(16.dp)) }
-                    item { MyWallet() } // Gọi hàm từ file HomeScreenComponents của b
+                    item { MyWallet() }
                     item { Spacer(modifier = Modifier.height(16.dp)) }
                 }
             }
@@ -189,18 +182,34 @@ fun Homescreen() {
                     Text("Màn hình Ngân sách", color = Color.White, modifier = Modifier.padding(16.dp))
                 }
             }
-
+            /*
             composable(Screen.Profile.route) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text("Màn hình Tài khoản", color = Color.White, modifier = Modifier.padding(16.dp))
                 }
             }
+            */
 
             composable(Screen.AddTransaction.route) {
-                // Màn hình Thêm giao dịch riêng biệt hoàn toàn (Sẽ ẩn menu đáy đi vì không nằm trong bottomBar)
                 Box(modifier = Modifier.fillMaxSize().background(Color.DarkGray)) {
                     Text("Màn hình THÊM GIAO DỊCH MỚI (Bấm Back hệ thống để quay lại)", color = Color.White, modifier = Modifier.padding(16.dp))
                 }
+            }
+            composable(Screen.About.route) {
+                // Gọi màn hình giới thiệu của bạn lên
+                AboutScreen(
+                    navController = navController,
+                    onBack = { navController.popBackStack()
+                    }
+                )
+            }
+            composable(Screen.Category.route) {
+                DanhMucScreen(
+                    onBack = {
+                        // Nhấn nút mũi tên sẽ lùi về màn trước đó
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }
