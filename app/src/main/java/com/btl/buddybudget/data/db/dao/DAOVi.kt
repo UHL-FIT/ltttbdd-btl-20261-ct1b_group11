@@ -50,7 +50,7 @@ interface DAOVi {
             ) 
             AS SoDuHienTai,
             COUNT(gd.id) AS transactionCount
-        FROM TBVI vi
+        FROM tbVi vi
         LEFT JOIN tbGiaoDich gd ON gd.idVi = vi.id
         WHERE vi.isArchived = 0
         GROUP BY vi.id

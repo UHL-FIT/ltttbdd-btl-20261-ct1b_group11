@@ -64,4 +64,5 @@ dependencies {
     implementation("androidx.room:room-ktx:2.8.4")
 
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("javax.inject:javax.inject:1")
 }

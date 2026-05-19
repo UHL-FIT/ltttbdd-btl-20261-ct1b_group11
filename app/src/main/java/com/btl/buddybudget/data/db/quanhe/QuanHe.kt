@@ -7,7 +7,7 @@ import com.btl.buddybudget.data.db.entities.NganSach
 import com.btl.buddybudget.data.db.entities.GiaoDich
 import com.btl.buddybudget.data.db.entities.Vi
 
-data class GiaoDichWithAll(
+data class GiaoDichvaDanhMuc(
     @Embedded val giaodich: GiaoDich,
     @Relation(parentColumn = "idDanhMuc", entityColumn = "id")
     val danhmuc: DanhMuc?,

@@ -8,7 +8,7 @@ data class DanhMuc(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,
-    val iconName: String,
+        val iconName: String,
     val colorHex: String,
     val type: KieuGiaoDich = KieuGiaoDich.EXPENSE,
     /** Danh mục mặc định không cho phép xoá */
