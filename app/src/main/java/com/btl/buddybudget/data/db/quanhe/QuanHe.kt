@@ -26,11 +26,11 @@ data class WalletWithBalance(
     val name: String,
     val iconName: String,
     val colorHex: String,
-    val donvi: String,
-    val sodubandau: Double,
+    val donVi: String,
+    val soDuBanDau: Double,
     val isArchived: Boolean,
     val sortOrder: Int,
-    val soduhientai: Double,
+    val soDuHienTai: Double,
     val transactionCount: Int
 )
 
