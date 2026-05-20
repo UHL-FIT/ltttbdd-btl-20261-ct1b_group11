@@ -108,7 +108,7 @@ fun AboutScreen(
                             navController.navigate(Screen.Category.route)
                         }
                 ) {
-                    InfoRowTextOnly(title = "Quản lý thu chi")
+                    InfoRowTextOnly(title = "Danh Mục")
                 }
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFF38383A))
                 InfoRowTextOnly(title = "Thống kê chi tiêu")
