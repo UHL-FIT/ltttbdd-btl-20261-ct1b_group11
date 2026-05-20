@@ -44,7 +44,10 @@ import com.btl.buddybudget.ui.danhmuc.DanhMucScreen
 import com.btl.buddybudget.ui.gioithieu.AboutScreen
 import com.btl.buddybudget.ui.vi.ViScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.btl.buddybudget.ui.danhmuc.AddCategoryScreen
 import com.btl.buddybudget.ui.danhmuc.DanhMucViewModel
+import com.btl.buddybudget.ui.giaodich.ThemGiaoDichScreen
+import com.btl.buddybudget.ui.giaodich.ThemGiaoDichViewModel
 import com.btl.buddybudget.ui.vi.ThemViScreen
 import com.btl.buddybudget.ui.vi.ThemViViewModel
 import com.btl.buddybudget.ui.vi.ViViewModel
@@ -210,9 +213,15 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
             */
 
             composable(Screen.AddTransaction.route) {
-                Box(modifier = Modifier.fillMaxSize().background(Color.DarkGray)) {
-                    Text("Màn hình THÊM GIAO DỊCH MỚI (Bấm Back hệ thống để quay lại)", color = Color.White, modifier = Modifier.padding(16.dp))
-                }
+                val themGiaoDichViewModel: ThemGiaoDichViewModel = viewModel(factory = viewModelFactory)
+                ThemGiaoDichScreen(
+                    viewModel = themGiaoDichViewModel,
+                    onCancel = { navController.popBackStack() },
+                    onNavigateToSelectGroup = {
+                        // Khi nhấn chọn nhóm thì điều hướng sang trang Danh Mục
+                        navController.navigate(Screen.Category.route)
+                    }
+                )
             }
             composable(Screen.About.route) {
                 // Gọi màn hình giới thiệu của bạn lên
@@ -222,19 +231,24 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
                     }
                 )
             }
+            // Màn hình hiển thị danh sách danh mục
             composable(Screen.Category.route) {
                 val danhMucViewModel: DanhMucViewModel = viewModel(factory = viewModelFactory)
+
                 DanhMucScreen(
                     onBack = { navController.popBackStack() },
-                    danhMucViewModel
+                    onAddCate = { navController.navigate(Screen.AddCategory.route) },
+                    onEditCate = { id -> navController.navigate("edit_category/$id") },
+                    viewModel = danhMucViewModel
                 )
             }
 
-
-
-
-
-
+            // Màn hình Thêm nhóm mới
+            composable(Screen.AddCategory.route) {
+                AddCategoryScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
             composable(Screen.Wallet.route) {
 
                 val viViewModel: ViViewModel = viewModel(factory = viewModelFactory)
