@@ -33,6 +33,8 @@ import com.btl.buddybudget.ui.vi.ViViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DanhMucScreen(onBack: () -> Unit,
+                  onAddCate: () -> Unit,
+                  onEditCate: (Int) -> Unit,
                   viewModel: DanhMucViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -51,7 +53,7 @@ fun DanhMucScreen(onBack: () -> Unit,
 
     val filteredItems = uiState.danhMucs.filter { it.type == currentType }
 
-    val backgroundColor = Color(0xFF1C1C1E)
+    val backgroundColor = Color(0xFF000000)
     val cardColor = Color(0xFF2C2C2E)
     val primaryGreen = Color(0xFF4CAF50)
     val grayCircle = Color(0xFF3A3A3C)
@@ -125,7 +127,7 @@ fun DanhMucScreen(onBack: () -> Unit,
                     .padding(horizontal = 16.dp)
                     .height(56.dp)
                     .background(cardColor, RoundedCornerShape(28.dp))
-                    .clickable { /* Thêm mới */ }
+                    .clickable { onAddCate() }
                     .padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
@@ -144,7 +146,7 @@ fun DanhMucScreen(onBack: () -> Unit,
                 items(filteredItems) { item ->
                     CateItem(
                         danhMuc = item,
-                        onClick = { /* Xử lý khi nhấn vào danh mục */ }
+                        onClick = { onEditCate(item.id) }
                     )
                 }
             }
@@ -160,7 +162,7 @@ fun CateItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp),
-        color = Color.LightGray,
+        color = Color(0xFF2C2C2E),
         shape = RoundedCornerShape(32.dp)
     ) {
         Row(
