@@ -1,6 +1,7 @@
 package com.btl.buddybudget.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,34 +21,59 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.btl.buddybudget.data.db.quanhe.WalletWithBalance
+import com.btl.buddybudget.ui.vi.ViScreenState
 
 @Composable
-fun MyWallet(){
+fun MyWallet(uiState: ViScreenState,
+
+             onViewAllClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E))
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Ví của tôi",
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
 
-            walletrow(name = "Tiền mặt", amount = "1,000,000đ")
-            Spacer(modifier = Modifier.height(16.dp))
-            walletrow(name = "Ví tín dụng", amount = "1,000,000đ")
-        }
-    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Ví của tôi",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Text(
+                            text = "Xem tất cả",
+                            color = Color(0xFF4CAF50),
+                            fontSize = 16.sp,
+                            modifier = Modifier.clickable {
+                                onViewAllClick()
+                            }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    uiState.wallets.take(2).forEach { wallet ->
+
+                        walletrow(
+                            wallet = wallet
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                }
+            }
 }
 
 @Composable
-fun walletrow(name: String, amount: String){
+fun walletrow(wallet: WalletWithBalance){
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -58,9 +84,9 @@ fun walletrow(name: String, amount: String){
                 .background(Color(0xFF333333), shape = RoundedCornerShape(20.dp)),
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Text(text = name, color = Color.White, fontSize = 16.sp,
+        Text(text = wallet.name, color = Color.White, fontSize = 16.sp,
             modifier = Modifier.padding(start = 10.dp))
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = amount, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+        Text(text = "${wallet.soDuHienTai.toLong()} ${wallet.donVi}", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
     }
 }

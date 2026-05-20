@@ -28,7 +28,7 @@ import javax.inject.Singleton
  * trong Application class và truyền vào ViewModel qua ViewModelFactory.
  */
 @Singleton
-class KhoTaiChinh @Inject constructor(
+class Repo   @Inject constructor(
     private val daoGiaoDich: DAOGiaoDich,
     private val daoDanhMuc:  DAODanhMuc,
     private val daoNganSach: DAONganSach,

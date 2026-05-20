@@ -29,6 +29,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -37,16 +39,25 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.btl.buddybudget.AppViewModelFactory
 import com.btl.buddybudget.ui.danhmuc.DanhMucScreen
 import com.btl.buddybudget.ui.gioithieu.AboutScreen
+import com.btl.buddybudget.ui.vi.ViScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.btl.buddybudget.ui.danhmuc.DanhMucViewModel
+import com.btl.buddybudget.ui.vi.ThemViScreen
+import com.btl.buddybudget.ui.vi.ThemViViewModel
+import com.btl.buddybudget.ui.vi.ViViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Homescreen() {
+fun HomeScreen(viewModelFactory: AppViewModelFactory) {
     val navController = rememberNavController()
-
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
+
+
 
     Scaffold(
         containerColor = Color.Black,
@@ -164,9 +175,17 @@ fun Homescreen() {
                 .padding(innerPadding)
         ) {
             composable(Screen.Overview.route) {
+                val viViewModel: ViViewModel = viewModel(factory = viewModelFactory)
+                val uiState by viViewModel.uiState.collectAsState()
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item { Spacer(modifier = Modifier.height(16.dp)) }
-                    item { MyWallet() }
+                    item { MyWallet(
+                        uiState = uiState,
+                        onViewAllClick = {
+                            navController.navigate(Screen.Wallet.route)
+                        }
+                    )
+                    }
                     item { Spacer(modifier = Modifier.height(16.dp)) }
                 }
             }
@@ -204,11 +223,37 @@ fun Homescreen() {
                 )
             }
             composable(Screen.Category.route) {
+                val danhMucViewModel: DanhMucViewModel = viewModel(factory = viewModelFactory)
                 DanhMucScreen(
-                    onBack = {
-                        // Nhấn nút mũi tên sẽ lùi về màn trước đó
-                        navController.popBackStack()
-                    }
+                    onBack = { navController.popBackStack() },
+                    danhMucViewModel
+                )
+            }
+
+
+
+
+
+
+            composable(Screen.Wallet.route) {
+
+                val viViewModel: ViViewModel = viewModel(factory = viewModelFactory)
+
+                ViScreen(
+                    viviewModel = viViewModel,
+                    onBack = { navController.popBackStack() },
+                    onAddWallet = { navController.navigate(Screen.AddWallet.route) },
+                    onEditWallet = { id -> navController.navigate(Screen.EditWallet.createRoute(id)) }
+                )
+            }
+
+            composable(Screen.AddWallet.route) {
+                // 2. Khởi tạo ThemViViewModel bằng factory
+                val themViViewModel: ThemViViewModel = viewModel(factory = viewModelFactory)
+
+                ThemViScreen(
+                    viewModel = themViViewModel,
+                    onBack = { navController.popBackStack() }
                 )
             }
         }

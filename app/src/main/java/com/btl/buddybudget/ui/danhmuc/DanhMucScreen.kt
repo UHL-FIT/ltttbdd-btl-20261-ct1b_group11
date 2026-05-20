@@ -18,17 +18,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.btl.buddybudget.AppContainer
 import com.btl.buddybudget.data.db.KieuGiaoDich
 import com.btl.buddybudget.data.db.entities.DanhMuc
+import com.btl.buddybudget.ui.vi.ViViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DanhMucScreen(onBack: () -> Unit) { // ◄ Nhận sự kiện onBack từ file cha truyền xuống
+fun DanhMucScreen(onBack: () -> Unit,
+                  viewModel: DanhMucViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     // --- CẤU HÌNH STATUS BAR TRẮNG ---
     val view = LocalView.current
@@ -42,16 +49,7 @@ fun DanhMucScreen(onBack: () -> Unit) { // ◄ Nhận sự kiện onBack từ fi
     var selectedTab by remember { mutableIntStateOf(0) }
     val currentType = if (selectedTab == 0) KieuGiaoDich.EXPENSE else KieuGiaoDich.INCOME
 
-    val danhMucList = remember {
-        mutableStateListOf(
-            DanhMuc(1, "Ăn uống", "ic_food", "#FF5252", KieuGiaoDich.EXPENSE, isDefault = true),
-            DanhMuc(2, "Hoá đơn", "ic_bill", "#546E7A", KieuGiaoDich.EXPENSE, isDefault = true),
-            DanhMuc(3, "Lương", "ic_salary", "#4CAF50", KieuGiaoDich.INCOME, isDefault = true),
-            DanhMuc(4, "Mua sắm", "ic_shop", "#EC407A", KieuGiaoDich.EXPENSE, isDefault = false)
-        )
-    }
-
-    val filteredItems = danhMucList.filter { it.type == currentType }
+    val filteredItems = uiState.danhMucs.filter { it.type == currentType }
 
     val backgroundColor = Color(0xFF1C1C1E)
     val cardColor = Color(0xFF2C2C2E)
@@ -144,47 +142,57 @@ fun DanhMucScreen(onBack: () -> Unit) { // ◄ Nhận sự kiện onBack từ fi
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(filteredItems) { item ->
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(64.dp),
-                        color = cardColor,
-                        shape = RoundedCornerShape(32.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(
-                                        Color(android.graphics.Color.parseColor(item.colorHex)),
-                                        CircleShape
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(item.name.take(1), color = Color.White, fontWeight = FontWeight.Bold)
-                            }
-
-                            Text(
-                                text = item.name,
-                                color = Color.White,
-                                modifier = Modifier.padding(start = 16.dp).weight(1f),
-                                fontSize = 16.sp
-                            )
-
-                            Icon(
-                                Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                null,
-                                tint = Color.Gray
-                            )
-                        }
-                    }
+                    CateItem(
+                        danhMuc = item,
+                        onClick = { /* Xử lý khi nhấn vào danh mục */ }
+                    )
                 }
             }
+        }
+    }
+}
+@Composable
+fun CateItem(
+    danhMuc: DanhMuc,
+    onClick: () -> Unit
+){
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp),
+        color = Color.LightGray,
+        shape = RoundedCornerShape(32.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(
+                        Color(android.graphics.Color.parseColor(danhMuc.colorHex)),
+                        CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(danhMuc.name.take(1), color = Color.White, fontWeight = FontWeight.Bold)
+            }
+
+            Text(
+                text = danhMuc.name,
+                color = Color.White,
+                modifier = Modifier.padding(start = 16.dp).weight(1f),
+                fontSize = 16.sp
+            )
+
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                null,
+                tint = Color.Gray
+            )
         }
     }
 }
