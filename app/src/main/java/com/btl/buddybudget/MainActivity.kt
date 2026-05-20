@@ -8,16 +8,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.btl.buddybudget.ui.home.Homescreen
+import com.btl.buddybudget.ui.home.HomeScreen
 import com.btl.buddybudget.ui.theme.BuddyBudgetTheme
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val app = application as BuddyBudgetApplication
+        val appContainer = app.container
         setContent {
             BuddyBudgetTheme {
-               Homescreen()
+                HomeScreen(viewModelFactory = appContainer.viewModelFactory)
                 }
             }
         }
@@ -35,6 +39,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     BuddyBudgetTheme {
-        Homescreen()
+
     }
 }

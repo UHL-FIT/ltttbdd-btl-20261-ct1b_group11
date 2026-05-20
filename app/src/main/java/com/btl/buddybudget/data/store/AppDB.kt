@@ -33,7 +33,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(context: Context): AppDatabase =
+        fun layDataBase(context: Context): AppDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
@@ -76,8 +76,8 @@ private suspend fun seedDefaultCategories(dao: DAODanhMuc   ) {
 private suspend fun seedDefaultWallets(dao: DAOVi) {
     if (dao.layViChuaXoaCount() > 0) return
     dao.insertAll(listOf(
-        Vi(name = "Tiền mặt",    iconName = "ti-cash",           colorHex = "#22C55E", soDuBanDau = 0.0, sortOrder = 0),
-        Vi(name = "Ngân hàng",   iconName = "ti-building-bank",  colorHex = "#3B82F6", soDuBanDau = 0.0, sortOrder = 1),
-        Vi(name = "Ví điện tử",  iconName = "ti-device-mobile",  colorHex = "#8B5CF6", soDuBanDau = 0.0, sortOrder = 2),
+        Vi(name = "Tiền mặt",    iconName = "ti-cash",           colorHex = "#22C55E", soDuBanDau = 1000000.0, sortOrder = 0),
+       Vi(name = "Ngân hàng",   iconName = "ti-building-bank",  colorHex = "#3B82F6", soDuBanDau = 2000000.0, sortOrder = 1),
+        Vi(name = "Ví điện tử",  iconName = "ti-device-mobile",  colorHex = "#8B5CF6", soDuBanDau = 3000000.0, sortOrder = 2),
     ))
 }
