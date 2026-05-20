@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.btl.buddybudget.data.repo.Repo
 import com.btl.buddybudget.ui.danhmuc.DanhMucViewModel
+import com.btl.buddybudget.ui.vi.SuaViViewModel
 import com.btl.buddybudget.ui.vi.ThemViViewModel
 import com.btl.buddybudget.ui.vi.ViViewModel
 
@@ -18,6 +19,8 @@ class AppViewModelFactory(private val repo: Repo) : ViewModelProvider.Factory {
 
             modelClass.isAssignableFrom(ThemViViewModel::class.java) ->
                 ThemViViewModel(repo) as T
+            modelClass.isAssignableFrom(SuaViViewModel::class.java) ->
+                SuaViViewModel(repo) as T
 
             modelClass.isAssignableFrom(DanhMucViewModel::class.java) ->
                 DanhMucViewModel(repo) as T

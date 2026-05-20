@@ -14,5 +14,5 @@
         val colorHex: String = "#0A5C32",
         /** Ẩn ví khỏi danh sách (thay vì xoá cứng) */
         val isArchived: Boolean = false,
-        val sortOrder: Int = 0
+            val sortOrder: Int = 0
     )

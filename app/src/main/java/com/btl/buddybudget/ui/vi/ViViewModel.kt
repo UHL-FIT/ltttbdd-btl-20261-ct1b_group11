@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class ViViewModel( // ◄ THÊM @Inject constructor
+class ViViewModel(
     private val repo: Repo
 ) : ViewModel() {
 

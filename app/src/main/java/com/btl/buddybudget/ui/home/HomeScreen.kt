@@ -44,7 +44,11 @@ import com.btl.buddybudget.ui.danhmuc.DanhMucScreen
 import com.btl.buddybudget.ui.gioithieu.AboutScreen
 import com.btl.buddybudget.ui.vi.ViScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.btl.buddybudget.ui.danhmuc.DanhMucViewModel
+import com.btl.buddybudget.ui.vi.SuaViScreen
+import com.btl.buddybudget.ui.vi.SuaViViewModel
 import com.btl.buddybudget.ui.vi.ThemViScreen
 import com.btl.buddybudget.ui.vi.ThemViViewModel
 import com.btl.buddybudget.ui.vi.ViViewModel
@@ -247,12 +251,34 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
                 )
             }
 
+
             composable(Screen.AddWallet.route) {
-                // 2. Khởi tạo ThemViViewModel bằng factory
                 val themViViewModel: ThemViViewModel = viewModel(factory = viewModelFactory)
 
                 ThemViScreen(
                     viewModel = themViViewModel,
+                    onBack = { navController.popBackStack()}
+                    //onSuccess={navController.navigate(Screen.Wallet.route)}
+
+                )
+            }
+
+            composable(
+                route = Screen.EditWallet.route, // Bản chất chuỗi này thường định nghĩa là "edit_wallet/{id}"
+                arguments = listOf(
+                    navArgument("id") { type = NavType.IntType } // Khai báo tham số nhận vào là kiểu Int
+                )
+            ) { backStackEntry ->
+                // 1. Lấy giá trị id ra từ arguments (khớp với tên "id" cấu hình ở trên)
+                val walletId = backStackEntry.arguments?.getInt("id") ?: 0
+
+                // 2. Khởi tạo ViewModel phụ trách sửa ví
+                val suaViViewModel: SuaViViewModel = viewModel(factory = viewModelFactory)
+
+                // 3. Gọi màn hình SuaViScreen và truyền id cùng ViewModel vào
+                SuaViScreen(
+                    walletId = walletId,
+                    viewModel = suaViViewModel,
                     onBack = { navController.popBackStack() }
                 )
             }
