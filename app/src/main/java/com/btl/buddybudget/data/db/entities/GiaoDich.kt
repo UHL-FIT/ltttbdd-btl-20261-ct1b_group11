@@ -8,8 +8,8 @@ import com.btl.buddybudget.data.db.KieuGiaoDich
 
 /**
  * Khoá ngoại:
- *   - categoryId → categories.id  (SET_DEFAULT khi xoá danh mục)
- *   - walletId   → wallets.id     (RESTRICT: không xoá ví khi còn giao dịch)
+ *   - idDanhMuc → danhmuc.id  (SET_DEFAULT khi xoá danh mục)
+ *   - idVi      → vi.id       (RESTRICT: không xoá ví khi còn giao dịch)
  */
 @Entity(
     tableName = "tbGiaoDich",
@@ -37,11 +37,10 @@ import com.btl.buddybudget.data.db.KieuGiaoDich
 data class GiaoDich(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val title: String,
     val amount: Double,
-    val idDanhMuc: Int = 9,
+    val idDanhMuc: Int = 1,
     val idVi: Int,
-    val type: KieuGiaoDich,
+    val type: String, // "EXPENSE" or "INCOME"
     val date: Long = System.currentTimeMillis(),
     val note: String = "",
     val createdAt: Long = System.currentTimeMillis()

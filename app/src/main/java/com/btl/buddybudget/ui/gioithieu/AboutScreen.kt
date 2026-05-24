@@ -104,8 +104,8 @@ fun AboutScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            // Khi ấn vào sẽ điều hướng thẳng tới màn hình Danh Mục
-                            navController.navigate(Screen.Category.route)
+                            // Khi ấn vào sẽ điều hướng tới màn hình Quản lý Danh Mục
+                            navController.navigate(Screen.ManageCategory.route)
                         }
                 ) {
                     InfoRowTextOnly(title = "Danh Mục")

@@ -5,5 +5,6 @@ import com.btl.buddybudget.data.db.entities.DanhMuc
 data class DanhMucScreenState(
     val danhMucs: List<DanhMuc> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val filterType: String? = null
 )

@@ -25,18 +25,47 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ThemGiaoDichScreen(
-    viewModel: ThemGiaoDichViewModel,
+fun SuaGiaoDichScreen(
+    idGiaoDich: Int,
+    viewModel: SuaGiaoDichViewModel,
     onCancel: () -> Unit,
-    onNavigateToSelectGroup: (Boolean) -> Unit, // Truyền true nếu là Chi, false nếu là Thu
+    onNavigateToSelectGroup: (Boolean) -> Unit,
     onNavigateToSelectWallet: () -> Unit
 ) {
-    // Thu thập trạng thái UI từ ViewModel
+    LaunchedEffect(idGiaoDich) {
+        viewModel.loadTransaction(idGiaoDich)
+    }
+
     val uiState by viewModel.uiState.collectAsState()
     val cardColor = Color(0xFF1C1C1E)
+    var hienThiXacNhanXoa by remember { mutableStateOf(false) }
 
-    // Trạng thái hiển thị DatePicker
+    if (hienThiXacNhanXoa) {
+        AlertDialog(
+            onDismissRequest = { hienThiXacNhanXoa = false },
+            title = { Text(text = "Xóa giao dịch", color = Color.White) },
+            text = { Text(text = "Bạn có chắc chắn muốn xóa giao dịch này không?", color = Color.LightGray) },
+            containerColor = Color(0xFF1E1E1E),
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        hienThiXacNhanXoa = false
+                        viewModel.deleteTransaction(onSuccess = onCancel)
+                    }
+                ) {
+                    Text("XÓA", color = Color(0xFFF44336))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { hienThiXacNhanXoa = false }) {
+                    Text("HỦY", color = Color.Gray)
+                }
+            }
+        )
+    }
+
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = uiState.date
@@ -72,13 +101,11 @@ fun ThemGiaoDichScreen(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // --- TOP BAR TỰ CHẾ ---
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
         ) {
-            // Nút Huỷ dạng hình Oval bên trái
             Surface(
                 onClick = { onCancel() },
                 color = Color(0xFF2C2C2E),
@@ -90,9 +117,8 @@ fun ThemGiaoDichScreen(
                 }
             }
 
-            // Tiêu đề chính giữa
             Text(
-                text = "Thêm Giao Dịch",
+                text = "Sửa Giao Dịch",
                 color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -102,7 +128,6 @@ fun ThemGiaoDichScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // --- KHỐI NHẬP LIỆU CHÍNH ---
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -110,7 +135,6 @@ fun ThemGiaoDichScreen(
                 .background(cardColor)
                 .padding(16.dp)
         ) {
-            // 1. Hàng chọn Khoản chi / Khoản thu dạng Capsule
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -144,7 +168,6 @@ fun ThemGiaoDichScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 2. Hàng chọn ví tài khoản
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -170,7 +193,6 @@ fun ThemGiaoDichScreen(
 
             HorizontalDivider(color = Color(0xFF2C2C2E), modifier = Modifier.padding(vertical = 8.dp))
 
-            // 3. Khối hiển thị nhập số tiền
             Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
                 Text("Số tiền", color = Color.Gray, fontSize = 12.sp)
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -199,7 +221,6 @@ fun ThemGiaoDichScreen(
 
             HorizontalDivider(color = Color(0xFF2C2C2E), modifier = Modifier.padding(vertical = 8.dp))
 
-            // 4. Hàng Chọn nhóm (Được gán sự kiện để click nhảy sang trang danh mục)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -235,7 +256,6 @@ fun ThemGiaoDichScreen(
 
             HorizontalDivider(color = Color(0xFF2C2C2E), modifier = Modifier.padding(vertical = 8.dp))
 
-            // 5. Ghi chú
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -265,7 +285,6 @@ fun ThemGiaoDichScreen(
 
             HorizontalDivider(color = Color(0xFF2C2C2E), modifier = Modifier.padding(vertical = 8.dp))
 
-            // 6. Ngày giao dịch
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -293,10 +312,9 @@ fun ThemGiaoDichScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // --- NÚT LƯU CỐ ĐỊNH PHÍA DƯỚI ---
         Button(
             onClick = {
-                viewModel.saveTransaction(onSuccess = { onCancel() })
+                viewModel.updateTransaction(onSuccess = { onCancel() })
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -304,7 +322,16 @@ fun ThemGiaoDichScreen(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1C1C1E)),
             shape = RoundedCornerShape(25.dp)
         ) {
-            Text("Lưu", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text("Lưu thay đổi", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        TextButton(
+            onClick = { hienThiXacNhanXoa = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Xóa giao dịch", color = Color(0xFFF44336), fontSize = 16.sp)
         }
     }
 }

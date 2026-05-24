@@ -18,9 +18,9 @@ import kotlinx.coroutines.launch
         GiaoDich::class,
         DanhMuc::class,
         NganSach::class,
-        Vi::class          // <-- thêm Wallet
+        Vi::class
     ],
-    version = 1,
+    version = 4, // Nâng lên version 4 để đảm bảo Room xóa DB cũ và tạo lại theo cấu trúc mới
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -40,6 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "budget_buddy.db"
                 )
+                    .fallbackToDestructiveMigration()
                     .addCallback(DatabaseCallback())
                     .build().also { INSTANCE = it }
             }

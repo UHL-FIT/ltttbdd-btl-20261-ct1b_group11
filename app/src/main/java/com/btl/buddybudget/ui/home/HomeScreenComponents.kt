@@ -21,72 +21,122 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.draw.clip
 import com.btl.buddybudget.data.db.quanhe.WalletWithBalance
 import com.btl.buddybudget.ui.vi.ViScreenState
 
-@Composable
-fun MyWallet(uiState: ViScreenState,
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
-             onViewAllClick: () -> Unit) {
+@Composable
+fun MyWallet(
+    uiState: ViScreenState,
+    onViewAllClick: () -> Unit,
+    onTransactionHistoryClick: () -> Unit
+) {
+    val formatter = remember {
+        val symbols = DecimalFormatSymbols(Locale.forLanguageTag("vi-VN"))
+        DecimalFormat("#,###", symbols)
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2E))
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column {
+                    Text(
+                        text = "Tổng số dư",
+                        color = Color.Gray,
+                        fontSize = 13.sp
+                    )
+                    Text(
+                        text = "${formatter.format(uiState.tongTaiSan.toLong())} đ",
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Ví của tôi",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                Spacer(modifier = Modifier.weight(1f))
 
-                        Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "Xem tất cả",
+                    color = Color(0xFF4CAF50),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.clickable { onViewAllClick() }
+                )
+            }
 
-                        Text(
-                            text = "Xem tất cả",
-                            color = Color(0xFF4CAF50),
-                            fontSize = 16.sp,
-                            modifier = Modifier.clickable {
-                                onViewAllClick()
-                            }
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    uiState.wallets.take(2).forEach { wallet ->
+            Spacer(modifier = Modifier.height(16.dp))
 
-                        walletrow(
-                            wallet = wallet
-                        )
-
-                        Spacer(modifier = Modifier.height(12.dp))
-                    }
+            uiState.wallets.take(3).forEachIndexed { index, wallet ->
+                WalletRow(wallet = wallet)
+                if (index < uiState.wallets.take(3).size - 1) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        thickness = 0.5.dp,
+                        color = Color.Gray.copy(alpha = 0.3f)
+                    )
                 }
             }
+        }
+    }
 }
 
 @Composable
-fun walletrow(wallet: WalletWithBalance){
+fun WalletRow(wallet: WalletWithBalance) {
+    val formatter = remember {
+        val symbols = DecimalFormatSymbols(Locale.forLanguageTag("vi-VN"))
+        DecimalFormat("#,###", symbols)
+    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
-                .background(Color(0xFF333333), shape = RoundedCornerShape(20.dp)),
+                .size(36.dp)
+                .clip(CircleShape)
+                .background(
+                    color = Color(android.graphics.Color.parseColor(wallet.colorHex)).copy(alpha = 0.2f)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = wallet.iconName,
+                color = Color(android.graphics.Color.parseColor(wallet.colorHex)),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Text(
+            text = wallet.name,
+            color = Color.White,
+            fontSize = 15.sp,
+            modifier = Modifier.weight(1f)
         )
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(text = wallet.name, color = Color.White, fontSize = 16.sp,
-            modifier = Modifier.padding(start = 10.dp))
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = "${wallet.soDuHienTai.toLong()} ${wallet.donVi}", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+
+        Text(
+            text = "${formatter.format(wallet.soDuHienTai.toLong())} đ",
+            color = Color.White,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }

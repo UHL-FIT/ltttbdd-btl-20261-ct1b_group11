@@ -18,24 +18,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.btl.buddybudget.AppContainer
 import com.btl.buddybudget.data.db.KieuGiaoDich
 import com.btl.buddybudget.data.db.entities.DanhMuc
-import com.btl.buddybudget.ui.vi.ViViewModel
 
+/**
+ * MÀN HÌNH CHỌN DANH MỤC (Dùng cho luồng Thêm giao dịch)
+ * - Tự động lọc theo type (EXPENSE/INCOME)
+ * - Không có TabBar
+ * - Click vào là chọn và quay về
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DanhMucScreen(onBack: () -> Unit,
-                  onAddCate: () -> Unit,
-                  onEditCate: (Int) -> Unit,
-                  viewModel: DanhMucViewModel
+fun ChonDanhMucScreen(
+    filterType: String,
+    onBack: () -> Unit,
+    onSelect: (DanhMuc) -> Unit,
+    viewModel: DanhMucViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -48,9 +51,81 @@ fun DanhMucScreen(onBack: () -> Unit,
         }
     }
 
+    val backgroundColor = Color(0xFF000000)
+    val cardColor = Color(0xFF2C2C2E)
+    val grayCircle = Color(0xFF3A3A3C)
+
+    val currentType = if (filterType == "INCOME") KieuGiaoDich.INCOME else KieuGiaoDich.EXPENSE
+    val filteredItems = uiState.danhMucs.filter { it.type == currentType }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    val title = if (filterType == "EXPENSE") "CHỌN NHÓM CHI" else "CHỌN NHÓM THU"
+                    Text(title, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                },
+                navigationIcon = {
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .size(36.dp)
+                            .background(grayCircle, CircleShape)
+                            .clickable { onBack() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White, modifier = Modifier.size(20.dp))
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = backgroundColor)
+            )
+        },
+        containerColor = backgroundColor
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues)) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(filteredItems) { item ->
+                    CateItem(
+                        danhMuc = item,
+                        onClick = { onSelect(item) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * MÀN HÌNH QUẢN LÝ DANH MỤC (Dùng để xem/sửa/xóa)
+ * - Có TabBar Chi/Thu
+ * - Click vào item để đi tới màn hình Sửa
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun QuanLyDanhMucScreen(
+    onBack: () -> Unit,
+    onAddCate: () -> Unit,
+    onEditCate: (Int) -> Unit,
+    viewModel: DanhMucViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    
+    // --- CẤU HÌNH STATUS BAR TRẮNG ---
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+        }
+    }
+
     var selectedTab by remember { mutableIntStateOf(0) }
     val currentType = if (selectedTab == 0) KieuGiaoDich.EXPENSE else KieuGiaoDich.INCOME
-
     val filteredItems = uiState.danhMucs.filter { it.type == currentType }
 
     val backgroundColor = Color(0xFF000000)
@@ -70,7 +145,7 @@ fun DanhMucScreen(onBack: () -> Unit,
                             .padding(start = 12.dp)
                             .size(36.dp)
                             .background(grayCircle, CircleShape)
-                            .clickable { onBack() }, // ◄ ĐÃ FIX SẠCH KÝ TỰ RÁC VÀ GỌI HÀM ONBACK CHUẨN
+                            .clickable { onBack() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White, modifier = Modifier.size(20.dp))
@@ -82,8 +157,7 @@ fun DanhMucScreen(onBack: () -> Unit,
         containerColor = backgroundColor
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-
-            // --- THANH CHỌN HIỆN ĐẠI (Capsule Style) ---
+            // TabBar
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -120,7 +194,7 @@ fun DanhMucScreen(onBack: () -> Unit,
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Nút Nhóm mới - Bo tròn Capsule
+            // Nút Nhóm mới
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -138,7 +212,6 @@ fun DanhMucScreen(onBack: () -> Unit,
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Danh sách hiển thị - Bo tròn Capsule đồng nhất
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -153,6 +226,7 @@ fun DanhMucScreen(onBack: () -> Unit,
         }
     }
 }
+
 @Composable
 fun CateItem(
     danhMuc: DanhMuc,
@@ -161,6 +235,7 @@ fun CateItem(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .height(64.dp),
         color = Color(0xFF2C2C2E),
         shape = RoundedCornerShape(32.dp)
@@ -180,7 +255,7 @@ fun CateItem(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(danhMuc.name.take(1), color = Color.White, fontWeight = FontWeight.Bold)
+                Text(danhMuc.iconName, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
             }
 
             Text(
