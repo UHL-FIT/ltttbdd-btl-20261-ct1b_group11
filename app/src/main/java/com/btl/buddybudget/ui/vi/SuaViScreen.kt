@@ -1,9 +1,17 @@
 package com.btl.buddybudget.ui.vi
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import com.btl.buddybudget.ui.danhmuc.DanhSachIcons
+import com.btl.buddybudget.ui.danhmuc.DanhSachMau
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -11,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -118,16 +127,87 @@ fun SuaViScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    OutlinedTextField(
-                        value = state.donVi,
-                        onValueChange = viewModel::doiDonVi,
-                        label = { Text("Đơn vị tiền tệ") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
+                    var expandedDonVi by remember { mutableStateOf(false) }
+                    val listDonVi = listOf("VND", "USD", "EUR", "JPY")
+
+                    ExposedDropdownMenuBox(
+                        expanded = expandedDonVi,
+                        onExpandedChange = { expandedDonVi = !expandedDonVi },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = state.donVi,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Đơn vị tiền tệ") },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDonVi) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
+                            ),
+                            modifier = Modifier
+                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                                .fillMaxWidth()
                         )
-                    )
+                        ExposedDropdownMenu(
+                            expanded = expandedDonVi,
+                            onDismissRequest = { expandedDonVi = false },
+                            containerColor = Color(0xFF2C2C2E)
+                        ) {
+                            listDonVi.forEach { selectionOption ->
+                                DropdownMenuItem(
+                                    text = { Text(selectionOption, color = Color.White) },
+                                    onClick = {
+                                        viewModel.doiDonVi(selectionOption)
+                                        expandedDonVi = false
+                                    },
+                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // --- CHỌN ICON ---
+                    Text("Chọn biểu tượng", color = Color.Gray, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        items(DanhSachIcons) { icon ->
+                            Box(
+                                modifier = Modifier
+                                    .size(45.dp)
+                                    .clip(CircleShape)
+                                    .background(if (state.iconName == icon) Color.White.copy(0.2f) else Color(0xFF2C2C2E))
+                                    .border(if (state.iconName == icon) 2.dp else 0.dp, Color.White, CircleShape)
+                                    .clickable { viewModel.doiIcon(icon) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(icon, fontSize = 22.sp)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // --- CHỌN MÀU ---
+                    Text("Chọn màu sắc", color = Color.Gray, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        items(DanhSachMau) { hex ->
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(android.graphics.Color.parseColor(hex)))
+                                    .border(if (state.colorHex == hex) 3.dp else 0.dp, Color.White, CircleShape)
+                                    .clickable { viewModel.doiMau(hex) }
+                            )
+                        }
+                    }
                 }
             }
 

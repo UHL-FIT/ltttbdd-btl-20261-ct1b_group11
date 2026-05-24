@@ -1,8 +1,11 @@
 package com.btl.buddybudget.ui.danhmuc
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -16,23 +19,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.btl.buddybudget.data.db.KieuGiaoDich
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCategoryScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: ThemDanhMucViewModel
 ) {
-    val backgroundColor = Color(0xFF000000) // Nền đen đồng bộ app
-    val cardColor = Color(0xFF1C1C1E)      // Màu khối xám bo tròn
-    var categoryName by remember { mutableStateOf("") }
-    var isExpense by remember { mutableStateOf(true) } // Mặc định là Khoản chi
+    val uiState by viewModel.uiState.collectAsState()
+    val backgroundColor = Color(0xFF000000)
+    val cardColor = Color(0xFF1C1C1E)
+
+    // Xử lý sau khi lưu thành công
+    LaunchedEffect(uiState.daLuuThanhCong) {
+        if (uiState.daLuuThanhCong) {
+            viewModel.resetTrangThaiLuu()
+            onBack()
+        }
+    }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Text("Nhóm mới", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                },
+                title = { Text("Nhóm mới", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     Box(
                         modifier = Modifier
@@ -42,12 +52,7 @@ fun AddCategoryScreen(
                             .clickable { onBack() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White, modifier = Modifier.size(20.dp))
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = backgroundColor)
@@ -64,7 +69,6 @@ fun AddCategoryScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- KHỐI NHẬP LIỆU CHÍNH ---
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,30 +76,23 @@ fun AddCategoryScreen(
                     .background(cardColor)
                     .padding(16.dp)
             ) {
-                // Hàng 1: Icon mặc định trái tim + Ô gõ tên nhóm
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
                             .size(44.dp)
-                            .background(Color(0xFF2C2C2E), CircleShape),
+                            .background(Color(android.graphics.Color.parseColor(uiState.mauChon)), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("❤️", fontSize = 20.sp)
+                        Text(uiState.iconChon, fontSize = 20.sp)
                     }
-
                     Spacer(modifier = Modifier.width(12.dp))
-
                     TextField(
-                        value = categoryName,
-                        onValueChange = { categoryName = it },
-                        placeholder = { Text("Tên nhóm", color = Color.Gray, fontSize = 16.sp) },
+                        value = uiState.tenDanhMuc,
+                        onValueChange = viewModel::capNhatTen,
+                        placeholder = { Text("Tên nhóm", color = Color.Gray) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                             focusedTextColor = Color.White,
@@ -107,56 +104,81 @@ fun AddCategoryScreen(
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFF2C2C2E))
 
-                // Hàng 2: Nút chọn Khoản chi / Khoản thu
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text("Loại giao dịch", color = Color.White, fontSize = 15.sp)
-
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFF2C2C2E))
-                            .padding(4.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(if (isExpense) Color(0xFF48484A) else Color.Transparent)
-                                .clickable { isExpense = true }
-                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                        ) {
-                            Text("Khoản chi", color = Color.White, fontSize = 13.sp)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(if (!isExpense) Color(0xFF48484A) else Color.Transparent)
-                                .clickable { isExpense = false }
-                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                        ) {
-                            Text("Khoản thu", color = Color.White, fontSize = 13.sp)
-                        }
+                // Loại giao dịch
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Text("Loại giao dịch", color = Color.White)
+                    Row(modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(Color(0xFF2C2C2E)).padding(4.dp)) {
+                        val isExp = uiState.loaiGiaoDich == KieuGiaoDich.EXPENSE
+                        TabItem("Khoản chi", isExp) { viewModel.capNhatLoai(KieuGiaoDich.EXPENSE) }
+                        TabItem("Khoản thu", !isExp) { viewModel.capNhatLoai(KieuGiaoDich.INCOME) }
                     }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Chọn Icon
+            Text("Chọn biểu tượng", color = Color.Gray, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                items(DanhSachIcons) { icon ->
+                    Box(
+                        modifier = Modifier
+                            .size(45.dp)
+                            .clip(CircleShape)
+                            .background(if (uiState.iconChon == icon) Color.White.copy(0.2f) else Color(0xFF2C2C2E))
+                            .border(if (uiState.iconChon == icon) 2.dp else 0.dp, Color.White, CircleShape)
+                            .clickable { viewModel.capNhatIcon(icon) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(icon, fontSize = 22.sp)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Chọn Màu
+            Text("Chọn màu sắc", color = Color.Gray, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                items(DanhSachMau) { hex ->
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(Color(android.graphics.Color.parseColor(hex)))
+                            .border(if (uiState.mauChon == hex) 3.dp else 0.dp, Color.White, CircleShape)
+                            .clickable { viewModel.capNhatMau(hex) }
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // --- NÚT LƯU ---
+            if (uiState.thongBaoLoi != null) {
+                Text(uiState.thongBaoLoi!!, color = Color.Red, fontSize = 14.sp)
+            }
+
             Button(
-                onClick = { /* Tạm thời quay về, bài sau mình kết nối DB lưu nhé */ onBack() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp)
-                    .height(50.dp),
+                onClick = viewModel::luuDanhMuc,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp).height(50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C2C2E)),
                 shape = RoundedCornerShape(25.dp)
             ) {
-                Text("Lưu", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text("Lưu", color = Color.White, fontWeight = FontWeight.Bold)
             }
         }
+    }
+}
+
+@Composable
+fun TabItem(text: String, isSelected: Boolean, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(if (isSelected) Color(0xFF48484A) else Color.Transparent)
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    ) {
+        Text(text, color = if (isSelected) Color.White else Color.Gray, fontSize = 13.sp)
     }
 }

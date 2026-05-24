@@ -34,7 +34,6 @@ class Repo   @Inject constructor(
     private val daoNganSach: DAONganSach,
     private val daoVi:       DAOVi
 ) {
-/*
     // ════════════════════════════════════════════════════════════════
     //  GIAO DỊCH
     // ════════════════════════════════════════════════════════════════
@@ -114,7 +113,7 @@ class Repo   @Inject constructor(
         val (tu, den) = khoangThang(thang, nam)
         return daoGiaoDich.thongKeDanhMuc(tu, den)
     }
-*/
+
     // ════════════════════════════════════════════════════════════════
     //  DANH MỤC
     // ════════════════════════════════════════════════════════════════
@@ -130,6 +129,9 @@ class Repo   @Inject constructor(
 
     fun layTatCaDanhMuc(): Flow<List<DanhMuc>> =
         daoDanhMuc.layTatCa()
+
+    suspend fun layDanhMucTheoId(id: Int): DanhMuc? =
+        daoDanhMuc.layDanhMucTheoID(id)
 
     fun layDanhMucChi(): Flow<List<DanhMuc>> =
         daoDanhMuc.layDanhMucTheoLoai(KieuGiaoDich.EXPENSE.name)

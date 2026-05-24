@@ -8,8 +8,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
+import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
+
 class ViViewModel(
-    private val repo: Repo
+    val repo: Repo
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ViScreenState())

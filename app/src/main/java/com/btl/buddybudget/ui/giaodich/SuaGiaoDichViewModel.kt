@@ -1,23 +1,46 @@
 package com.btl.buddybudget.ui.giaodich
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.btl.buddybudget.data.db.entities.GiaoDich
+import com.btl.buddybudget.data.repo.Repo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-
-import com.btl.buddybudget.data.db.entities.GiaoDich
-import com.btl.buddybudget.data.repo.Repo
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
+class SuaGiaoDichViewModel(private val repo: Repo) : ViewModel() {
 
-    // Quản lý trạng thái UI dưới dạng StateFlow
     private val _uiState = MutableStateFlow(ThemGiaoDichScreenState())
     val uiState: StateFlow<ThemGiaoDichScreenState> = _uiState.asStateFlow()
 
-    // Thay đổi loại giao dịch (Thu / Chi)
+    private var currentTransaction: GiaoDich? = null
+
+    fun loadTransaction(id: Int) {
+        viewModelScope.launch {
+            repo.layGiaoDichTheoId(id)?.let { gd ->
+                currentTransaction = gd
+                val danhMuc = repo.layDanhMucTheoId(gd.idDanhMuc)
+                val vi = repo.layViTheoId(gd.idVi)
+                
+                _uiState.update { 
+                    it.copy(
+                        idExpense = gd.type == "EXPENSE",
+                        amount = gd.amount.toLong().toString(),
+                        selectedWalletName = vi?.name ?: "Ví không xác định",
+                        idVi = gd.idVi,
+                        selectedGroupName = danhMuc?.name ?: "Chọn nhóm",
+                        selectedGroupColor = danhMuc?.colorHex ?: "#48484A",
+                        idDanhMuc = gd.idDanhMuc,
+                        note = gd.note,
+                        date = gd.date
+                    )
+                }
+            }
+        }
+    }
+
     fun onTransactionTypeChanged(isExpense: Boolean) {
         _uiState.update { 
             it.copy(
@@ -29,25 +52,16 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
         }
     }
 
-    fun resetForm() {
-        _uiState.value = ThemGiaoDichScreenState()
-
-    }
-
-    // Thay đổi số tiền nhập vào
     fun onAmountChanged(newAmount: String) {
-        // Chỉ cho phép nhập số
         if (newAmount.all { it.isDigit() } || newAmount.isEmpty()) {
             _uiState.update { it.copy(amount = newAmount) }
         }
     }
 
-    // Cập nhật ví được chọn (Sau này kết nối DB chọn từ danh sách ví)
     fun onWalletSelected(id: Int, name: String) {
         _uiState.update { it.copy(idVi = id, selectedWalletName = name) }
     }
 
-    // Cập nhật nhóm được chọn (Khi từ trang Chọn nhóm trả kết quả về)
     fun onGroupSelected(id: Int, name: String, color: String) {
         _uiState.update { 
             it.copy(
@@ -58,37 +72,22 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
         }
     }
 
-    // Cập nhật ghi chú
     fun onNoteChanged(newNote: String) {
         _uiState.update { it.copy(note = newNote) }
     }
 
-    // Cập nhật ngày giao dịch
     fun onDateChanged(newDate: Long) {
         _uiState.update { it.copy(date = newDate) }
     }
 
-    // Thực hiện lưu giao dịch vào database
-    fun saveTransaction(onSuccess: () -> Unit) {
-        val currentState = _uiState.value
-        val amountValue = currentState.amount.toDoubleOrNull() ?: 0.0
-        
-        if (amountValue <= 0) {
-            // Có thể xử lý báo lỗi nếu số tiền bằng 0 ở đây
-            return
-        }
+    fun updateTransaction(onSuccess: () -> Unit) {
+        // ...
+    }
 
-        val transaction = GiaoDich(
-            amount = amountValue,
-            idDanhMuc = currentState.idDanhMuc,
-            idVi = currentState.idVi,
-            type = if (currentState.idExpense) "EXPENSE" else "INCOME",
-            date = currentState.date,
-            note = currentState.note
-        )
-
+    fun deleteTransaction(onSuccess: () -> Unit) {
+        val transaction = currentTransaction ?: return
         viewModelScope.launch {
-            repo.themGiaoDich(transaction)
+            repo.xoaGiaoDich(transaction)
             onSuccess()
         }
     }

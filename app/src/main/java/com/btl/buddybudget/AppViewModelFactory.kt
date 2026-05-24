@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.btl.buddybudget.data.repo.Repo
 import com.btl.buddybudget.ui.danhmuc.DanhMucViewModel
+import com.btl.buddybudget.ui.danhmuc.SuaDanhMucViewModel
+import com.btl.buddybudget.ui.danhmuc.ThemDanhMucViewModel
 import com.btl.buddybudget.ui.vi.SuaViViewModel
+import com.btl.buddybudget.ui.giaodich.SuaGiaoDichViewModel
 import com.btl.buddybudget.ui.giaodich.ThemGiaoDichViewModel
 import com.btl.buddybudget.ui.vi.ThemViViewModel
 import com.btl.buddybudget.ui.vi.ViViewModel
@@ -26,8 +29,22 @@ class AppViewModelFactory(private val repo: Repo) : ViewModelProvider.Factory {
             modelClass.isAssignableFrom(DanhMucViewModel::class.java) ->
                 DanhMucViewModel(repo) as T
 
+            modelClass.isAssignableFrom(ThemDanhMucViewModel::class.java) ->
+                ThemDanhMucViewModel(repo) as T
+
+            modelClass.isAssignableFrom(SuaDanhMucViewModel::class.java) ->
+                SuaDanhMucViewModel(repo) as T
+
             modelClass.isAssignableFrom(ThemGiaoDichViewModel::class.java) -> {
-                ThemGiaoDichViewModel() as T
+                ThemGiaoDichViewModel(repo) as T
+            }
+
+            modelClass.isAssignableFrom(SuaGiaoDichViewModel::class.java) -> {
+                SuaGiaoDichViewModel(repo) as T
+            }
+
+            modelClass.isAssignableFrom(com.btl.buddybudget.ui.giaodich.TransactionViewModel::class.java) -> {
+                com.btl.buddybudget.ui.giaodich.TransactionViewModel(repo) as T
             }
 
 
