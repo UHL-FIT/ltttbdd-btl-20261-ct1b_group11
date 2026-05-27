@@ -21,14 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.btl.buddybudget.data.db.KieuGiaoDich
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCategoryScreen(
     onBack: () -> Unit,
     viewModel: ThemDanhMucViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val backgroundColor = Color(0xFF000000)
+    val backgroundColor = Color.Black
     val cardColor = Color(0xFF1C1C1E)
 
     // Xử lý sau khi lưu thành công
@@ -39,36 +38,42 @@ fun AddCategoryScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Nhóm mới", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 12.dp)
-                            .size(36.dp)
-                            .background(Color(0xFF2C2C2E), CircleShape)
-                            .clickable { onBack() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White, modifier = Modifier.size(20.dp))
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = backgroundColor)
+    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
+        // --- NÚT QUAY VỀ HÌNH TRÒN (Giống AboutScreen) ---
+        Box(
+            modifier = Modifier
+                .padding(start = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { onBack() }
+                .align(Alignment.TopStart),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "‹",
+                color = Color(0xFF0A84FF),
+                fontSize = 28.sp,
+                modifier = Modifier.offset(y = (-2).dp)
             )
-        },
-        containerColor = backgroundColor
-    ) { paddingValues ->
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            // Tiêu đề căn giữa (Giống hệt AboutScreen)
+            Text(
+                text = "Nhóm mới",
+                color = Color.White,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
+            )
 
+            // Bỏ Spacer thừa ở đây để các cụm phía dưới đẩy lên đúng vị trí
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

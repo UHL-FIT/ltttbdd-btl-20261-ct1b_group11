@@ -8,9 +8,12 @@ data class ThemGiaoDichScreenState(
     val selectedWalletName: String = "Ví tín dụng",
     val idVi: Int = 1,
     val selectedGroupName: String = "Chọn nhóm",
+    val selectedWalletIcon: String = "💳",
+    val selectedWalletColor: String = "#48484A",
     val selectedGroupIcon: String = "📁",
     val selectedGroupColor: String = "#48484A", // Màu mặc định
     val idDanhMuc: Int = 0,
     val note: String = "",
-    val date: Long = System.currentTimeMillis()
+    val date: Long = System.currentTimeMillis(),
+    val errorMessage: String? = null
 )

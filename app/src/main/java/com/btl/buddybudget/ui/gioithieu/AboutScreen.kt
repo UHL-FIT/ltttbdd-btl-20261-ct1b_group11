@@ -111,7 +111,15 @@ fun AboutScreen(
                     InfoRowTextOnly(title = "Danh Mục")
                 }
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFF38383A))
-                InfoRowTextOnly(title = "Thống kê chi tiêu")
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate(Screen.Wallet.route)
+                        }
+                ) {
+                    InfoRowTextOnly(title = "Ví")
+                }
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFF38383A))
                 InfoRowTextOnly(title = "Cảnh báo ngân sách")
             }

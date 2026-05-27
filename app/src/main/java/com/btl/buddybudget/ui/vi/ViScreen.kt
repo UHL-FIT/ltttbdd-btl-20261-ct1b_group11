@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,7 +30,6 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViScreen(
     viviewModel: ViViewModel,
@@ -47,73 +47,86 @@ fun ViScreen(
         uiState.wallets.filter { !it.isArchived }
     }
 
-    Scaffold(
-        containerColor = Color.Black,
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = if (showArchived) "Ví đã ẩn" else "Quản lý ví",
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White)
-                    }
-                },
-                actions = {
-                    Box {
-                        IconButton(onClick = { menuExpanded = true }) {
-                            Icon(imageVector = Icons.Default.Edit, contentDescription = "Menu", tint = Color.White)
-                        }
-                        DropdownMenu(
-                            expanded = menuExpanded,
-                            onDismissRequest = { menuExpanded = false },
-                            containerColor = Color(0xFF2C2C2E)
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text("Ví đang hoạt động", color = Color.White) },
-                                onClick = {
-                                    showArchived = false
-                                    menuExpanded = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Ví đã ẩn", color = Color.White) },
-                                onClick = {
-                                    showArchived = true
-                                    menuExpanded = false
-                                }
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Black)
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        // --- NÚT QUAY VỀ HÌNH TRÒN ---
+        Box(
+            modifier = Modifier
+                .padding(start = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { onBack() }
+                .align(Alignment.TopStart),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "‹",
+                color = Color(0xFF0A84FF),
+                fontSize = 28.sp,
+                modifier = Modifier.offset(y = (-2).dp)
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddWallet,
-                containerColor = Color(0xFF4CAF50)
+        }
+
+        // --- NÚT MENU HÌNH TRÒN ---
+        Box(
+            modifier = Modifier
+                .padding(end = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { menuExpanded = true }
+                .align(Alignment.TopEnd),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Menu",
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
+            )
+
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+                containerColor = Color(0xFF2C2C2E)
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = Color.White)
+                DropdownMenuItem(
+                    text = { Text("Ví đang hoạt động", color = Color.White) },
+                    onClick = {
+                        showArchived = false
+                        menuExpanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Ví đã ẩn", color = Color.White) },
+                    onClick = {
+                        showArchived = true
+                        menuExpanded = false
+                    }
+                )
             }
         }
-    ) { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
-                .padding(padding)
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Tiêu đề căn giữa
+            Text(
+                text = if (showArchived) "Ví đã ẩn" else "Quản lý ví",
+                color = Color.White,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
+            )
+
             // SCROLL CONTENT
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(bottom = 24.dp)
             ) {
                 if (!showArchived) {
                     // TOTAL CARD
@@ -121,7 +134,7 @@ fun ViScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2E))
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E))
                         ) {
                             Column(modifier = Modifier.padding(20.dp)) {
                                 val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
@@ -134,6 +147,23 @@ fun ViScreen(
                                     fontWeight = FontWeight.Bold
                                 )
                             }
+                        }
+                    }
+
+                    // Nút Thêm ví mới (Capsule style)
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .background(Color(0xFF1C1C1E), RoundedCornerShape(28.dp))
+                                .clickable { onAddWallet() }
+                                .padding(horizontal = 20.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(Icons.Default.Add, null, tint = Color(0xFF4CAF50))
+                            Text("  Thêm ví mới", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -157,6 +187,7 @@ fun ViScreen(
         }
     }
 }
+
 @Composable
 fun WalletItem(
 
