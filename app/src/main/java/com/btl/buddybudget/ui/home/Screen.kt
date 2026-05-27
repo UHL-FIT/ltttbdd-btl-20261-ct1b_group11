@@ -9,6 +9,8 @@ sealed class Screen(val route: String) {
     object About : Screen("about")
 
 
+    object BieuDoTron: Screen("bieudotron")
+
     //Vi
     object Wallet : Screen("wallet")
     object AddWallet : Screen("add_wallet")

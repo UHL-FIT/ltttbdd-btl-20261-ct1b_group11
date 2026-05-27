@@ -121,7 +121,15 @@ fun AboutScreen(
                     InfoRowTextOnly(title = "Ví")
                 }
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFF38383A))
-                InfoRowTextOnly(title = "Cảnh báo ngân sách")
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate(Screen.BieuDoTron.route)
+                        }
+                ) {
+                    InfoRowTextOnly(title = "Cảnh báo ngân sách")
+                }
             }
             Spacer(modifier = Modifier.height(40.dp))
 

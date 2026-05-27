@@ -217,11 +217,13 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
                 }
             }
 
-            composable(Screen.Statistics.route) {
+           composable(Screen.BieuDoTron.route) {
                 ThongKeScreen(
-                    onBack = { navController.popBackStack() }
+                   /* onBack = { navController.popBackStack() }*/
                 )
             }
+
+
 
             composable(Screen.Budget.route) {
                 NganSachScreen(
