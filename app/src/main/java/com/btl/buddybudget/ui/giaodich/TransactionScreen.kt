@@ -11,7 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.ui.draw.clip
 import androidx.core.graphics.toColorInt
 import com.btl.buddybudget.data.db.entities.Vi
 import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
@@ -61,47 +62,58 @@ fun TransactionScreen(
         )
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Surface(
-                            shape = RoundedCornerShape(20.dp),
-                            color = Color(0xFF2C2C2E),
-                            modifier = Modifier.clickable { viewModel.toggleWalletPicker(true) }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text("🌐 ", fontSize = 14.sp)
-                                Text(
-                                    text = uiState.walletName,
-                                    color = Color.White,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                                Text(" ↕", color = Color.Gray, fontSize = 12.sp)
-                            }
-                        }
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        // --- NÚT TÌM KIẾM (Góc phải trên cùng) ---
+        Box(
+            modifier = Modifier
+                .padding(end = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { onNavigateToSearch() }
+                .align(Alignment.TopEnd),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
             )
-        },
-        containerColor = Color.Black
-    ) { innerPadding ->
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Header / Wallet Picker
+            Box(
+                modifier = Modifier
+                    .padding(top = 28.dp, bottom = 12.dp)
+                    .clickable { viewModel.toggleWalletPicker(true) }
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = Color(0xFF1C1C1E),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("🌐 ", fontSize = 14.sp)
+                        Text(
+                            text = uiState.walletName,
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(" ↕", color = Color.Gray, fontSize = 12.sp)
+                    }
+                }
+            }
+
             // KHU VỰC SỐ DƯ
             Column(
                 modifier = Modifier
@@ -141,15 +153,12 @@ fun TransactionScreen(
             }
 
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+                modifier = Modifier.fillMaxSize()
             ) {
                 // CARD BÁO CÁO TỔNG QUAN
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
                     Card(
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(25.dp),
                         colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -188,10 +197,10 @@ fun TransactionScreen(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
 
-                // DANH SÁCH GIAO DỊCH NHÓM THEO CATEGORY
+                // DANH SÁCH GIAO DỊCH NHÓM THEO CATEGORY - ĐÓNG KHUNG CẢ CỤM
                 uiState.groupedTransactions.forEach { (categoryName, transactions) ->
                     val totalCategory = transactions.sumOf {
                         if (it.giaodich.type == "EXPENSE") -it.giaodich.amount else it.giaodich.amount
@@ -199,24 +208,46 @@ fun TransactionScreen(
                     val firstGd = transactions.firstOrNull()
 
                     item {
-                        CategoryHeader(
-                            categoryName = categoryName,
-                            transactionCount = transactions.size,
-                            totalAmount = totalCategory,
-                            iconColor = firstGd?.danhmuc?.colorHex ?: "#808080",
-                            iconName = firstGd?.danhmuc?.iconName ?: "📁"
-                        )
-                    }
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 20.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E))
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                // Tiêu đề nhóm (Category Header) nằm trong Card
+                                CategoryHeader(
+                                    categoryName = categoryName,
+                                    transactionCount = transactions.size,
+                                    totalAmount = totalCategory,
+                                    iconColor = firstGd?.danhmuc?.colorHex ?: "#808080",
+                                    iconName = firstGd?.danhmuc?.iconName ?: "📁"
+                                )
 
-                    items(transactions) { transaction ->
-                        TransactionItemRow(
-                            item = transaction,
-                            onClick = { onEditTransaction(transaction.giaodich.id) },
-                            onDelete = { viewModel.deleteTransaction(transaction) }
-                        )
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(vertical = 12.dp),
+                                    color = Color(0xFF2C2C2E),
+                                    thickness = 1.dp
+                                )
+
+                                // Danh sách giao dịch bên trong
+                                transactions.forEachIndexed { index, transaction ->
+                                    TransactionItemRow(
+                                        item = transaction,
+                                        onClick = { onEditTransaction(transaction.giaodich.id) }
+                                    )
+                                    if (index < transactions.size - 1) {
+                                        HorizontalDivider(
+                                            modifier = Modifier.padding(horizontal = 40.dp, vertical = 4.dp),
+                                            color = Color(0xFF2C2C2E).copy(alpha = 0.5f),
+                                            thickness = 0.5.dp
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
-                    
-                    item { Spacer(modifier = Modifier.height(12.dp)) }
                 }
             }
         }
@@ -264,8 +295,7 @@ fun CategoryHeader(
 @Composable
 fun TransactionItemRow(
     item: GiaoDichvaDanhMuc,
-    onClick: () -> Unit,
-    onDelete: () -> Unit
+    onClick: () -> Unit
 ) {
     val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
     val locale = Locale.forLanguageTag("vi-VN")
@@ -276,49 +306,47 @@ fun TransactionItemRow(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 8.dp, horizontal = 4.dp),
+            .padding(vertical = 10.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(36.dp)
                 .background(Color(0xFF2C2C2E), CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(item.vi?.iconName ?: "👛", fontSize = 14.sp)
+            Text(item.vi?.iconName ?: "👛", fontSize = 16.sp)
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = dateLabel,
                 color = Color.Gray,
-                fontSize = 12.sp
+                fontSize = 11.sp
             )
             if (item.giaodich.note.isNotEmpty()) {
                 Text(
                     text = item.giaodich.note,
                     color = Color.White,
                     fontSize = 14.sp,
+                    maxLines = 1,
+                    fontWeight = FontWeight.Medium
+                )
+            } else {
+                Text(
+                    text = "Không có ghi chú",
+                    color = Color.DarkGray,
+                    fontSize = 14.sp,
                     maxLines = 1
                 )
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = currencyFormat.format(item.giaodich.amount),
-                color = if (item.giaodich.type == "EXPENSE") Color(0xFFFF5252) else Color(0xFF00BCD4),
-                fontWeight = FontWeight.Medium,
-                fontSize = 15.sp
-            )
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
+        Text(
+            text = "${if (item.giaodich.type == "EXPENSE") "-" else "+"}${currencyFormat.format(item.giaodich.amount)} đ",
+            color = if (item.giaodich.type == "EXPENSE") Color(0xFFFF5252) else Color(0xFF00BCD4),
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp
+        )
     }
 }
 

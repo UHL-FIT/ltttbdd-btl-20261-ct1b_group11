@@ -96,7 +96,7 @@ fun WalletSelectItem(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = wallet.name.firstOrNull()?.toString() ?: "V",
+                    text = wallet.iconName,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )

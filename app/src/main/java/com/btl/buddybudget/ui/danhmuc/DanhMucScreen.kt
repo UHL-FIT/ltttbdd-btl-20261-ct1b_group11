@@ -51,42 +51,50 @@ fun ChonDanhMucScreen(
         }
     }
 
-    val backgroundColor = Color(0xFF000000)
-    val cardColor = Color(0xFF2C2C2E)
-    val grayCircle = Color(0xFF3A3A3C)
-
+    val backgroundColor = Color.Black
     val currentType = if (filterType == "INCOME") KieuGiaoDich.INCOME else KieuGiaoDich.EXPENSE
     val filteredItems = uiState.danhMucs.filter { it.type == currentType }
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    val title = if (filterType == "EXPENSE") "CHỌN NHÓM CHI" else "CHỌN NHÓM THU"
-                    Text(title, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                },
-                navigationIcon = {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 12.dp)
-                            .size(36.dp)
-                            .background(grayCircle, CircleShape)
-                            .clickable { onBack() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White, modifier = Modifier.size(20.dp))
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = backgroundColor)
+    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
+        // --- NÚT QUAY VỀ HÌNH TRÒN (Đồng bộ style) ---
+        Box(
+            modifier = Modifier
+                .padding(start = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { onBack() }
+                .align(Alignment.TopStart),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "‹",
+                color = Color(0xFF0A84FF),
+                fontSize = 28.sp,
+                modifier = Modifier.offset(y = (-2).dp)
             )
-        },
-        containerColor = backgroundColor
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Tiêu đề căn giữa
+            val title = if (filterType == "EXPENSE") "Chọn nhóm chi" else "Chọn nhóm thu"
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(filteredItems) { item ->
@@ -128,40 +136,50 @@ fun QuanLyDanhMucScreen(
     val currentType = if (selectedTab == 0) KieuGiaoDich.EXPENSE else KieuGiaoDich.INCOME
     val filteredItems = uiState.danhMucs.filter { it.type == currentType }
 
-    val backgroundColor = Color(0xFF000000)
-    val cardColor = Color(0xFF2C2C2E)
+    val backgroundColor = Color.Black
+    val cardColor = Color(0xFF1C1C1E)
     val primaryGreen = Color(0xFF4CAF50)
-    val grayCircle = Color(0xFF3A3A3C)
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text("DANH MỤC", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                },
-                navigationIcon = {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 12.dp)
-                            .size(36.dp)
-                            .background(grayCircle, CircleShape)
-                            .clickable { onBack() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White, modifier = Modifier.size(20.dp))
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = backgroundColor)
+    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
+        // --- NÚT QUAY VỀ HÌNH TRÒN ---
+        Box(
+            modifier = Modifier
+                .padding(start = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { onBack() }
+                .align(Alignment.TopStart),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "‹",
+                color = Color(0xFF0A84FF),
+                fontSize = 28.sp,
+                modifier = Modifier.offset(y = (-2).dp)
             )
-        },
-        containerColor = backgroundColor
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Tiêu đề căn giữa
+            Text(
+                text = "Danh mục",
+                color = Color.White,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
+            )
+
             // TabBar
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
                     .height(48.dp)
                     .background(cardColor, RoundedCornerShape(24.dp))
                     .padding(4.dp)
@@ -172,7 +190,7 @@ fun QuanLyDanhMucScreen(
                             .weight(1f)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (selectedTab == 0) Color(0xFF636366) else Color.Transparent)
+                            .background(if (selectedTab == 0) Color(0xFF48484A) else Color.Transparent)
                             .clickable { selectedTab = 0 },
                         contentAlignment = Alignment.Center
                     ) {
@@ -183,7 +201,7 @@ fun QuanLyDanhMucScreen(
                             .weight(1f)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (selectedTab == 1) Color(0xFF636366) else Color.Transparent)
+                            .background(if (selectedTab == 1) Color(0xFF48484A) else Color.Transparent)
                             .clickable { selectedTab = 1 },
                         contentAlignment = Alignment.Center
                     ) {
@@ -198,7 +216,6 @@ fun QuanLyDanhMucScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
                     .height(56.dp)
                     .background(cardColor, RoundedCornerShape(28.dp))
                     .clickable { onAddCate() }
@@ -213,7 +230,7 @@ fun QuanLyDanhMucScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(filteredItems) { item ->

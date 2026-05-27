@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.items // Rất quan trọng để sửa 
 import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconChi
 import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachMau
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditCategoryScreen(
     idDanhMuc: Int,
@@ -33,7 +32,7 @@ fun EditCategoryScreen(
     viewModel: SuaDanhMucViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val backgroundColor = Color(0xFF000000)
+    val backgroundColor = Color.Black
     val cardColor = Color(0xFF1C1C1E)
 
     var hienThiXacNhanXoa by remember { mutableStateOf(false) }
@@ -67,46 +66,67 @@ fun EditCategoryScreen(
         )
     }
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Sửa nhóm", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 12.dp)
-                            .size(36.dp)
-                            .background(Color(0xFF2C2C2E), CircleShape)
-                            .clickable { onBack() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White, modifier = Modifier.size(20.dp))
-                    }
-                },
-                actions = {
-                    if (!uiState.isDefault) {
-                        IconButton(onClick = { hienThiXacNhanXoa = true }) {
-                            Icon(Icons.Default.Delete, null, tint = Color.Red)
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = backgroundColor)
+    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
+        // --- NÚT QUAY VỀ HÌNH TRÒN (Giống AboutScreen) ---
+        Box(
+            modifier = Modifier
+                .padding(start = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { onBack() }
+                .align(Alignment.TopStart),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "‹",
+                color = Color(0xFF0A84FF),
+                fontSize = 28.sp,
+                modifier = Modifier.offset(y = (-2).dp)
             )
-        },
-        containerColor = backgroundColor
-    ) { paddingValues ->
-        if (uiState.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Color.White)
-            }
-        } else {
-            Column(
+        }
+
+        // --- NÚT XÓA (Góc phải trên cùng) ---
+        if (!uiState.isDefault && !uiState.isLoading) {
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(end = 20.dp, top = 20.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF1C1C1E))
+                    .clickable { hienThiXacNhanXoa = true }
+                    .align(Alignment.TopEnd),
+                contentAlignment = Alignment.Center
             ) {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Xóa",
+                    tint = Color.Red,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Tiêu đề căn giữa (Giống AboutScreen)
+            Text(
+                text = "Sửa nhóm",
+                color = Color.White,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
+            )
+
+            if (uiState.isLoading) {
+                Spacer(modifier = Modifier.weight(1f))
+                CircularProgressIndicator(color = Color.White)
+                Spacer(modifier = Modifier.weight(1f))
+            } else {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Column(

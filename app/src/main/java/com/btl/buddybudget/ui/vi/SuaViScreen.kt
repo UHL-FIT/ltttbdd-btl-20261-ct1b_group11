@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconVi
 import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachMau
 
@@ -64,114 +65,140 @@ fun SuaViScreen(
         )
     }
 
-    Scaffold(
-        containerColor = Color.Black,
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Sửa ví", color = Color.White) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Quay lại",
-                            tint = Color.White
-                        )
-                    }
-                },
-                actions = {
-                    TextButton(
-                        onClick = { viewModel.capNhatVi(onSuccess = onBack) }
-                    ) {
-                        Text(text = "LƯU", color = Color(0xFF4CAF50), fontSize = 16.sp)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        // --- NÚT QUAY VỀ HÌNH TRÒN ---
+        Box(
+            modifier = Modifier
+                .padding(start = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { onBack() }
+                .align(Alignment.TopStart),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "‹",
+                color = Color(0xFF0A84FF),
+                fontSize = 28.sp,
+                modifier = Modifier.offset(y = (-2).dp)
             )
         }
-    ) { padding ->
+
+        // --- NÚT LƯU ---
+        Text(
+            text = "Lưu",
+            color = Color(0xFF0A84FF),
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier
+                .padding(end = 20.dp, top = 28.dp)
+                .clickable { viewModel.capNhatVi(onSuccess = onBack) }
+                .align(Alignment.TopEnd)
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Phần Form nhập liệu tương đương WalletForm
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
-                shape = RoundedCornerShape(24.dp)
+            // Tiêu đề căn giữa
+            Text(
+                text = "Sửa ví",
+                color = Color.White,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Top
             ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    OutlinedTextField(
-                        value = state.name,
-                        onValueChange = viewModel::doiTenVi,
-                        label = { Text("Tên ví") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    OutlinedTextField(
-                        value = state.soDu,
-                        onValueChange = viewModel::doiSoDu,
-                        label = { Text("Số dư ban đầu") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    var expandedDonVi by remember { mutableStateOf(false) }
-                    val listDonVi = listOf("VND", "USD", "EUR", "JPY")
-
-                    ExposedDropdownMenuBox(
-                        expanded = expandedDonVi,
-                        onExpandedChange = { expandedDonVi = !expandedDonVi },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E)),
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
                         OutlinedTextField(
-                            value = state.donVi,
-                            onValueChange = {},
-                            readOnly = true,
-                            label = { Text("Đơn vị tiền tệ") },
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDonVi) },
+                            value = state.name,
+                            onValueChange = viewModel::doiTenVi,
+                            label = { Text("Tên ví") },
+                            modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = Color.White,
                                 unfocusedTextColor = Color.White,
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                disabledContainerColor = Color.Transparent,
-                            ),
-                            modifier = Modifier
-                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                                .fillMaxWidth()
+                                focusedLabelColor = Color.Gray,
+                                unfocusedLabelColor = Color.Gray
+                            )
                         )
-                        ExposedDropdownMenu(
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        OutlinedTextField(
+                            value = state.soDu,
+                            onValueChange = viewModel::doiSoDu,
+                            label = { Text("Số dư ban đầu") },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedLabelColor = Color.Gray,
+                                unfocusedLabelColor = Color.Gray
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        var expandedDonVi by remember { mutableStateOf(false) }
+                        val listDonVi = listOf("VND", "USD", "EUR", "JPY")
+
+                        ExposedDropdownMenuBox(
                             expanded = expandedDonVi,
-                            onDismissRequest = { expandedDonVi = false },
-                            containerColor = Color(0xFF2C2C2E)
+                            onExpandedChange = { expandedDonVi = !expandedDonVi },
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            listDonVi.forEach { selectionOption ->
-                                DropdownMenuItem(
-                                    text = { Text(selectionOption, color = Color.White) },
-                                    onClick = {
-                                        viewModel.doiDonVi(selectionOption)
-                                        expandedDonVi = false
-                                    },
-                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                                )
+                            OutlinedTextField(
+                                value = state.donVi,
+                                onValueChange = {},
+                                readOnly = true,
+                                label = { Text("Đơn vị tiền tệ") },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDonVi) },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    disabledContainerColor = Color.Transparent,
+                                ),
+                                modifier = Modifier
+                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                                    .fillMaxWidth()
+                            )
+                            ExposedDropdownMenu(
+                                expanded = expandedDonVi,
+                                onDismissRequest = { expandedDonVi = false },
+                                containerColor = Color(0xFF2C2C2E)
+                            ) {
+                                listDonVi.forEach { selectionOption ->
+                                    DropdownMenuItem(
+                                        text = { Text(selectionOption, color = Color.White) },
+                                        onClick = {
+                                            viewModel.doiDonVi(selectionOption)
+                                            expandedDonVi = false
+                                        },
+                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                    )
+                                }
                             }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
                     // --- CHỌN ICON ---
                     Text("Chọn biểu tượng", color = Color.Gray, fontSize = 14.sp)
@@ -185,91 +212,97 @@ fun SuaViScreen(
                                     .background(if (state.iconName == icon) Color.White.copy(0.2f) else Color(0xFF2C2C2E))
                                     .border(if (state.iconName == icon) 2.dp else 0.dp, Color.White, CircleShape)
                                     .clickable { viewModel.doiIcon(icon) },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(icon, fontSize = 22.sp)
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(icon, fontSize = 22.sp)
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        // --- CHỌN MÀU ---
+                        Text("Chọn màu sắc", color = Color.Gray, fontSize = 14.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            items(DanhSachMau) { hex ->
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(android.graphics.Color.parseColor(hex)))
+                                        .border(if (state.colorHex == hex) 3.dp else 0.dp, Color.White, CircleShape)
+                                        .clickable { viewModel.doiMau(hex) }
+                                )
                             }
                         }
                     }
+                }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    // --- CHỌN MÀU ---
-                    Text("Chọn màu sắc", color = Color.Gray, fontSize = 14.sp)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        items(DanhSachMau) { hex ->
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(android.graphics.Color.parseColor(hex)))
-                                    .border(if (state.colorHex == hex) 3.dp else 0.dp, Color.White, CircleShape)
-                                    .clickable { viewModel.doiMau(hex) }
+                // Card Trạng thái Lưu trữ (Ẩn ví)
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E)),
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Lưu trữ ví (Tạm ẩn)",
+                            color = Color.White,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Switch(
+                            checked = state.isArchived,
+                            onCheckedChange = viewModel::anVi,
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = Color(0xFF4CAF50)
                             )
-                        }
+                        )
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-            // Card Trạng thái Lưu trữ (Ẩn ví)
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                // NÚT XÓA VÍ
+                Button(
+                    onClick = { hienThiXacNhanXoa = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFD32F2F)
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Lưu trữ ví (Tạm ẩn)",
-                        color = Color.White,
-                        modifier = Modifier.weight(1f)
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Xóa ví",
+                        tint = Color.White
                     )
-                    Switch(
-                        checked = state.isArchived,
-                        onCheckedChange = viewModel::anVi
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "XÓA VÍ",
+                        color = Color.White,
+                        fontSize = 16.sp
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // NÚT XÓA VÍ (Màu đỏ đặc trưng cho hành động phá hủy dữ liệu)
-            Button(
-                onClick = { hienThiXacNhanXoa = true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFD32F2F) // Màu đỏ đậm phù hợp Dark Theme
-                ),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Xóa ví",
-                    tint = Color.White
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "XÓA VÍ",
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
-            }
-
-            // Hiển thị thông báo lỗi hệ thống/Validation (nếu có)
-            state.error?.let {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = it,
-                    color = Color.Red,
-                    fontSize = 14.sp,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                // Hiển thị thông báo lỗi hệ thống/Validation (nếu có)
+                state.error?.let {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        fontSize = 14.sp,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }

@@ -111,20 +111,15 @@ fun AboutScreen(
                     InfoRowTextOnly(title = "Danh Mục")
                 }
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFF38383A))
-
-                // --- ĐÃ THÊM CLICKABLE CHO THỐNG KÊ CHI TIÊU ---
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navController.navigate(Screen.Statistics.route)
+                            navController.navigate(Screen.Wallet.route)
                         }
                 ) {
-                    InfoRowTextOnly(title = "Thống kê chi tiêu")
+                    InfoRowTextOnly(title = "Ví")
                 }
-                // ----------------------------------------------
-
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFF38383A))
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFF38383A))
                 InfoRowTextOnly(title = "Cảnh báo ngân sách")
             }

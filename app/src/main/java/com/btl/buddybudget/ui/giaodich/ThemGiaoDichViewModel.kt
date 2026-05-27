@@ -38,13 +38,13 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
     fun onAmountChanged(newAmount: String) {
         // Chỉ cho phép nhập số
         if (newAmount.all { it.isDigit() } || newAmount.isEmpty()) {
-            _uiState.update { it.copy(amount = newAmount) }
+            _uiState.update { it.copy(amount = newAmount, errorMessage = null) }
         }
     }
 
     // Cập nhật ví được chọn (Sau này kết nối DB chọn từ danh sách ví)
-    fun onWalletSelected(id: Int, name: String) {
-        _uiState.update { it.copy(idVi = id, selectedWalletName = name) }
+    fun onWalletSelected(id: Int, name: String, color: String, icon: String) {
+        _uiState.update { it.copy(idVi = id, selectedWalletName = name, selectedWalletColor = color, selectedWalletIcon = icon) }
     }
 
     // Cập nhật nhóm được chọn (Khi từ trang Chọn nhóm trả kết quả về)
@@ -54,7 +54,8 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
                 idDanhMuc = id, 
                 selectedGroupName = name,
                 selectedGroupColor = color,
-                selectedGroupIcon = icon
+                selectedGroupIcon = icon,
+                errorMessage = null
             ) 
         }
     }
@@ -69,13 +70,22 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
         _uiState.update { it.copy(date = newDate) }
     }
 
+    fun clearErrorMessage() {
+        _uiState.update { it.copy(errorMessage = null) }
+    }
+
     // Thực hiện lưu giao dịch vào database
     fun saveTransaction(onSuccess: () -> Unit) {
         val currentState = _uiState.value
         val amountValue = currentState.amount.toDoubleOrNull() ?: 0.0
         
         if (amountValue <= 0) {
-            // Có thể xử lý báo lỗi nếu số tiền bằng 0 ở đây
+            _uiState.update { it.copy(errorMessage = "Vui lòng nhập số tiền hợp lệ") }
+            return
+        }
+
+        if (currentState.idDanhMuc <= 0) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng chọn nhóm giao dịch") }
             return
         }
 

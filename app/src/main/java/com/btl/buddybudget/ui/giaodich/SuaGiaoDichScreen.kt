@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -94,47 +95,68 @@ fun SuaGiaoDichScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        // --- NÚT QUAY VỀ HÌNH TRÒN (Giống AboutScreen) ---
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(start = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { onCancel() }
+                .align(Alignment.TopStart),
+            contentAlignment = Alignment.Center
         ) {
-            Surface(
-                onClick = { onCancel() },
-                color = Color(0xFF2C2C2E),
-                shape = CircleShape,
-                modifier = Modifier.size(width = 65.dp, height = 36.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text("Huỷ", color = Color.White, fontSize = 14.sp)
-                }
-            }
-
             Text(
-                text = "Sửa Giao Dịch",
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.Center)
+                text = "‹",
+                color = Color(0xFF0A84FF),
+                fontSize = 28.sp,
+                modifier = Modifier.offset(y = (-2).dp)
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        // --- NÚT XÓA (Góc phải trên cùng) ---
+        Box(
+            modifier = Modifier
+                .padding(end = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { hienThiXacNhanXoa = true }
+                .align(Alignment.TopEnd),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Default.Delete,
+                contentDescription = "Xóa",
+                tint = Color.Red,
+                modifier = Modifier.size(20.dp)
+            )
+        }
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(24.dp))
-                .background(cardColor)
-                .padding(16.dp)
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Tiêu đề căn giữa (Giống hệt AboutScreen)
+            Text(
+                text = "Sửa giao dịch",
+                color = Color.White,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
+            )
+
+            // --- KHỐI NHẬP LIỆU CHÍNH ---
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(cardColor)
+                    .padding(16.dp)
+            ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -327,11 +349,7 @@ fun SuaGiaoDichScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        TextButton(
-            onClick = { hienThiXacNhanXoa = true },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Xóa giao dịch", color = Color(0xFFF44336), fontSize = 16.sp)
+        // Bỏ TextButton xóa ở dưới vì đã có nút xóa hình tròn ở trên rồi
         }
     }
 }

@@ -53,6 +53,8 @@ import com.btl.buddybudget.ui.danhmuc.SuaDanhMucViewModel
 import com.btl.buddybudget.ui.danhmuc.DanhMucViewModel
 import com.btl.buddybudget.ui.danhmuc.ThemDanhMucViewModel
 import com.btl.buddybudget.ui.gioithieu.AboutScreen
+import com.btl.buddybudget.ui.thongke.ThongKeScreen
+import com.btl.buddybudget.ui.ngansach.NganSachScreen
 import com.btl.buddybudget.ui.vi.ViScreen
 import com.btl.buddybudget.ui.vi.SuaViScreen
 import com.btl.buddybudget.ui.vi.SuaViViewModel
@@ -216,15 +218,15 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
             }
 
             composable(Screen.Statistics.route) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Text("Màn hình Thống kê", color = Color.White, modifier = Modifier.padding(16.dp))
-                }
+                ThongKeScreen(
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             composable(Screen.Budget.route) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Text("Màn hình Ngân sách", color = Color.White, modifier = Modifier.padding(16.dp))
-                }
+                NganSachScreen(
+                    onBack = { navController.popBackStack() }
+                )
             }
             /*
             composable(Screen.Profile.route) {
@@ -331,7 +333,7 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
             ) { backStackEntry ->
                 val type = backStackEntry.arguments?.getString("type") ?: "EXPENSE"
                 val danhMucViewModel: DanhMucViewModel = viewModel(factory = viewModelFactory)
-                
+
                 com.btl.buddybudget.ui.danhmuc.ChonDanhMucScreen(
                     filterType = type,
                     onBack = { navController.popBackStack() },
@@ -400,7 +402,7 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
                     viewModel = viViewModel,
                     onBack = { navController.popBackStack() },
                     onSelect = { wallet ->
-                        themGiaoDichViewModel.onWalletSelected(wallet.id, wallet.name)
+                        themGiaoDichViewModel.onWalletSelected(wallet.id, wallet.name, wallet.colorHex, wallet.iconName)
                         navController.popBackStack()
                     }
                 )
