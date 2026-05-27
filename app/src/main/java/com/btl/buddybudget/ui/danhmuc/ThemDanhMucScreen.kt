@@ -20,6 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.btl.buddybudget.data.db.KieuGiaoDich
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconChi
+
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachMau
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +123,7 @@ fun AddCategoryScreen(
             // Chọn Icon
             Text("Chọn biểu tượng", color = Color.Gray, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(DanhSachIcons) { icon ->
+                items(DanhSachIconChi) { icon ->
                     Box(
                         modifier = Modifier
                             .size(45.dp)

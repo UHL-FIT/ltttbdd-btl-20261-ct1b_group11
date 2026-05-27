@@ -13,6 +13,7 @@ import com.btl.buddybudget.data.db.entities.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 @Database(
     entities = [
         GiaoDich::class,
@@ -30,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun daoDanhMuc(): DAODanhMuc
     abstract fun daoNganSach(): DAONganSach
     abstract fun daoVi(): DAOVi
+
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
 
@@ -59,26 +61,28 @@ abstract class AppDatabase : RoomDatabase() {
     }
 }
 
-private suspend fun seedDefaultCategories(dao: DAODanhMuc   ) {
+// Chỉ có ĐÚNG 1 hàm seedDefaultCategories ở đây
+private suspend fun seedDefaultCategories(dao: DAODanhMuc) {
     if (dao.getCount() > 0) return
     dao.insertAll(listOf(
-        DanhMuc(name = "Ăn uống",    iconName = "ti-tools-kitchen-2",    colorHex = "#FF6B35", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Di chuyển",  iconName = "ti-car",                 colorHex = "#3B82F6", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Giải trí",   iconName = "ti-device-gamepad",      colorHex = "#8B5CF6", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Mua sắm",    iconName = "ti-shopping-cart",       colorHex = "#10B981", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Sức khoẻ",  iconName = "ti-heart-rate-monitor",  colorHex = "#EF4444", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Giáo dục",   iconName = "ti-school",              colorHex = "#0EA5E9", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Lương",      iconName = "ti-wallet",              colorHex = "#22C55E", type = KieuGiaoDich.INCOME,  isDefault = true),
-        DanhMuc(name = "Thưởng",     iconName = "ti-star",                colorHex = "#FBBF24", type = KieuGiaoDich.INCOME,  isDefault = true),
-        DanhMuc(name = "Khác",       iconName = "ti-dots",                colorHex = "#94A3B8", type = KieuGiaoDich.EXPENSE, isDefault = true),
+        DanhMuc(name = "Ăn uống",    iconName = "🍴", colorHex = "#FF6B35", type = KieuGiaoDich.EXPENSE, isDefault = true),
+        DanhMuc(name = "Di chuyển",  iconName = "🚗", colorHex = "#3B82F6", type = KieuGiaoDich.EXPENSE, isDefault = true),
+        DanhMuc(name = "Giải trí",   iconName = "🎮", colorHex = "#8B5CF6", type = KieuGiaoDich.EXPENSE, isDefault = true),
+        DanhMuc(name = "Mua sắm",    iconName = "🛒", colorHex = "#10B981", type = KieuGiaoDich.EXPENSE, isDefault = true),
+        DanhMuc(name = "Sức khoẻ",   iconName = "🏥", colorHex = "#EF4444", type = KieuGiaoDich.EXPENSE, isDefault = true),
+        DanhMuc(name = "Giáo dục",   iconName = "🎓", colorHex = "#0EA5E9", type = KieuGiaoDich.EXPENSE, isDefault = true),
+        DanhMuc(name = "Lương",      iconName = "💰", colorHex = "#22C55E", type = KieuGiaoDich.INCOME,  isDefault = true),
+        DanhMuc(name = "Thưởng",     iconName = "🎁", colorHex = "#FBBF24", type = KieuGiaoDich.INCOME,  isDefault = true),
+        DanhMuc(name = "Khác",       iconName = "📁", colorHex = "#94A3B8", type = KieuGiaoDich.EXPENSE, isDefault = true)
     ))
 }
 
+// Chỉ có ĐÚNG 1 hàm seedDefaultWallets ở đây
 private suspend fun seedDefaultWallets(dao: DAOVi) {
     if (dao.layViChuaXoaCount() > 0) return
     dao.insertAll(listOf(
-        Vi(name = "Tiền mặt",    iconName = "ti-cash",           colorHex = "#22C55E", soDuBanDau = 1000000.0, sortOrder = 0),
-       Vi(name = "Ngân hàng",   iconName = "ti-building-bank",  colorHex = "#3B82F6", soDuBanDau = 2000000.0, sortOrder = 1),
-        Vi(name = "Ví điện tử",  iconName = "ti-device-mobile",  colorHex = "#8B5CF6", soDuBanDau = 3000000.0, sortOrder = 2),
+        Vi(name = "Tiền mặt",    iconName = "💵", colorHex = "#22C55E", soDuBanDau = 1000000.0, sortOrder = 0),
+        Vi(name = "Ngân hàng",   iconName = "🏦", colorHex = "#3B82F6", soDuBanDau = 2000000.0, sortOrder = 1),
+        Vi(name = "Ví điện tử",  iconName = "📱", colorHex = "#8B5CF6", soDuBanDau = 3000000.0, sortOrder = 2)
     ))
 }

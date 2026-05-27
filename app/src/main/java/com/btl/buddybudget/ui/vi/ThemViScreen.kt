@@ -11,8 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import com.btl.buddybudget.ui.danhmuc.DanhSachIcons
-import com.btl.buddybudget.ui.danhmuc.DanhSachMau
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconVi
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachMau
 import com.btl.buddybudget.ui.theme.BuddyBudgetTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -174,7 +175,7 @@ fun ThemViScreen(
                     Text("Chọn biểu tượng", color = Color.Gray, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        items(DanhSachIcons) { icon ->
+                        items(DanhSachIconVi) { icon ->
                             Box(
                                 modifier = Modifier
                                     .size(45.dp)

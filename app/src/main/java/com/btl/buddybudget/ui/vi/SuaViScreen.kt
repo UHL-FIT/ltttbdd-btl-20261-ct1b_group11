@@ -10,8 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import com.btl.buddybudget.ui.danhmuc.DanhSachIcons
-import com.btl.buddybudget.ui.danhmuc.DanhSachMau
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -23,6 +22,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconVi
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachMau
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -176,7 +177,7 @@ fun SuaViScreen(
                     Text("Chọn biểu tượng", color = Color.Gray, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        items(DanhSachIcons) { icon ->
+                        items(DanhSachIconVi) { icon ->
                             Box(
                                 modifier = Modifier
                                     .size(45.dp)
