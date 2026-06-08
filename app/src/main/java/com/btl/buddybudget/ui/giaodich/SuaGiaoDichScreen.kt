@@ -96,7 +96,7 @@ fun SuaGiaoDichScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-        // --- NÚT QUAY VỀ HÌNH TRÒN (Giống AboutScreen) ---
+        // --- NÚT QUAY VỀ HÌNH TRÒN ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
@@ -140,7 +140,7 @@ fun SuaGiaoDichScreen(
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Tiêu đề căn giữa (Giống hệt AboutScreen)
+            // Tiêu đề căn giữa
             Text(
                 text = "Sửa giao dịch",
                 color = Color.White,
@@ -169,22 +169,20 @@ fun SuaGiaoDichScreen(
                         .weight(1f)
                         .clip(RoundedCornerShape(20.dp))
                         .background(if (uiState.idExpense) Color(0xFF48484A) else Color.Transparent)
-                        .clickable { viewModel.onTransactionTypeChanged(true) }
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Khoản chi", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text("Khoản chi", color = if (uiState.idExpense) Color.White else Color.Gray, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 }
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(20.dp))
                         .background(if (!uiState.idExpense) Color(0xFF48484A) else Color.Transparent)
-                        .clickable { viewModel.onTransactionTypeChanged(false) }
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Khoản thu", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Text("Khoản thu", color = if (!uiState.idExpense) Color.White else Color.Gray, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 }
             }
 

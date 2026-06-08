@@ -31,7 +31,7 @@
         @Query("SELECT * FROM tbVi WHERE id = :id LIMIT 1")
         suspend fun layViTheoID(id: Int): Vi?
 
-        /** Số dư hiện tại = initialBalance + thu - chi */
+        /** Số dư hiện tại = thu - chi */
         @Query("""
             SELECT
                 vi.id,
@@ -39,14 +39,12 @@
                 vi.iconName,
                 vi.colorHex,
                 vi.donVi,
-                vi.soDuBanDau,
                 vi.isArchived,
                 vi.sortOrder,
                 COALESCE(
-                        vi.SoDuBanDau
-                    + SUM(CASE WHEN gd.type = 'INCOME'  THEN  gd.amount ELSE 0 END)
+                      SUM(CASE WHEN gd.type = 'INCOME'  THEN  gd.amount ELSE 0 END)
                     - SUM(CASE WHEN gd.type = 'EXPENSE' THEN  gd.amount ELSE 0 END),
-                    vi.soDuBanDau
+                    0.0
                 ) 
                 AS soDuHienTai,
                 COUNT(gd.id) AS transactionCount
@@ -61,8 +59,7 @@
         /** Tổng tài sản tất cả ví đang hoạt động */
         @Query("""
             SELECT COALESCE(
-                SUM(vi.SoDuBanDau)
-                + SUM(CASE WHEN gd.type = 'INCOME'  THEN  gd.amount ELSE 0 END)
+                  SUM(CASE WHEN gd.type = 'INCOME'  THEN  gd.amount ELSE 0 END)
                 - SUM(CASE WHEN gd.type = 'EXPENSE' THEN  gd.amount ELSE 0 END),
                 0.0
             )

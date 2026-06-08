@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.btl.buddybudget.data.db.KieuGiaoDich
+import com.btl.buddybudget.data.db.entities.GiaoDich
 import com.btl.buddybudget.data.db.entities.Vi
 import com.btl.buddybudget.data.repo.Repo
 import kotlinx.coroutines.launch
@@ -40,16 +42,29 @@ class ThemViViewModel(
 
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
-            repo.themVi(
+            val newWalletId = repo.themVi(
                 Vi(
                     name      = uiState.name.trim(),
-                    soDuBanDau = amount,
                     donVi     = uiState.donVi.ifBlank { "VND" },
                     iconName  = uiState.iconName,
                     colorHex  = uiState.colorHex,
                     isArchived = uiState.isArchived
                 )
             )
+
+            if (amount > 0) {
+                val category = repo.layTheoTen("Thay đổi số dư")
+                repo.themGiaoDich(
+                    GiaoDich(
+                        amount = amount,
+                        idDanhMuc = category?.id ?: 1, // Fallback to id 1 if not found
+                        idVi = newWalletId.toInt(),
+                        type = KieuGiaoDich.INCOME.name,
+                        note = "Số dư ban đầu"
+                    )
+                )
+            }
+
             uiState = uiState.copy(isLoading = false)
             onSuccess()
         }

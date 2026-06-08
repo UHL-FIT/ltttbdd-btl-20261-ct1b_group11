@@ -219,7 +219,7 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
 
            composable(Screen.BieuDoTron.route) {
                 ThongKeScreen(
-                   /* onBack = { navController.popBackStack() }*/
+                   onBack = { navController.popBackStack() }
                 )
             }
 
@@ -230,13 +230,6 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
                     onBack = { navController.popBackStack() }
                 )
             }
-            /*
-            composable(Screen.Profile.route) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Text("Màn hình Tài khoản", color = Color.White, modifier = Modifier.padding(16.dp))
-                }
-            }
-            */
 
             composable(Screen.AddTransaction.route) {
                 ThemGiaoDichScreen(

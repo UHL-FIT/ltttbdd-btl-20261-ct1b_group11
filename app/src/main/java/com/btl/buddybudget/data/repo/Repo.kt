@@ -2,14 +2,11 @@ package com.btl.buddybudget.data.repo
 
 import com.btl.buddybudget.data.db.KieuGiaoDich
 import com.btl.buddybudget.data.db.dao.DAODanhMuc
-import com.btl.buddybudget.data.db.dao.DAONganSach
 import com.btl.buddybudget.data.db.dao.DAOGiaoDich
 import com.btl.buddybudget.data.db.dao.DAOVi
-import com.btl.buddybudget.data.db.entities.NganSach
 import com.btl.buddybudget.data.db.entities.DanhMuc
 import com.btl.buddybudget.data.db.entities.GiaoDich
 import com.btl.buddybudget.data.db.entities.Vi
-import com.btl.buddybudget.data.db.quanhe.NganSachVADanhMuc
 import com.btl.buddybudget.data.db.quanhe.ThongKeDanhMuc
 import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
 import com.btl.buddybudget.data.db.quanhe.WalletWithBalance
@@ -31,7 +28,6 @@ import javax.inject.Singleton
 class Repo   @Inject constructor(
     private val daoGiaoDich: DAOGiaoDich,
     private val daoDanhMuc:  DAODanhMuc,
-    private val daoNganSach: DAONganSach,
     private val daoVi:       DAOVi
 ) {
     // ════════════════════════════════════════════════════════════════
@@ -133,27 +129,15 @@ class Repo   @Inject constructor(
     suspend fun layDanhMucTheoId(id: Int): DanhMuc? =
         daoDanhMuc.layDanhMucTheoID(id)
 
+    suspend fun layTheoTen(name: String): DanhMuc? =
+        daoDanhMuc.layTheoTen(name)
+
     fun layDanhMucChi(): Flow<List<DanhMuc>> =
         daoDanhMuc.layDanhMucTheoLoai(KieuGiaoDich.EXPENSE.name)
 
     fun layDanhMucThu(): Flow<List<DanhMuc>> =
         daoDanhMuc.layDanhMucTheoLoai(KieuGiaoDich.INCOME.name)
 
-    // ════════════════════════════════════════════════════════════════
-    //  NGÂN SÁCH
-    // ════════════════════════════════════════════════════════════════
-
-    suspend fun datNganSach(idDanhMuc: Int, hanMuc: Double, thang: Int, nam: Int) =
-        daoNganSach.upsert(idDanhMuc, hanMuc, thang, nam)
-
-    suspend fun xoaNganSach(idDanhMuc: Int, thang: Int, nam: Int) =
-        daoNganSach.XoaNganSachTheoThangKemDanhMuc(idDanhMuc, thang, nam)
-
-    fun layNganSachTheoThang(thang: Int, nam: Int): Flow<List<NganSachVADanhMuc>> =
-        daoNganSach.layNganSachTheoThangNamKemDanhMuc(thang, nam)
-
-    suspend fun layNganSachCuaDanhMuc(idDanhMuc: Int, thang: Int, nam: Int): NganSach? =
-        daoNganSach.layNganSachTheoThangKemDanhMuc(idDanhMuc, thang, nam)
 
     // ════════════════════════════════════════════════════════════════
     //  VÍ

@@ -69,7 +69,7 @@ val DarkSurface = Color(0xFF1C1C1E)
 val TextGray = Color(0xFFAAAAAA)
 
 @Composable
-fun ThongKeScreen() {
+fun ThongKeScreen(onBack: () -> Unit) {
     // Trạng thái Tab (Thu/Chi)
     var isExpenseSelected by remember { mutableStateOf(true) }
 
@@ -89,7 +89,8 @@ fun ThongKeScreen() {
         TopBarSection(
             month = selectedMonth,
             year = selectedYear,
-            onDateClick = { showDatePicker = true }
+            onDateClick = { showDatePicker = true },
+            onBack = { onBack() }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -134,26 +135,29 @@ fun ThongKeScreen() {
 fun TopBarSection(
     month: Int,
     year: Int,
-    onDateClick: () -> Unit
+    onDateClick: () -> Unit,
+    onBack: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .height(56.dp)
     ) {
-        Surface(
+        Box(
             modifier = Modifier
-                .align(Alignment.CenterStart)
                 .size(40.dp)
-                .clickable { /* Xử lý sự kiện quay lại ở đây */ },
-            shape = CircleShape,
-            color = DarkSurface
+                .clip(CircleShape)
+                .background(Color(0xFF1C1C1E))
+                .clickable { onBack() }
+                .align(Alignment.CenterStart),
+            contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                tint = Color.White,
-                modifier = Modifier.padding(8.dp)
+            Text(
+                text = "‹",
+                color = Color(0xFF0A84FF),
+                fontSize = 28.sp,
+                modifier = Modifier.offset(y = (-2).dp)
             )
         }
 
@@ -467,10 +471,4 @@ fun ExpenseListItem(item: ExpenseItem) {
             fontWeight = FontWeight.Medium
         )
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ThongKeScreenPreview() {
-    ThongKeScreen()
 }

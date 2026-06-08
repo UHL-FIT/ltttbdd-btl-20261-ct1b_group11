@@ -45,7 +45,7 @@ fun SuaViScreen(
         AlertDialog(
             onDismissRequest = { hienThiXacNhanXoa = false },
             title = { Text(text = "Xóa ví", color = Color.White) },
-            text = { Text(text = "Bạn có chắc chắn muốn xóa ví '${state.name}' không? Hành động này không thể hoàn tác nếu ví chứa giao dịch.", color = Color.LightGray) },
+            text = { Text(text = "Bạn có chắc chắn muốn xóa ví '${state.name}' không? Hành động này không thể hoàn tác.", color = Color.LightGray) },
             containerColor = Color(0xFF1E1E1E),
             confirmButton = {
                 TextButton(
@@ -140,14 +140,18 @@ fun SuaViScreen(
 
                         OutlinedTextField(
                             value = state.soDu,
-                            onValueChange = viewModel::doiSoDu,
-                            label = { Text("Số dư ban đầu") },
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Số dư hiện tại") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
+                                focusedTextColor = Color.Gray,
+                                unfocusedTextColor = Color.Gray,
                                 focusedLabelColor = Color.Gray,
-                                unfocusedLabelColor = Color.Gray
+                                unfocusedLabelColor = Color.Gray,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
                             )
                         )
 
