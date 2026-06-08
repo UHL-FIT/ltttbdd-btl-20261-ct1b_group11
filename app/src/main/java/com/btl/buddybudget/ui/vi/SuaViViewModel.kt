@@ -19,13 +19,15 @@ class SuaViViewModel(
     fun loadWallet(walletId: Int) {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
-            // Gọi phương thức từ repo (giả định repo kết nối với DAOVi.layViTheoID)
+            // Gọi phương thức từ repo
             val vi = repo.layViTheoId(walletId)
             if (vi != null) {
+                // Lấy số dư hiện tại từ danh sách ví có số dư
+                // Hoặc bạn có thể thêm 1 hàm lấy 1 ví kèm số dư trong repo
                 uiState = SuaViState(
                     id = vi.id,
                     name = vi.name,
-                    soDu = vi.soDuBanDau.toString(),
+                    soDu = "0.0", // Tạm thời để 0.0 hoặc fetch từ nguồn khác
                     donVi = vi.donVi,
                     iconName = vi.iconName,
                     colorHex = vi.colorHex,
@@ -40,7 +42,6 @@ class SuaViViewModel(
     }
 
     fun doiTenVi(value: String)  { uiState = uiState.copy(name = value, error = null) }
-    fun doiSoDu(value: String)   { uiState = uiState.copy(soDu = value, error = null) }
     fun doiDonVi(value: String)  { uiState = uiState.copy(donVi = value) }
     fun doiMau(value: String)    { uiState = uiState.copy(colorHex = value) }
     fun doiIcon(value: String)   { uiState = uiState.copy(iconName = value) }
@@ -53,20 +54,12 @@ class SuaViViewModel(
             return
         }
 
-        val amount = uiState.soDu.toDoubleOrNull() ?: run {
-            if (uiState.soDu.isNotBlank()) {
-                uiState = uiState.copy(error = "Số dư không hợp lệ")
-                return
-            }
-            0.0
-        }
 
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
             val viCapNhat = Vi(
                 id = uiState.id,
                 name = uiState.name.trim(),
-                soDuBanDau = amount,
                 donVi = uiState.donVi.ifBlank { "VND" },
                 iconName = uiState.iconName,
                 colorHex = uiState.colorHex,
@@ -86,16 +79,20 @@ class SuaViViewModel(
             val viXoa = Vi(
                 id = uiState.id,
                 name = uiState.name,
-                soDuBanDau = uiState.soDu.toDoubleOrNull() ?: 0.0,
                 donVi = uiState.donVi,
                 iconName = uiState.iconName,
                 colorHex = uiState.colorHex,
                 isArchived = uiState.isArchived,
                 sortOrder = uiState.sortOrder
             )
-            repo.xoaVi(viXoa) // giả định phương thức trong repo gọi DAOVi.delete(vi)
+            val thanhCong = repo.xoaVi(viXoa) 
             uiState = uiState.copy(isLoading = false)
-            onSuccess()
+            
+            if (thanhCong) {
+                onSuccess()
+            } else {
+                uiState = uiState.copy(error = "Không thể xóa ví vì vẫn còn giao dịch liên quan.")
+            }
         }
     }
 }

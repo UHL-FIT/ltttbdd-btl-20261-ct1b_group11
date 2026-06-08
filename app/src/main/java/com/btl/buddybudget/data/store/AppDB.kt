@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
     entities = [
         GiaoDich::class,
         DanhMuc::class,
-        NganSach::class,
         Vi::class
     ],
     version = 4, // Nâng lên version 4 để đảm bảo Room xóa DB cũ và tạo lại theo cấu trúc mới
@@ -29,7 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun daoGiaoDich(): DAOGiaoDich
     abstract fun daoDanhMuc(): DAODanhMuc
-    abstract fun daoNganSach(): DAONganSach
+
     abstract fun daoVi(): DAOVi
 
     companion object {
@@ -73,7 +72,8 @@ private suspend fun seedDefaultCategories(dao: DAODanhMuc) {
         DanhMuc(name = "Giáo dục",   iconName = "🎓", colorHex = "#0EA5E9", type = KieuGiaoDich.EXPENSE, isDefault = true),
         DanhMuc(name = "Lương",      iconName = "💰", colorHex = "#22C55E", type = KieuGiaoDich.INCOME,  isDefault = true),
         DanhMuc(name = "Thưởng",     iconName = "🎁", colorHex = "#FBBF24", type = KieuGiaoDich.INCOME,  isDefault = true),
-        DanhMuc(name = "Khác",       iconName = "📁", colorHex = "#94A3B8", type = KieuGiaoDich.EXPENSE, isDefault = true)
+        DanhMuc(name = "Khác",       iconName = "📁", colorHex = "#94A3B8", type = KieuGiaoDich.EXPENSE, isDefault = true),
+        DanhMuc(name = "Thay đổi số dư",       iconName = "💸", colorHex = "#94A3B8", type = KieuGiaoDich.INCOME, isDefault = true)
     ))
 }
 
@@ -81,8 +81,8 @@ private suspend fun seedDefaultCategories(dao: DAODanhMuc) {
 private suspend fun seedDefaultWallets(dao: DAOVi) {
     if (dao.layViChuaXoaCount() > 0) return
     dao.insertAll(listOf(
-        Vi(name = "Tiền mặt",    iconName = "💵", colorHex = "#22C55E", soDuBanDau = 1000000.0, sortOrder = 0),
-        Vi(name = "Ngân hàng",   iconName = "🏦", colorHex = "#3B82F6", soDuBanDau = 2000000.0, sortOrder = 1),
-        Vi(name = "Ví điện tử",  iconName = "📱", colorHex = "#8B5CF6", soDuBanDau = 3000000.0, sortOrder = 2)
+        Vi(name = "Tiền mặt",    iconName = "💵", colorHex = "#22C55E", sortOrder = 0),
+        Vi(name = "Ngân hàng",   iconName = "🏦", colorHex = "#3B82F6", sortOrder = 1),
+        Vi(name = "Ví điện tử",  iconName = "📱", colorHex = "#8B5CF6", sortOrder = 2)
     ))
 }

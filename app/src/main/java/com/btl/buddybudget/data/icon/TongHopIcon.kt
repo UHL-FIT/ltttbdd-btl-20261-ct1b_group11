@@ -9,7 +9,8 @@ object TongHopIcon {
         "💼", // Công việc / Làm thêm
         "📈", // Đầu tư / Lãi chứng khoán
         "💵", // Tiền mặt phát sinh
-        "🏦"  // Lãi tiền gửi ngân hàng
+        "🏦",  // Lãi tiền gửi ngân hàng
+        "💸" //Thay đỏi số dư
     )
 
     // 2. Danh sách icon dành cho KHOẢN CHI (Ăn uống, mua sắm, di chuyển...)
