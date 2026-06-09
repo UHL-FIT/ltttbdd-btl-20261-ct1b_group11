@@ -14,27 +14,28 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun NganSachScreen(
     onBack: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         // --- NÚT QUAY VỀ HÌNH TRÒN ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
@@ -49,7 +50,7 @@ fun NganSachScreen(
             // Tiêu đề căn giữa
             Text(
                 text = "Ngân sách",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
@@ -63,7 +64,7 @@ fun NganSachScreen(
                 item {
                     Text(
                         text = "Tính năng Ngân sách đang được phát triển",
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp
                     )
                 }

@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -32,13 +34,19 @@ fun EditCategoryScreen(
     viewModel: SuaDanhMucViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val backgroundColor = Color.Black
-    val cardColor = Color(0xFF1C1C1E)
+    val snackbarHostState = remember { SnackbarHostState() }
 
     var hienThiXacNhanXoa by remember { mutableStateOf(false) }
 
     LaunchedEffect(idDanhMuc) {
         viewModel.loadDanhMuc(idDanhMuc)
+    }
+
+    LaunchedEffect(uiState.thongBaoLoi) {
+        uiState.thongBaoLoi?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearError()
+        }
     }
 
     LaunchedEffect(uiState.daCapNhat, uiState.daXoa) {
@@ -50,37 +58,39 @@ fun EditCategoryScreen(
     if (hienThiXacNhanXoa) {
         AlertDialog(
             onDismissRequest = { hienThiXacNhanXoa = false },
-            title = { Text("Xóa nhóm", color = Color.White) },
-            text = { Text("Bạn có chắc chắn muốn xóa nhóm '${uiState.tenDanhMuc}' này không?", color = Color.LightGray) },
-            containerColor = Color(0xFF1E1E1E),
+            title = { Text("Xóa nhóm") },
+            text = { Text("Bạn có chắc chắn muốn xóa nhóm '${uiState.tenDanhMuc}' này không?") },
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             confirmButton = {
                 TextButton(onClick = { viewModel.xoaDanhMuc() }) {
-                    Text("XÓA", color = Color.Red)
+                    Text("XÓA", color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { hienThiXacNhanXoa = false }) {
-                    Text("HỦY", color = Color.Gray)
+                    Text("HỦY", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
-        // --- NÚT QUAY VỀ HÌNH TRÒN (Giống AboutScreen) ---
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        // --- NÚT QUAY VỀ HÌNH TRÒN ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
@@ -93,7 +103,7 @@ fun EditCategoryScreen(
                     .padding(end = 20.dp, top = 20.dp)
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF1C1C1E))
+                    .background(MaterialTheme.colorScheme.surface)
                     .clickable { hienThiXacNhanXoa = true }
                     .align(Alignment.TopEnd),
                 contentAlignment = Alignment.Center
@@ -101,7 +111,7 @@ fun EditCategoryScreen(
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = "Xóa",
-                    tint = Color.Red,
+                    tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -113,10 +123,10 @@ fun EditCategoryScreen(
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Tiêu đề căn giữa (Giống AboutScreen)
+            // Tiêu đề căn giữa
             Text(
                 text = "Sửa nhóm",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
@@ -124,7 +134,7 @@ fun EditCategoryScreen(
 
             if (uiState.isLoading) {
                 Spacer(modifier = Modifier.weight(1f))
-                CircularProgressIndicator(color = Color.White)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.weight(1f))
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -133,7 +143,7 @@ fun EditCategoryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
-                        .background(cardColor)
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(16.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -149,24 +159,25 @@ fun EditCategoryScreen(
                         TextField(
                             value = uiState.tenDanhMuc,
                             onValueChange = viewModel::capNhatTen,
-                            placeholder = { Text("Tên nhóm", color = Color.Gray) },
+                            placeholder = { Text("Tên nhóm", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedContainerColor = Color.Transparent,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
 
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFF2C2C2E))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        Text("Loại giao dịch", color = Color.White)
-                        Row(modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(Color(0xFF2C2C2E)).padding(4.dp)) {
+                        Text("Loại giao dịch", color = MaterialTheme.colorScheme.onSurface)
+                        Row(modifier = Modifier.clip(RoundedCornerShape(25.dp)).background(MaterialTheme.colorScheme.surfaceVariant).padding(4.dp)) {
                             val isExp = uiState.loaiGiaoDich == KieuGiaoDich.EXPENSE
                             TabItem("Khoản chi", isExp) { viewModel.capNhatLoai(KieuGiaoDich.EXPENSE) }
                             TabItem("Khoản thu", !isExp) { viewModel.capNhatLoai(KieuGiaoDich.INCOME) }
@@ -176,15 +187,15 @@ fun EditCategoryScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text("Chọn biểu tượng", color = Color.Gray, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
+                Text("Chọn biểu tượng", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(DanhSachIconChi) { icon ->
                         Box(
                             modifier = Modifier
                                 .size(45.dp)
                                 .clip(CircleShape)
-                                .background(if (uiState.iconChon == icon) Color.White.copy(0.2f) else Color(0xFF2C2C2E))
-                                .border(if (uiState.iconChon == icon) 2.dp else 0.dp, Color.White, CircleShape)
+                                .background(if (uiState.iconChon == icon) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant)
+                                .border(if (uiState.iconChon == icon) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                                 .clickable { viewModel.capNhatIcon(icon) },
                             contentAlignment = Alignment.Center
                         ) {
@@ -195,7 +206,7 @@ fun EditCategoryScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text("Chọn màu sắc", color = Color.Gray, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
+                Text("Chọn màu sắc", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(DanhSachMau) { hex ->
                         Box(
@@ -203,7 +214,7 @@ fun EditCategoryScreen(
                                 .size(40.dp)
                                 .clip(CircleShape)
                                 .background(Color(android.graphics.Color.parseColor(hex)))
-                                .border(if (uiState.mauChon == hex) 3.dp else 0.dp, Color.White, CircleShape)
+                                .border(if (uiState.mauChon == hex) 3.dp else 0.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
                                 .clickable { viewModel.capNhatMau(hex) }
                         )
                     }
@@ -211,19 +222,26 @@ fun EditCategoryScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                if (uiState.thongBaoLoi != null) {
-                    Text(uiState.thongBaoLoi!!, color = Color.Red, fontSize = 14.sp)
-                }
-
                 Button(
                     onClick = viewModel::luuCapNhat,
                     modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp).height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C2C2E)),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
                     shape = RoundedCornerShape(25.dp)
                 ) {
-                    Text("Lưu thay đổi", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text("Lưu thay đổi", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 90.dp)
+        )
     }
 }
+

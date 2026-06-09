@@ -51,25 +51,25 @@ fun ChonDanhMucScreen(
         }
     }
 
-    val backgroundColor = Color.Black
+
     val currentType = if (filterType == "INCOME") KieuGiaoDich.INCOME else KieuGiaoDich.EXPENSE
     val filteredItems = uiState.danhMucs.filter { it.type == currentType }
 
-    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         // --- NÚT QUAY VỀ HÌNH TRÒN (Đồng bộ style) ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
@@ -85,7 +85,7 @@ fun ChonDanhMucScreen(
             val title = if (filterType == "EXPENSE") "Chọn nhóm chi" else "Chọn nhóm thu"
             Text(
                 text = title,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
@@ -136,25 +136,21 @@ fun QuanLyDanhMucScreen(
     val currentType = if (selectedTab == 0) KieuGiaoDich.EXPENSE else KieuGiaoDich.INCOME
     val filteredItems = uiState.danhMucs.filter { it.type == currentType }
 
-    val backgroundColor = Color.Black
-    val cardColor = Color(0xFF1C1C1E)
-    val primaryGreen = Color(0xFF4CAF50)
-
-    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         // --- NÚT QUAY VỀ HÌNH TRÒN ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
@@ -169,7 +165,7 @@ fun QuanLyDanhMucScreen(
             // Tiêu đề căn giữa
             Text(
                 text = "Danh mục",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
@@ -181,7 +177,7 @@ fun QuanLyDanhMucScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .height(48.dp)
-                    .background(cardColor, RoundedCornerShape(24.dp))
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(24.dp))
                     .padding(4.dp)
             ) {
                 Row(modifier = Modifier.fillMaxSize()) {
@@ -190,22 +186,28 @@ fun QuanLyDanhMucScreen(
                             .weight(1f)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (selectedTab == 0) Color(0xFF48484A) else Color.Transparent)
+                            .background(if (selectedTab == 0) MaterialTheme.colorScheme.background else Color.Transparent)
                             .clickable { selectedTab = 0 },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Khoản chi", color = Color.White, fontWeight = FontWeight.Medium)
+                        Text("Khoản chi", color = if (selectedTab ==0 ) MaterialTheme.colorScheme.onPrimaryContainer
+                                                    else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant ,
+                            fontWeight = FontWeight.Medium)
                     }
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (selectedTab == 1) Color(0xFF48484A) else Color.Transparent)
+                            .background(if (selectedTab == 1) MaterialTheme.colorScheme.background else Color.Transparent)
                             .clickable { selectedTab = 1 },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Khoản thu", color = Color.White, fontWeight = FontWeight.Medium)
+                        Text("Khoản thu",  color = if (selectedTab == 1 ) MaterialTheme.colorScheme.onPrimaryContainer
+                                                     else
+                                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                            fontWeight = FontWeight.Medium)
                     }
                 }
             }
@@ -217,14 +219,14 @@ fun QuanLyDanhMucScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .background(cardColor, RoundedCornerShape(28.dp))
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(28.dp))
                     .clickable { onAddCate() }
                     .padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Icon(Icons.Default.AddCircle, null, tint = primaryGreen)
-                Text("  Nhóm mới", color = primaryGreen, fontWeight = FontWeight.Bold)
+                Icon(Icons.Default.AddCircle, null, tint = MaterialTheme.colorScheme.primary)
+                Text("  Nhóm mới", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -254,7 +256,7 @@ fun CateItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .height(64.dp),
-        color = Color(0xFF2C2C2E),
+        color = MaterialTheme.colorScheme.surfaceVariant,
         shape = RoundedCornerShape(32.dp)
     ) {
         Row(
@@ -272,12 +274,12 @@ fun CateItem(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(danhMuc.iconName, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Text(danhMuc.iconName, color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, fontSize = 20.sp)
             }
 
             Text(
                 text = danhMuc.name,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(start = 16.dp).weight(1f),
                 fontSize = 16.sp
             )
@@ -285,7 +287,7 @@ fun CateItem(
             Icon(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 null,
-                tint = Color.Gray
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

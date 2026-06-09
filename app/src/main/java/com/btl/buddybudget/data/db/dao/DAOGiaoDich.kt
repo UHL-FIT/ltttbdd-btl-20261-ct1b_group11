@@ -24,11 +24,21 @@ interface DAOGiaoDich {
     suspend fun layTheoId(id: Int): GiaoDich?
 
     @Transaction
-    @Query("SELECT * FROM tbGiaoDich ORDER BY date DESC")
+    @Query("""
+        SELECT g.* FROM tbGiaoDich g
+        INNER JOIN tbVi v ON g.idVi = v.id
+        WHERE v.isArchived = 0
+        ORDER BY g.date DESC
+    """)
     fun layTatCa(): Flow<List<GiaoDichvaDanhMuc>>
 
     @Transaction
-    @Query("SELECT * FROM tbGiaoDich WHERE date >= :tu AND date < :den ORDER BY date DESC")
+    @Query("""
+        SELECT g.* FROM tbGiaoDich g
+        INNER JOIN tbVi v ON g.idVi = v.id
+        WHERE v.isArchived = 0 AND g.date >= :tu AND g.date < :den 
+        ORDER BY g.date DESC
+    """)
     fun layTheoKhoangThoiGian(tu: Long, den: Long): Flow<List<GiaoDichvaDanhMuc>>
 
     @Transaction
@@ -40,29 +50,55 @@ interface DAOGiaoDich {
     fun layTheoViVaThang(idVi: Int, tu: Long, den: Long): Flow<List<GiaoDichvaDanhMuc>>
 
     @Transaction
-    @Query("SELECT * FROM tbGiaoDich WHERE note LIKE '%' || :tuKhoa || '%' ORDER BY date DESC")
+    @Query("""
+        SELECT g.* FROM tbGiaoDich g
+        INNER JOIN tbVi v ON g.idVi = v.id
+        WHERE v.isArchived = 0 AND g.note LIKE '%' || :tuKhoa || '%' 
+        ORDER BY g.date DESC
+    """)
     fun timKiem(tuKhoa: String): Flow<List<GiaoDichvaDanhMuc>>
 
-    @Query("SELECT SUM(amount) FROM tbGiaoDich WHERE type = :type AND date >= :tu AND date < :den")
+    @Query("""
+        SELECT SUM(g.amount) FROM tbGiaoDich g
+        INNER JOIN tbVi v ON g.idVi = v.id
+        WHERE v.isArchived = 0 AND g.type = :type AND g.date >= :tu AND g.date < :den
+    """)
     fun tinhTong(type: String, tu: Long, den: Long): Flow<Double>
 
-    @Query("SELECT MIN(amount) FROM tbGiaoDich WHERE type = :type AND date >= :tu AND date < :den")
+    @Query("""
+        SELECT MIN(g.amount) FROM tbGiaoDich g
+        INNER JOIN tbVi v ON g.idVi = v.id
+        WHERE v.isArchived = 0 AND g.type = :type AND g.date >= :tu AND g.date < :den
+    """)
     fun tinhMin(type: String, tu: Long, den: Long): Flow<Double>
 
-    @Query("SELECT MAX(amount) FROM tbGiaoDich WHERE type = :type AND date >= :tu AND date < :den")
+    @Query("""
+        SELECT MAX(g.amount) FROM tbGiaoDich g
+        INNER JOIN tbVi v ON g.idVi = v.id
+        WHERE v.isArchived = 0 AND g.type = :type AND g.date >= :tu AND g.date < :den
+    """)
     fun tinhMax(type: String, tu: Long, den: Long): Flow<Double>
 
-    @Query("SELECT AVG(amount) FROM tbGiaoDich WHERE type = :type AND date >= :tu AND date < :den")
+    @Query("""
+        SELECT AVG(g.amount) FROM tbGiaoDich g
+        INNER JOIN tbVi v ON g.idVi = v.id
+        WHERE v.isArchived = 0 AND g.type = :type AND g.date >= :tu AND g.date < :den
+    """)
     fun tinhTrungBinh(type: String, tu: Long, den: Long): Flow<Double>
 
-    @Query("SELECT COUNT(*) FROM tbGiaoDich")
+    @Query("""
+        SELECT COUNT(g.id) FROM tbGiaoDich g
+        INNER JOIN tbVi v ON g.idVi = v.id
+        WHERE v.isArchived = 0
+    """)
     fun demTatCa(): Flow<Int>
 
     @Query("""
         SELECT d.id, d.name, d.colorHex, SUM(g.amount) as total, COUNT(g.id) as count
         FROM tbDanhMuc d
         JOIN tbGiaoDich g ON d.id = g.idDanhMuc
-        WHERE g.date >= :tu AND g.date < :den
+        JOIN tbVi v ON g.idVi = v.id
+        WHERE v.isArchived = 0 AND g.date >= :tu AND g.date < :den
         GROUP BY d.id
     """)
     fun thongKeDanhMuc(tu: Long, den: Long): Flow<List<ThongKeDanhMuc>>

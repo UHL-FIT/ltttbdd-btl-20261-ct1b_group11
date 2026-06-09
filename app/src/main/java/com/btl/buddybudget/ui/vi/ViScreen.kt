@@ -47,21 +47,21 @@ fun ViScreen(
         uiState.wallets.filter { !it.isArchived }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         // --- NÚT QUAY VỀ HÌNH TRÒN ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
@@ -73,7 +73,7 @@ fun ViScreen(
                 .padding(end = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { menuExpanded = true }
                 .align(Alignment.TopEnd),
             contentAlignment = Alignment.Center
@@ -81,24 +81,24 @@ fun ViScreen(
             Icon(
                 imageVector = Icons.Default.Edit,
                 contentDescription = "Menu",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(20.dp)
             )
 
             DropdownMenu(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
-                containerColor = Color(0xFF2C2C2E)
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 DropdownMenuItem(
-                    text = { Text("Ví đang hoạt động", color = Color.White) },
+                    text = { Text("Ví đang hoạt động", color = MaterialTheme.colorScheme.onSurface) },
                     onClick = {
                         showArchived = false
                         menuExpanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Ví đã ẩn", color = Color.White) },
+                    text = { Text("Ví đã ẩn", color = MaterialTheme.colorScheme.onSurface) },
                     onClick = {
                         showArchived = true
                         menuExpanded = false
@@ -116,7 +116,7 @@ fun ViScreen(
             // Tiêu đề căn giữa
             Text(
                 text = if (showArchived) "Ví đã ẩn" else "Quản lý ví",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
@@ -134,15 +134,15 @@ fun ViScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E))
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
                             Column(modifier = Modifier.padding(20.dp)) {
                                 val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
-                                Text(text = "Tổng tài sản", color = Color.Gray, fontSize = 14.sp)
+                                Text(text = "Tổng tài sản", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = "${currencyFormat.format(uiState.tongTaiSan.toLong())} đ",
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 28.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -156,14 +156,14 @@ fun ViScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)
-                                .background(Color(0xFF1C1C1E), RoundedCornerShape(28.dp))
+                                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(28.dp))
                                 .clickable { onAddWallet() }
                                 .padding(horizontal = 20.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Icon(Icons.Default.Add, null, tint = Color(0xFF4CAF50))
-                            Text("  Thêm ví mới", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
+                            Icon(Icons.Default.Add, null, tint = MaterialTheme.colorScheme.primary)
+                            Text("  Thêm ví mới", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -171,7 +171,7 @@ fun ViScreen(
                 item {
                     Text(
                         text = if (showArchived) "Danh sách ví ẩn" else "Danh sách ví",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -190,53 +190,37 @@ fun ViScreen(
 
 @Composable
 fun WalletItem(
-
     wallet: WalletWithBalance,
-
     onClick: () -> Unit
-
 ) {
-
     Card(
-
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                onClick()
-            },
-
+            .clickable { onClick() },
         shape = RoundedCornerShape(22.dp),
-
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF2C2C2E)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(18.dp),
-
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             // ICON
             Box(
                 modifier = Modifier
                     .size(52.dp)
                     .background(
-                        color = Color(
-                            android.graphics.Color.parseColor(wallet.colorHex)
-                        ),
+                        color = Color(android.graphics.Color.parseColor(wallet.colorHex)),
                         shape = CircleShape
                     ),
-
                 contentAlignment = Alignment.Center
             ) {
-
                 Text(
                     text = wallet.iconName,
-                    color = Color.White,
+                    color = Color.White, // Icon emoji nên giữ màu trắng/mặc định
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp
                 )
@@ -247,19 +231,16 @@ fun WalletItem(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-
                 Text(
                     text = wallet.name,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.SemiBold
                 )
-
                 Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
                     text = "${wallet.transactionCount} giao dịch",
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp
                 )
             }
@@ -270,17 +251,15 @@ fun WalletItem(
                 val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
                 Text(
                     text = "${currencyFormat.format(wallet.soDuHienTai.toLong())}đ",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-
                 Spacer(modifier = Modifier.height(6.dp))
-
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = null,
-                    tint = Color.Gray,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(18.dp)
                 )
             }

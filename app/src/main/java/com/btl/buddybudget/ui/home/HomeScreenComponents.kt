@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import com.btl.buddybudget.data.db.quanhe.WalletWithBalance
@@ -32,12 +33,12 @@ import com.btl.buddybudget.ui.vi.ViScreenState
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import androidx.core.graphics.toColorInt
 
 @Composable
 fun MyWallet(
     uiState: ViScreenState,
     onViewAllClick: () -> Unit,
-    onTransactionHistoryClick: () -> Unit
 ) {
     val formatter = remember {
         val symbols = DecimalFormatSymbols(Locale.forLanguageTag("vi-VN"))
@@ -48,7 +49,7 @@ fun MyWallet(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2E))
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -58,12 +59,12 @@ fun MyWallet(
                 Column {
                     Text(
                         text = "Tổng số dư",
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp
                     )
                     Text(
                         text = "${formatter.format(uiState.tongTaiSan.toLong())} đ",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -73,7 +74,7 @@ fun MyWallet(
 
                 Text(
                     text = "Xem tất cả",
-                    color = Color(0xFF4CAF50),
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.clickable { onViewAllClick() }
@@ -82,13 +83,14 @@ fun MyWallet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            uiState.wallets.take(3).forEachIndexed { index, wallet ->
+            val displayWallets = uiState.wallets.filter { !it.isArchived }.take(3)
+            displayWallets.forEachIndexed { index, wallet ->
                 WalletRow(wallet = wallet)
-                if (index < uiState.wallets.take(3).size - 1) {
+                if (index < displayWallets.size - 1) {
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 12.dp),
                         thickness = 0.5.dp,
-                        color = Color.Gray.copy(alpha = 0.3f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
                     )
                 }
             }
@@ -111,13 +113,13 @@ fun WalletRow(wallet: WalletWithBalance) {
                 .size(36.dp)
                 .clip(CircleShape)
                 .background(
-                    color = Color(android.graphics.Color.parseColor(wallet.colorHex)).copy(alpha = 0.2f)
+                    color = Color(wallet.colorHex.toColorInt()).copy(alpha = 0.2f)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = wallet.iconName,
-                color = Color(android.graphics.Color.parseColor(wallet.colorHex)),
+                color = Color(wallet.colorHex.toColorInt()),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -127,14 +129,14 @@ fun WalletRow(wallet: WalletWithBalance) {
 
         Text(
             text = wallet.name,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 15.sp,
             modifier = Modifier.weight(1f)
         )
 
         Text(
             text = "${formatter.format(wallet.soDuHienTai.toLong())} đ",
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold
         )

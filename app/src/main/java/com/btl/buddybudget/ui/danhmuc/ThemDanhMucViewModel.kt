@@ -59,4 +59,8 @@ class ThemDanhMucViewModel(private val repo: Repo) : ViewModel() {
     fun resetTrangThaiLuu() {
         _uiState.update { it.copy(daLuuThanhCong = false) }
     }
+
+    fun clearError() {
+        _uiState.update { it.copy(thongBaoLoi = null) }
+    }
 }

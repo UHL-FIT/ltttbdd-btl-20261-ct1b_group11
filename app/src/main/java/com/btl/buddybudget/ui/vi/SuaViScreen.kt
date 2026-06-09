@@ -11,6 +11,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -33,20 +35,29 @@ fun SuaViScreen(
     onBack: () -> Unit,
     viewModel: SuaViViewModel
 ) {
+    val state = viewModel.uiState
+    val snackbarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(walletId) {
         viewModel.loadWallet(walletId)
     }
 
-    val state = viewModel.uiState
+    LaunchedEffect(state.error) {
+        state.error?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearError()
+        }
+    }
+
     var hienThiXacNhanXoa by remember { mutableStateOf(false) }
 
     // Hộp thoại cảnh báo khi nhấn nút Xóa
     if (hienThiXacNhanXoa) {
         AlertDialog(
             onDismissRequest = { hienThiXacNhanXoa = false },
-            title = { Text(text = "Xóa ví", color = Color.White) },
-            text = { Text(text = "Bạn có chắc chắn muốn xóa ví '${state.name}' không? Hành động này không thể hoàn tác.", color = Color.LightGray) },
-            containerColor = Color(0xFF1E1E1E),
+            title = { Text(text = "Xóa ví", color = MaterialTheme.colorScheme.onSurface) },
+            text = { Text(text = "Bạn có chắc chắn muốn xóa ví '${state.name}' không? Hành động này không thể hoàn tác.", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+            containerColor = MaterialTheme.colorScheme.surface,
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -54,48 +65,55 @@ fun SuaViScreen(
                         viewModel.xoaVi(onSuccess = onBack)
                     }
                 ) {
-                    Text("XÓA", color = Color(0xFFF44336))
+                    Text("XÓA", color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { hienThiXacNhanXoa = false }) {
-                    Text("HỦY", color = Color.Gray)
+                    Text("HỦY", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         // --- NÚT QUAY VỀ HÌNH TRÒN ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
         }
 
-        // --- NÚT LƯU ---
-        Text(
-            text = "Lưu",
-            color = Color(0xFF0A84FF),
-            fontSize = 17.sp,
-            fontWeight = FontWeight.Medium,
+        // --- NÚT XÓA (Góc phải trên cùng) ---
+        Box(
             modifier = Modifier
-                .padding(end = 20.dp, top = 28.dp)
-                .clickable { viewModel.capNhatVi(onSuccess = onBack) }
-                .align(Alignment.TopEnd)
-        )
+                .padding(end = 20.dp, top = 20.dp)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surface)
+                .clickable { hienThiXacNhanXoa = true }
+                .align(Alignment.TopEnd),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Default.Delete,
+                contentDescription = "Xóa",
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(20.dp)
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -106,7 +124,7 @@ fun SuaViScreen(
             // Tiêu đề căn giữa
             Text(
                 text = "Sửa ví",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
@@ -114,12 +132,12 @@ fun SuaViScreen(
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(1f)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Top
             ) {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E)),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(24.dp)
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
@@ -128,14 +146,16 @@ fun SuaViScreen(
                             onValueChange = viewModel::doiTenVi,
                             label = { Text("Tên ví") },
                             modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
-                                focusedLabelColor = Color.Gray,
-                                unfocusedLabelColor = Color.Gray
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
 
+                        /*
                         Spacer(modifier = Modifier.height(16.dp))
 
                         OutlinedTextField(
@@ -145,20 +165,21 @@ fun SuaViScreen(
                             label = { Text("Số dư hiện tại") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.Gray,
-                                unfocusedTextColor = Color.Gray,
-                                focusedLabelColor = Color.Gray,
-                                unfocusedLabelColor = Color.Gray,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedContainerColor = Color.Transparent,
                                 disabledContainerColor = Color.Transparent,
                             )
                         )
+                         */
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         var expandedDonVi by remember { mutableStateOf(false) }
-                        val listDonVi = listOf("VND", "USD", "EUR", "JPY")
+                        val listDonVi = listOf("VND")
 
                         ExposedDropdownMenuBox(
                             expanded = expandedDonVi,
@@ -172,10 +193,10 @@ fun SuaViScreen(
                                 label = { Text("Đơn vị tiền tệ") },
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDonVi) },
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedLabelColor = Color.Gray,
-                                    unfocusedLabelColor = Color.Gray,
+                                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                     focusedContainerColor = Color.Transparent,
                                     unfocusedContainerColor = Color.Transparent,
                                     disabledContainerColor = Color.Transparent,
@@ -187,11 +208,11 @@ fun SuaViScreen(
                             ExposedDropdownMenu(
                                 expanded = expandedDonVi,
                                 onDismissRequest = { expandedDonVi = false },
-                                containerColor = Color(0xFF2C2C2E)
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
                             ) {
                                 listDonVi.forEach { selectionOption ->
                                     DropdownMenuItem(
-                                        text = { Text(selectionOption, color = Color.White) },
+                                        text = { Text(selectionOption, color = MaterialTheme.colorScheme.onSurface) },
                                         onClick = {
                                             viewModel.doiDonVi(selectionOption)
                                             expandedDonVi = false
@@ -205,7 +226,7 @@ fun SuaViScreen(
                         Spacer(modifier = Modifier.height(20.dp))
 
                     // --- CHỌN ICON ---
-                    Text("Chọn biểu tượng", color = Color.Gray, fontSize = 14.sp)
+                    Text("Chọn biểu tượng", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         items(DanhSachIconVi) { icon ->
@@ -213,8 +234,8 @@ fun SuaViScreen(
                                 modifier = Modifier
                                     .size(45.dp)
                                     .clip(CircleShape)
-                                    .background(if (state.iconName == icon) Color.White.copy(0.2f) else Color(0xFF2C2C2E))
-                                    .border(if (state.iconName == icon) 2.dp else 0.dp, Color.White, CircleShape)
+                                    .background(if (state.iconName == icon) MaterialTheme.colorScheme.primary.copy(0.2f) else MaterialTheme.colorScheme.surfaceVariant)
+                                    .border(if (state.iconName == icon) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                                     .clickable { viewModel.doiIcon(icon) },
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -226,7 +247,7 @@ fun SuaViScreen(
                         Spacer(modifier = Modifier.height(20.dp))
 
                         // --- CHỌN MÀU ---
-                        Text("Chọn màu sắc", color = Color.Gray, fontSize = 14.sp)
+                        Text("Chọn màu sắc", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                         Spacer(modifier = Modifier.height(8.dp))
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             items(DanhSachMau) { hex ->
@@ -235,7 +256,7 @@ fun SuaViScreen(
                                         .size(40.dp)
                                         .clip(CircleShape)
                                         .background(Color(android.graphics.Color.parseColor(hex)))
-                                        .border(if (state.colorHex == hex) 3.dp else 0.dp, Color.White, CircleShape)
+                                        .border(if (state.colorHex == hex) 3.dp else 0.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
                                         .clickable { viewModel.doiMau(hex) }
                                 )
                             }
@@ -247,7 +268,7 @@ fun SuaViScreen(
 
                 // Card Trạng thái Lưu trữ (Ẩn ví)
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E)),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(24.dp)
                 ) {
                     Row(
@@ -258,56 +279,42 @@ fun SuaViScreen(
                     ) {
                         Text(
                             text = "Lưu trữ ví (Tạm ẩn)",
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.weight(1f)
                         )
                         Switch(
                             checked = state.isArchived,
                             onCheckedChange = viewModel::anVi,
                             colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color.White,
-                                checkedTrackColor = Color(0xFF4CAF50)
+                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary
                             )
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
-
-                // NÚT XÓA VÍ
-                Button(
-                    onClick = { hienThiXacNhanXoa = true },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFD32F2F)
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Xóa ví",
-                        tint = Color.White
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "XÓA VÍ",
-                        color = Color.White,
-                        fontSize = 16.sp
-                    )
-                }
-
-                // Hiển thị thông báo lỗi hệ thống/Validation (nếu có)
-                state.error?.let {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = it,
-                        color = Color.Red,
-                        fontSize = 14.sp,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                }
                 Spacer(modifier = Modifier.height(24.dp))
             }
+
+            // --- NÚT LƯU CỐ ĐỊNH PHÍA DƯỚI ---
+            Button(
+                onClick = { viewModel.capNhatVi(onSuccess = onBack) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                shape = RoundedCornerShape(25.dp)
+            ) {
+                Text("Lưu thay đổi", color = MaterialTheme.colorScheme.onPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+        )
     }
 }

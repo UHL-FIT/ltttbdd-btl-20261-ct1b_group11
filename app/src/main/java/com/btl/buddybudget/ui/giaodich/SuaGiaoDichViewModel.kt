@@ -82,11 +82,28 @@ class SuaGiaoDichViewModel(private val repo: Repo) : ViewModel() {
         _uiState.update { it.copy(date = newDate) }
     }
 
+    fun clearErrorMessage() {
+        _uiState.update { it.copy(errorMessage = null) }
+    }
+
     fun updateTransaction(onSuccess: () -> Unit) {
         val currentState = _uiState.value
         val amountValue = currentState.amount.toDoubleOrNull() ?: 0.0
 
-        if (amountValue <= 0) return
+        if (amountValue <= 0) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng nhập số tiền hợp lệ") }
+            return
+        }
+
+        if (currentState.idDanhMuc <= 0) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng chọn nhóm giao dịch") }
+            return
+        }
+
+        if (currentState.note.isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng nhập ghi chú") }
+            return
+        }
 
         val transaction = currentTransaction?.copy(
             amount = amountValue,

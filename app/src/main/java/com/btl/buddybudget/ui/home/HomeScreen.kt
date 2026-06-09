@@ -1,7 +1,6 @@
 package com.btl.buddybudget.ui.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +19,7 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -29,12 +28,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,8 +42,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.btl.buddybudget.AppViewModelFactory
-import com.btl.buddybudget.ui.danhmuc.ChonDanhMucScreen
-import com.btl.buddybudget.ui.danhmuc.QuanLyDanhMucScreen
 import com.btl.buddybudget.ui.danhmuc.AddCategoryScreen
 import com.btl.buddybudget.ui.danhmuc.EditCategoryScreen
 import com.btl.buddybudget.ui.danhmuc.SuaDanhMucViewModel
@@ -58,7 +53,6 @@ import com.btl.buddybudget.ui.ngansach.NganSachScreen
 import com.btl.buddybudget.ui.vi.ViScreen
 import com.btl.buddybudget.ui.vi.SuaViScreen
 import com.btl.buddybudget.ui.vi.SuaViViewModel
-import com.btl.buddybudget.ui.vi.ChonViScreen
 import com.btl.buddybudget.ui.giaodich.SearchTransactionsScreen
 import com.btl.buddybudget.ui.giaodich.SuaGiaoDichScreen
 import com.btl.buddybudget.ui.giaodich.SuaGiaoDichViewModel
@@ -66,37 +60,38 @@ import com.btl.buddybudget.ui.giaodich.ThemGiaoDichScreen
 import com.btl.buddybudget.ui.giaodich.ThemGiaoDichViewModel
 import com.btl.buddybudget.ui.giaodich.TransactionScreen
 import com.btl.buddybudget.ui.giaodich.TransactionViewModel
-import com.btl.buddybudget.ui.thongke.ThongKeScreen
 import com.btl.buddybudget.ui.vi.ThemViScreen
 import com.btl.buddybudget.ui.vi.ThemViViewModel
 import com.btl.buddybudget.ui.vi.ViViewModel
-
+import androidx.compose.material3.MaterialTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModelFactory: AppViewModelFactory) {
+fun HomeScreen(
+    viewModelFactory: AppViewModelFactory,
+    isDarkTheme: Boolean = true,
+    onThemeChange: (Boolean) -> Unit = {}
+) {
 
     val navController = rememberNavController()
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
-
-
     Scaffold(
-        containerColor = Color.Black,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             Surface(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
                     .height(70.dp)
                     .fillMaxWidth(),
-                color = Color(0xFF1A1A1A).copy(alpha = 0.5f),
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f),
                 tonalElevation = 8.dp,
                 shape = RoundedCornerShape(35.dp)
             ) {
                 NavigationBar(
                     containerColor = Color.Transparent,
-                    contentColor = Color.White,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
                     windowInsets = WindowInsets(0, 0, 0, 0)
                 ) {
                     // TAB TỔNG QUAN
@@ -123,8 +118,8 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
                                 navController.navigate(Screen.TransactionHistory.route)
                             }
                         },
-                        icon = { Icon(imageVector = Icons.Default.List, contentDescription = "Thống kê", modifier = Modifier.size(32.dp)) },
-                        label = { Text("Thống kê", fontSize = 11.sp) },
+                        icon = { Icon(imageVector = Icons.Default.List, contentDescription = "Sổ giao dịch", modifier = Modifier.size(32.dp)) },
+                        label = { Text("Sổ giao dịch", fontSize = 11.sp) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = Color(0xFF4CAF50), selectedTextColor = Color(0xFF4CAF50),
                             unselectedIconColor = Color.Gray, unselectedTextColor = Color.Gray,
@@ -146,8 +141,8 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
                                 navController.navigate(Screen.Budget.route)
                             }
                         },
-                        icon = { Icon(imageVector = Icons.Default.Refresh, contentDescription = "Ngân sách", modifier = Modifier.size(32.dp)) },
-                        label = { Text("Ngân sách", fontSize = 11.sp) },
+                        icon = { Icon(imageVector = Icons.Default.PieChart, contentDescription = "Thống kê", modifier = Modifier.size(32.dp)) },
+                        label = { Text("Thống kê", fontSize = 11.sp) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = Color(0xFF4CAF50), selectedTextColor = Color(0xFF4CAF50),
                             unselectedIconColor = Color.Gray, unselectedTextColor = Color.Gray,
@@ -162,8 +157,8 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
                                 navController.navigate(Screen.About.route)
                             }
                         },
-                        icon = { Icon(imageVector = Icons.Default.Person, contentDescription = "Tài khoản", modifier = Modifier.size(32.dp)) },
-                        label = { Text("Tài khoản", fontSize = 11.sp) },
+                        icon = { Icon(imageVector = Icons.Default.Person, contentDescription = "Cá nhân", modifier = Modifier.size(32.dp)) },
+                        label = { Text("Cá nhân", fontSize = 11.sp) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = Color(0xFF4CAF50), selectedTextColor = Color(0xFF4CAF50),
                             unselectedIconColor = Color.Gray, unselectedTextColor = Color.Gray,
@@ -195,7 +190,7 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
             startDestination = Screen.Overview.route,
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(innerPadding)
         ) {
             composable(Screen.Overview.route) {
@@ -207,9 +202,6 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
                         uiState = uiState,
                         onViewAllClick = {
                             navController.navigate(Screen.Wallet.route)
-                        },
-                        onTransactionHistoryClick = {
-                            navController.navigate(Screen.TransactionHistory.route)
                         }
                     )
                     }
@@ -314,11 +306,11 @@ fun HomeScreen(viewModelFactory: AppViewModelFactory) {
             }
 
             composable(Screen.About.route) {
-                // Gọi màn hình giới thiệu của bạn lên
                 AboutScreen(
                     navController = navController,
-                    onBack = { navController.popBackStack()
-                    }
+                    isDarkTheme = isDarkTheme,
+                    onThemeChange = onThemeChange,
+                    onBack = { navController.popBackStack() }
                 )
             }
             // Màn hình CHỌN danh mục (khi thêm giao dịch)

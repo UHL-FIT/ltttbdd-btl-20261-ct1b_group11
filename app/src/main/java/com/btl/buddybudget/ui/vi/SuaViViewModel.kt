@@ -22,12 +22,11 @@ class SuaViViewModel(
             // Gọi phương thức từ repo
             val vi = repo.layViTheoId(walletId)
             if (vi != null) {
-                // Lấy số dư hiện tại từ danh sách ví có số dư
-                // Hoặc bạn có thể thêm 1 hàm lấy 1 ví kèm số dư trong repo
+
                 uiState = SuaViState(
                     id = vi.id,
                     name = vi.name,
-                    soDu = "0.0", // Tạm thời để 0.0 hoặc fetch từ nguồn khác
+                   // soDu = "0",
                     donVi = vi.donVi,
                     iconName = vi.iconName,
                     colorHex = vi.colorHex,
@@ -46,7 +45,7 @@ class SuaViViewModel(
     fun doiMau(value: String)    { uiState = uiState.copy(colorHex = value) }
     fun doiIcon(value: String)   { uiState = uiState.copy(iconName = value) }
     fun anVi(value: Boolean)     { uiState = uiState.copy(isArchived = value) }
-
+    fun clearError()             { uiState = uiState.copy(error = null) }
 
     fun capNhatVi(onSuccess: () -> Unit = {}) {
         if (uiState.name.isBlank()) {
@@ -95,4 +94,6 @@ class SuaViViewModel(
             }
         }
     }
+
+
 }

@@ -57,7 +57,7 @@ class ThemViViewModel(
                 repo.themGiaoDich(
                     GiaoDich(
                         amount = amount,
-                        idDanhMuc = category?.id ?: 1, // Fallback to id 1 if not found
+                        idDanhMuc = category?.id ?: 1,
                         idVi = newWalletId.toInt(),
                         type = KieuGiaoDich.INCOME.name,
                         note = "Số dư ban đầu"
@@ -68,5 +68,9 @@ class ThemViViewModel(
             uiState = uiState.copy(isLoading = false)
             onSuccess()
         }
+    }
+
+    fun clearError() {
+        uiState = uiState.copy(error = null)
     }
 }

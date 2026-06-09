@@ -1,6 +1,9 @@
 package com.btl.buddybudget.ui.vi
 
 
+import com.btl.buddybudget.data.icon.TongHopIcon
+
+
 data class ViUIState(
 
     val name: String = "",
@@ -9,9 +12,9 @@ data class ViUIState(
 
     val donVi: String = "VND",
 
-    val iconName: String = "ti-wallet",
+    val iconName: String = TongHopIcon.DanhSachIconVi[0],
 
-    val colorHex: String = "#4CAF50",
+    val colorHex: String = TongHopIcon.DanhSachMau[0],
 
     val isArchived: Boolean = false,
 

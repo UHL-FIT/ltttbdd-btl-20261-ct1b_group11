@@ -63,11 +63,6 @@ val incomeList = listOf(
     ExpenseItem(3, "Khác", "📦", 5.0f, "1.000.000đ", Color(0xFF00ACC1))        // Xanh ngọc (Cyan)
 )
 
-// Màu nền dark-mode
-val AppBlack = Color(0xFF000000)
-val DarkSurface = Color(0xFF1C1C1E)
-val TextGray = Color(0xFFAAAAAA)
-
 @Composable
 fun ThongKeScreen(onBack: () -> Unit) {
     // Trạng thái Tab (Thu/Chi)
@@ -84,7 +79,7 @@ fun ThongKeScreen(onBack: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppBlack)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         TopBarSection(
             month = selectedMonth,
@@ -122,12 +117,11 @@ fun ThongKeScreen(onBack: () -> Unit) {
                 selectedMonth = month
                 selectedYear = year
                 showDatePicker = false
-
-                // TODO: Gọi ViewModel ở đây để load lại dữ liệu theo tháng/năm mới
             }
         )
     }
 }
+
 
 // ---------------- CÁC THÀNH PHẦN GIAO DIỆN CON ----------------
 
@@ -148,14 +142,14 @@ fun TopBarSection(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { onBack() }
                 .align(Alignment.CenterStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
@@ -172,14 +166,14 @@ fun TopBarSection(
         ) {
             Text(
                 text = "Tháng $month, $year",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
                 contentDescription = "Mở chọn tháng",
-                tint = Color.White
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }
@@ -198,13 +192,18 @@ fun MonthYearPickerDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = Color(0xFF2C2C2E) // Nền xám đen
+            color = MaterialTheme.colorScheme.surface
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Chọn thời gian", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "Chọn thời gian",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -215,19 +214,26 @@ fun MonthYearPickerDialog(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowLeft,
-                        contentDescription = "Năm trước",
-                        tint = Color.White,
-                        modifier = Modifier.clickable { year-- }
+                    IconButton(onClick = { year-- }) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowLeft,
+                            contentDescription = "Năm trước",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    Text(
+                        text = "$year",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
                     )
-                    Text(text = "$year", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowRight,
-                        contentDescription = "Năm sau",
-                        tint = Color.White,
-                        modifier = Modifier.clickable { year++ }
-                    )
+                    IconButton(onClick = { year++ }) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowRight,
+                            contentDescription = "Năm sau",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -248,14 +254,14 @@ fun MonthYearPickerDialog(
                                         .weight(1f)
                                         .padding(4.dp)
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(if (isSelected) Color(0xFF4CAF50) else Color.Transparent)
+                                        .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
                                         .clickable { month = m }
                                         .padding(vertical = 12.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = "Tháng $m",
-                                        color = if (isSelected) Color.White else Color.Gray,
+                                        color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontSize = 14.sp
                                     )
                                 }
@@ -271,11 +277,11 @@ fun MonthYearPickerDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Hủy", color = Color.Gray, fontSize = 16.sp)
+                        Text("Hủy", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     TextButton(onClick = { onConfirm(month, year) }) {
-                        Text("Chọn", color = Color(0xFF4CAF50), fontSize = 16.sp)
+                        Text("Chọn", color = MaterialTheme.colorScheme.primary, fontSize = 16.sp)
                     }
                 }
             }
@@ -293,7 +299,7 @@ fun TabSection(
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 12.dp)
             .height(50.dp)
-            .background(DarkSurface, RoundedCornerShape(25.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(25.dp))
             .padding(4.dp)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -301,18 +307,18 @@ fun TabSection(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    .clip(RoundedCornerShape(25.dp))
                     .background(
-                        if (isExpenseSelected) Color(0xFF4A4A4C) else Color.Transparent,
-                        RoundedCornerShape(25.dp)
+                        if (isExpenseSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
                     )
                     .clickable { onTabSelected(true) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "Khoản chi",
-                    color = Color.White,
-                    fontWeight = if (isExpenseSelected) FontWeight.Bold else FontWeight.Normal,
-                    fontSize = 15.sp
+                    color = if (isExpenseSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
                 )
             }
 
@@ -320,23 +326,24 @@ fun TabSection(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    .clip(RoundedCornerShape(25.dp))
                     .background(
-                        if (!isExpenseSelected) Color(0xFF4A4A4C) else Color.Transparent,
-                        RoundedCornerShape(25.dp)
+                        if (!isExpenseSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
                     )
                     .clickable { onTabSelected(false) },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "Khoản thu",
-                    color = Color.White,
-                    fontWeight = if (!isExpenseSelected) FontWeight.Bold else FontWeight.Normal,
-                    fontSize = 15.sp
+                    color = if (!isExpenseSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
                 )
             }
         }
     }
 }
+
 
 // -----------------------------------------------------------------------------------
 // --- 3. ĐÃ CẬP NHẬT LOGIC VẼ CHỮ `%` TRONG BIỂU ĐỒ (LUÔN DÙNG CHỮ TRẮNG) ---
@@ -408,14 +415,14 @@ fun ExpenseListSection(items: List<ExpenseItem>) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(DarkSurface)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         itemsIndexed(items) { index, item ->
             ExpenseListItem(item)
 
             if (index < items.lastIndex) {
-                Divider(
-                    color = Color(0xFF38383A),
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant,
                     thickness = 0.5.dp,
                     modifier = Modifier.padding(start = 72.dp)
                 )
@@ -450,7 +457,7 @@ fun ExpenseListItem(item: ExpenseItem) {
         ) {
             Text(
                 text = item.name,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp
             )
 
@@ -459,14 +466,14 @@ fun ExpenseListItem(item: ExpenseItem) {
             // Hiển thị phần trăm ở đây
             Text(
                 text = "${item.percentage}%",
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp
             )
         }
 
         Text(
             text = item.amount,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         )

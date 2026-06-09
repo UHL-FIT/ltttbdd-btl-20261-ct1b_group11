@@ -1,11 +1,13 @@
 package com.btl.buddybudget.ui.giaodich
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.DateRange
@@ -32,7 +34,6 @@ fun ThemGiaoDichScreen(
     onNavigateToSelectWallet: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val cardColor = Color(0xFF1C1C1E)
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState.errorMessage) {
@@ -70,7 +71,7 @@ fun ThemGiaoDichScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -79,7 +80,7 @@ fun ThemGiaoDichScreen(
         ) {
             Text(
                 text = "Thêm giao dịch",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
@@ -90,7 +91,7 @@ fun ThemGiaoDichScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(24.dp))
-                    .background(cardColor)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(16.dp)
             ) {
                 // 1. Khoản chi / Khoản thu
@@ -98,30 +99,40 @@ fun ThemGiaoDichScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(25.dp))
-                        .background(Color(0xFF2C2C2E))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(4.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (uiState.idExpense) Color(0xFF48484A) else Color.Transparent)
+                            .background(if (uiState.idExpense) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
                             .clickable { viewModel.onTransactionTypeChanged(true) }
                             .padding(vertical = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Khoản chi", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                        Text(
+                            "Khoản chi",
+                            color = if (uiState.idExpense) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (!uiState.idExpense) Color(0xFF48484A) else Color.Transparent)
+                            .background(if (!uiState.idExpense) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
                             .clickable { viewModel.onTransactionTypeChanged(false) }
                             .padding(vertical = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Khoản thu", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                        Text(
+                            "Khoản thu",
+                            color = if (!uiState.idExpense) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                 }
 
@@ -140,38 +151,42 @@ fun ThemGiaoDichScreen(
                         Box(
                             modifier = Modifier
                                 .size(32.dp)
-                                .background(Color(0xFF4CAF50), RoundedCornerShape(8.dp)),
+                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(uiState.selectedWalletIcon, fontSize = 16.sp)
                         }
                         Spacer(modifier = Modifier.width(12.dp))
-                        Text(text = uiState.selectedWalletName, color = Color.White, fontSize = 16.sp)
+                        Text(text = uiState.selectedWalletName, color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp)
                     }
-                    Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.Gray)
+                    Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
 
-                HorizontalDivider(color = Color(0xFF2C2C2E), modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 8.dp))
 
                 // 3. Số tiền
                 Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                    Text("Số tiền", color = Color.Gray, fontSize = 12.sp)
+                    Text("Số tiền", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
-                            color = Color(0xFF2C2C2E),
+                            color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = RoundedCornerShape(6.dp),
                             modifier = Modifier.padding(end = 12.dp)
                         ) {
-                            Text("VND", color = Color.Gray, fontSize = 14.sp, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
+                            Text("VND", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
                         }
                         BasicTextField(
                             value = uiState.amount,
                             onValueChange = { viewModel.onAmountChanged(it) },
-                            textStyle = TextStyle(color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold),
+                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface, fontSize = 28.sp, fontWeight = FontWeight.Bold),
                             modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Next
+                            ),
                             decorationBox = { innerTextField ->
                                 if (uiState.amount.isEmpty()) {
-                                    Text("0", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                                    Text("0", color = MaterialTheme.colorScheme.onSurface, fontSize = 28.sp, fontWeight = FontWeight.Bold)
                                 }
                                 innerTextField()
                             }
@@ -179,7 +194,7 @@ fun ThemGiaoDichScreen(
                     }
                 }
 
-                HorizontalDivider(color = Color(0xFF2C2C2E), modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 8.dp))
 
                 // 4. Chọn nhóm
                 Row(
@@ -195,7 +210,7 @@ fun ThemGiaoDichScreen(
                             modifier = Modifier
                                 .size(32.dp)
                                 .background(
-                                    color = Color(android.graphics.Color.parseColor(uiState.selectedGroupColor)).copy(alpha = 0.2f),
+                                    color = try { Color(android.graphics.Color.parseColor(uiState.selectedGroupColor)).copy(alpha = 0.2f) } catch(e: Exception) { MaterialTheme.colorScheme.surfaceVariant },
                                     shape = CircleShape
                                 ),
                             contentAlignment = Alignment.Center
@@ -205,14 +220,14 @@ fun ThemGiaoDichScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = uiState.selectedGroupName,
-                            color = if (uiState.selectedGroupName == "Chọn nhóm") Color.Gray else Color.White,
+                            color = if (uiState.selectedGroupName == "Chọn nhóm") MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                             fontSize = 16.sp
                         )
                     }
-                    Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.Gray)
+                    Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
 
-                HorizontalDivider(color = Color(0xFF2C2C2E), modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 8.dp))
 
                 // 5. Ghi chú
                 Row(
@@ -221,23 +236,24 @@ fun ThemGiaoDichScreen(
                         .padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp))
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(24.dp))
                     Spacer(modifier = Modifier.width(12.dp))
                     BasicTextField(
                         value = uiState.note,
                         onValueChange = { viewModel.onNoteChanged(it) },
-                        textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
+                        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp),
                         modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         decorationBox = { innerTextField ->
                             if (uiState.note.isEmpty()) {
-                                Text("Ghi chú", color = Color.Gray, fontSize = 16.sp)
+                                Text("Ghi chú", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
                             }
                             innerTextField()
                         }
                     )
                 }
 
-                HorizontalDivider(color = Color(0xFF2C2C2E), modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 8.dp))
 
                 // 6. Ngày giao dịch
                 Row(
@@ -249,13 +265,13 @@ fun ThemGiaoDichScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(imageVector = Icons.Default.DateRange, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp))
+                        Icon(imageVector = Icons.Default.DateRange, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(24.dp))
                         Spacer(modifier = Modifier.width(12.dp))
                         val locale = Locale.forLanguageTag("vi-VN")
                         val dateFormatter = remember(locale) { SimpleDateFormat("dd/MM/yyyy", locale) }
-                        Text(text = dateFormatter.format(Date(uiState.date)), color = Color.White, fontSize = 16.sp)
+                        Text(text = dateFormatter.format(Date(uiState.date)), color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp)
                     }
-                    Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.Gray)
+                    Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 
@@ -269,10 +285,10 @@ fun ThemGiaoDichScreen(
                     .fillMaxWidth()
                     .padding(bottom = 24.dp)
                     .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1C1C1E)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(25.dp)
             ) {
-                Text("Lưu", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text("Lưu", color = MaterialTheme.colorScheme.onPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
         }
 
@@ -282,7 +298,7 @@ fun ThemGiaoDichScreen(
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { 
                     viewModel.resetForm()
                     onCancel() 
@@ -292,11 +308,12 @@ fun ThemGiaoDichScreen(
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
         }
+
 
         // Snackbar hiển thị cảnh báo (Đặt trong Box để align đúng)
         SnackbarHost(

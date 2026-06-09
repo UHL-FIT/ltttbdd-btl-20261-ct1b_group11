@@ -1,5 +1,6 @@
 package com.btl.buddybudget.ui.giaodich
 
+import com.btl.buddybudget.data.db.TransactionViewMode
 import com.btl.buddybudget.data.db.entities.Vi
 import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
 import java.util.Calendar
@@ -15,6 +16,7 @@ data class TransactionUiState(
     val selectedYear: Int = Calendar.getInstance().get(Calendar.YEAR),
 
     val groupedTransactions: Map<String, List<GiaoDichvaDanhMuc>> = emptyMap(),
+    val viewMode: TransactionViewMode = TransactionViewMode.BY_CATEGORY,
 
     val walletName: String = "Tổng cộng",
     val selectedWalletId: Int? = null,

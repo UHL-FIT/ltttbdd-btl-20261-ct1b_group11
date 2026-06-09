@@ -26,33 +26,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.btl.buddybudget.R
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+
 @Composable
 fun AboutScreen(
     navController : NavController,
-    onBack: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) { // Thêm nền đen đồng bộ app
+    isDarkTheme: Boolean,
+    onThemeChange: (Boolean) -> Unit,
+    onBack: () -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) { 
 
-        // --- NÚT QUAY VỀ HÌNH TRÒN (Góc trái trên cùng) ---
+        // --- NÚT QUAY VỀ HÌNH TRÒN ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
@@ -66,7 +73,7 @@ fun AboutScreen(
         ) {
             Text(
                 text = "Giới thiệu",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
@@ -87,48 +94,55 @@ fun AboutScreen(
                         .clip(RoundedCornerShape(22.dp))
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "BudgetBuddy", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Phiên bản 1.0", color = Color(0xFF8E8E93), fontSize = 14.sp)
+                Text(text = "BudgetBuddy", color = MaterialTheme.colorScheme.onBackground, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Phiên bản 1.0", color = MaterialTheme.colorScheme.onBackground, fontSize = 14.sp)
             }
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // --- CỤM 2: DANH SÁCH CHỨC NĂNG ---
+            // --- CỤM 2: DANH SÁCH CHỨC NĂNG & CHUYỂN THEME ---
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFF1C1C1E))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
+                // Dòng chuyển Theme
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Chế độ tối", color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = isDarkTheme,
+                        onCheckedChange = { onThemeChange(it) },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.primary,
+                            checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+                            uncheckedThumbColor = Color.White,
+                            uncheckedTrackColor = Color.LightGray,
+                            checkedIconColor = Color.White
+                        )
+                    )
+                }
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            // Khi ấn vào sẽ điều hướng tới màn hình Quản lý Danh Mục
-                            navController.navigate(Screen.ManageCategory.route)
-                        }
+                        .clickable { navController.navigate(Screen.ManageCategory.route) }
                 ) {
                     InfoRowTextOnly(title = "Danh Mục")
                 }
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFF38383A))
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            navController.navigate(Screen.Wallet.route)
-                        }
+                        .clickable { navController.navigate(Screen.Wallet.route) }
                 ) {
                     InfoRowTextOnly(title = "Ví")
-                }
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color(0xFF38383A))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.navigate(Screen.BieuDoTron.route)
-                        }
-                ) {
-                    InfoRowTextOnly(title = "Cảnh báo ngân sách")
                 }
             }
             Spacer(modifier = Modifier.height(40.dp))
@@ -139,10 +153,10 @@ fun AboutScreen(
                 modifier = Modifier
                     .height(46.dp)
                     .widthIn(min = 180.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1C1C1E)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(text = "Hướng dẫn sử dụng ›", color = Color(0xFF0A84FF), fontSize = 15.sp)
+                Text(text = "Hướng dẫn sử dụng ›", color = MaterialTheme.colorScheme.primary, fontSize = 15.sp)
             }
         }
     }
@@ -156,6 +170,6 @@ fun InfoRowTextOnly(title: String) {
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = title, color = Color.White, fontSize = 16.sp)
+        Text(text = title, color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp)
     }
 }

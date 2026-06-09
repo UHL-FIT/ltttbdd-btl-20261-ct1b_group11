@@ -3,10 +3,12 @@ package com.btl.buddybudget.ui.giaodich
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btl.buddybudget.data.db.KieuGiaoDich
+import com.btl.buddybudget.data.db.TransactionViewMode
 import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
 import com.btl.buddybudget.data.repo.Repo
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 
 class TransactionViewModel(private val repo: Repo) : ViewModel() {
@@ -85,6 +87,11 @@ class TransactionViewModel(private val repo: Repo) : ViewModel() {
         _uiState.update { it.copy(isDatePickerVisible = visible) }
     }
 
+    fun onChangeViewMode(mode: TransactionViewMode) {
+        _uiState.update { it.copy(viewMode = mode) }
+        loadTransactions()
+    }
+
     fun deleteTransaction(transaction: GiaoDichvaDanhMuc) {
         viewModelScope.launch {
             repo.xoaGiaoDich(transaction.giaodich)
@@ -118,8 +125,15 @@ class TransactionViewModel(private val repo: Repo) : ViewModel() {
                 val income = transactions.filter { it.giaodich.type == KieuGiaoDich.INCOME.name }.sumOf { it.giaodich.amount }
                 val expense = transactions.filter { it.giaodich.type == KieuGiaoDich.EXPENSE.name }.sumOf { it.giaodich.amount }
                 
-                // Nhóm theo Danh mục (Category)
-                val grouped = transactions.groupBy { it.danhmuc?.name ?: "Khác" }
+                val currentViewMode = _uiState.value.viewMode
+                val grouped = if (currentViewMode == TransactionViewMode.BY_CATEGORY) {
+                    // Nhóm theo Danh mục (Category)
+                    transactions.groupBy { it.danhmuc?.name ?: "Khác" }
+                } else {
+                    // Nhóm theo Ngày (Date)
+                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("vi-VN"))
+                    transactions.groupBy { sdf.format(Date(it.giaodich.date)) }
+                }
 
                 _uiState.update { 
                     it.copy(

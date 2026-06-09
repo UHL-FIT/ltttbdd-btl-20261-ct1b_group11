@@ -89,6 +89,11 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
             return
         }
 
+        if (currentState.note.isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng nhập ghi chú") }
+            return
+        }
+
         val transaction = GiaoDich(
             amount = amountValue,
             idDanhMuc = currentState.idDanhMuc,

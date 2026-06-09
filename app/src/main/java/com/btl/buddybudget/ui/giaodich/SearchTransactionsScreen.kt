@@ -36,21 +36,21 @@ fun SearchTransactionsScreen(
         viewModel.searchTransactions(searchQuery)
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         // --- NÚT QUAY VỀ HÌNH TRÒN ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
@@ -64,7 +64,7 @@ fun SearchTransactionsScreen(
         ) {
             Text(
                 text = "Tìm kiếm",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
@@ -76,7 +76,7 @@ fun SearchTransactionsScreen(
                     .fillMaxWidth()
                     .height(46.dp),
                 shape = RoundedCornerShape(12.dp),
-                color = Color(0xFF1C1C1E)
+                color = MaterialTheme.colorScheme.surface
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -85,21 +85,21 @@ fun SearchTransactionsScreen(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = null,
-                        tint = Color(0xFF8E8E93),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Box(modifier = Modifier.weight(1f)) {
                         if (searchQuery.isEmpty()) {
-                            Text("Tìm kiếm giao dịch...", color = Color(0xFF8E8E93), fontSize = 16.sp)
+                            Text("Tìm kiếm giao dịch...", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
                         }
                         BasicTextField(
                             value = searchQuery,
                             onValueChange = { searchQuery = it },
-                            textStyle = androidx.compose.ui.text.TextStyle(color = Color.White, fontSize = 16.sp),
+                            textStyle = androidx.compose.ui.text.TextStyle(color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp),
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
-                            cursorBrush = androidx.compose.ui.graphics.SolidColor(Color.White)
+                            cursorBrush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.onSurface)
                         )
                     }
                     if (searchQuery.isNotEmpty()) {
@@ -107,7 +107,7 @@ fun SearchTransactionsScreen(
                             onClick = { searchQuery = "" },
                             modifier = Modifier.size(20.dp)
                         ) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear", tint = Color(0xFF8E8E93))
+                            Icon(Icons.Default.Clear, contentDescription = "Clear", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -117,11 +117,11 @@ fun SearchTransactionsScreen(
 
             if (searchQuery.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Nhập từ khóa để tìm kiếm", color = Color.Gray)
+                    Text("Nhập từ khóa để tìm kiếm", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             } else if (searchResults.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Không tìm thấy giao dịch nào", color = Color.Gray)
+                    Text("Không tìm thấy giao dịch nào", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             } else {
                 LazyColumn(
@@ -132,7 +132,7 @@ fun SearchTransactionsScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(25.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E))
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 searchResults.forEachIndexed { index, transaction ->
@@ -146,7 +146,7 @@ fun SearchTransactionsScreen(
                                     if (index < searchResults.size - 1) {
                                         HorizontalDivider(
                                             modifier = Modifier.padding(horizontal = 40.dp, vertical = 4.dp),
-                                            color = Color(0xFF2C2C2E).copy(alpha = 0.5f),
+                                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                                             thickness = 0.5.dp
                                         )
                                     }
@@ -158,4 +158,5 @@ fun SearchTransactionsScreen(
             }
         }
     }
+
 }

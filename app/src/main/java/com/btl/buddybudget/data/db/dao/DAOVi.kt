@@ -50,7 +50,6 @@
                 COUNT(gd.id) AS transactionCount
             FROM tbVi vi
             LEFT JOIN tbGiaoDich gd ON gd.idVi = vi.id
-            WHERE vi.isArchived = 0
             GROUP BY vi.id
             ORDER BY vi.sortOrder ASC
         """)

@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Check
 
 import androidx.compose.material3.*
@@ -23,8 +25,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.filled.List
 import androidx.compose.ui.draw.clip
 import androidx.core.graphics.toColorInt
+import com.btl.buddybudget.data.db.TransactionViewMode
 import com.btl.buddybudget.data.db.entities.Vi
 import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
 import java.text.DecimalFormat
@@ -62,24 +66,72 @@ fun TransactionScreen(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-        // --- NÚT TÌM KIẾM (Góc phải trên cùng) ---
-        Box(
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        // --- NÚT TÌM KIẾM & MENU 3 CHẤM (Góc phải trên cùng) ---
+        Row(
             modifier = Modifier
-                .padding(end = 20.dp, top = 20.dp)
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
-                .clickable { onNavigateToSearch() }
+                .padding(end = 16.dp, top = 20.dp)
                 .align(Alignment.TopEnd),
-            contentAlignment = Alignment.Center
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search",
-                tint = Color.White,
-                modifier = Modifier.size(20.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .clickable { onNavigateToSearch() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(8.dp))
+
+            var showMenu by remember { mutableStateOf(false) }
+            Box {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface)
+                        .clickable { showMenu = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "More",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Xem theo danh mục") },
+                        leadingIcon = { Icon(Icons.Default.List, null) },
+                        onClick = {
+                            viewModel.onChangeViewMode(TransactionViewMode.BY_CATEGORY)
+                            showMenu = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Xem theo ngày") },
+                        leadingIcon = { Icon(Icons.Default.DateRange, null) },
+                        onClick = {
+                            viewModel.onChangeViewMode(TransactionViewMode.BY_DATE)
+                            showMenu = false
+                        }
+                    )
+                }
+            }
         }
 
         Column(
@@ -96,7 +148,7 @@ fun TransactionScreen(
             ) {
                 Surface(
                     shape = RoundedCornerShape(20.dp),
-                    color = Color(0xFF1C1C1E),
+                    color = MaterialTheme.colorScheme.surface,
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -105,11 +157,11 @@ fun TransactionScreen(
                         Text("🌐 ", fontSize = 14.sp)
                         Text(
                             text = uiState.walletName,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
                         )
-                        Text(" ↕", color = Color.Gray, fontSize = 12.sp)
+                        Text(" ↕", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                     }
                 }
             }
@@ -121,10 +173,10 @@ fun TransactionScreen(
                     .padding(vertical = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Số dư", color = Color.Gray, fontSize = 14.sp)
+                Text("Số dư", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 Text(
                     "${currencyFormat.format(uiState.totalBalance)} đ",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -141,14 +193,14 @@ fun TransactionScreen(
             ) {
                 Text(
                     text = "Tháng ${uiState.selectedMonth}, ${uiState.selectedYear}",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = null,
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
@@ -159,7 +211,7 @@ fun TransactionScreen(
                 item {
                     Card(
                         shape = RoundedCornerShape(25.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
@@ -167,10 +219,10 @@ fun TransactionScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Tiền vào", color = Color.Gray)
+                                Text("Tiền vào", color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(
-                                    currencyFormat.format(uiState.incomeAmount),
-                                    color = Color(0xFF00BCD4)
+                                    currencyFormat.format(uiState.incomeAmount)+"đ",
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                             Spacer(modifier = Modifier.height(8.dp))
@@ -178,20 +230,20 @@ fun TransactionScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Tiền ra", color = Color.Gray)
+                                Text("Tiền ra", color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(
-                                    currencyFormat.format(uiState.expenseAmount),
-                                    color = Color(0xFFFF5252)
+                                    currencyFormat.format(uiState.expenseAmount)+"đ",
+                                    color = MaterialTheme.colorScheme.error
                                 )
                             }
                             HorizontalDivider(
                                 modifier = Modifier.padding(vertical = 12.dp),
-                                color = Color.DarkGray,
+                                color = MaterialTheme.colorScheme.outlineVariant,
                                 thickness = 0.5.dp
                             )
                             Text(
                                 text = currencyFormat.format(uiState.incomeAmount - uiState.expenseAmount),
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.align(Alignment.End),
                                 fontWeight = FontWeight.Bold
                             )
@@ -200,9 +252,9 @@ fun TransactionScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                 }
 
-                // DANH SÁCH GIAO DỊCH NHÓM THEO CATEGORY - ĐÓNG KHUNG CẢ CỤM
-                uiState.groupedTransactions.forEach { (categoryName, transactions) ->
-                    val totalCategory = transactions.sumOf {
+                // DANH SÁCH GIAO DỊCH
+                uiState.groupedTransactions.forEach { (headerName, transactions) ->
+                    val totalAmount = transactions.sumOf {
                         if (it.giaodich.type == "EXPENSE") -it.giaodich.amount else it.giaodich.amount
                     }
                     val firstGd = transactions.firstOrNull()
@@ -213,21 +265,28 @@ fun TransactionScreen(
                                 .fillMaxWidth()
                                 .padding(bottom = 20.dp),
                             shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E))
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                // Tiêu đề nhóm (Category Header) nằm trong Card
-                                CategoryHeader(
-                                    categoryName = categoryName,
-                                    transactionCount = transactions.size,
-                                    totalAmount = totalCategory,
-                                    iconColor = firstGd?.danhmuc?.colorHex ?: "#808080",
-                                    iconName = firstGd?.danhmuc?.iconName ?: "📁"
-                                )
+                                if (uiState.viewMode == TransactionViewMode.BY_CATEGORY) {
+                                    CategoryHeader(
+                                        categoryName = headerName,
+                                        transactionCount = transactions.size,
+                                        totalAmount = totalAmount,
+                                        iconColor = firstGd?.danhmuc?.colorHex ?: "#808080",
+                                        iconName = firstGd?.danhmuc?.iconName ?: "📁"
+                                    )
+                                } else {
+                                    DateHeader(
+                                        dateLabel = headerName,
+                                        transactionCount = transactions.size,
+                                        totalAmount = totalAmount
+                                    )
+                                }
 
                                 HorizontalDivider(
                                     modifier = Modifier.padding(vertical = 12.dp),
-                                    color = Color(0xFF2C2C2E),
+                                    color = MaterialTheme.colorScheme.outlineVariant,
                                     thickness = 1.dp
                                 )
 
@@ -235,12 +294,13 @@ fun TransactionScreen(
                                 transactions.forEachIndexed { index, transaction ->
                                     TransactionItemRow(
                                         item = transaction,
+                                        viewMode = uiState.viewMode,
                                         onClick = { onEditTransaction(transaction.giaodich.id) }
                                     )
                                     if (index < transactions.size - 1) {
                                         HorizontalDivider(
                                             modifier = Modifier.padding(horizontal = 40.dp, vertical = 4.dp),
-                                            color = Color(0xFF2C2C2E).copy(alpha = 0.5f),
+                                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                                             thickness = 0.5.dp
                                         )
                                     }
@@ -252,6 +312,7 @@ fun TransactionScreen(
             }
         }
     }
+
 }
 
 @Composable
@@ -280,12 +341,49 @@ fun CategoryHeader(
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(categoryName, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text("$transactionCount giao dịch", color = Color.Gray, fontSize = 12.sp)
+            Text(categoryName, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text("$transactionCount giao dịch", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
         }
         Text(
-            text = currencyFormat.format(totalAmount),
-            color = Color.White,
+            text = currencyFormat.format(totalAmount)+"đ",
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp
+        )
+    }
+}
+
+@Composable
+fun DateHeader(
+    dateLabel: String,
+    transactionCount: Int,
+    totalAmount: Double
+) {
+    val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
+    
+    // Convert dd/MM/yyyy to a more readable format like "15 Tháng 03"
+    val readableDate = try {
+        val inputSdf = SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("vi-VN"))
+        val outputSdf = SimpleDateFormat("dd MMMM", Locale.forLanguageTag("vi-VN"))
+        val date = inputSdf.parse(dateLabel)
+        outputSdf.format(date ?: Date())
+    } catch (e: Exception) {
+        dateLabel
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(readableDate, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text("$transactionCount giao dịch", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+        }
+        Text(
+            text = currencyFormat.format(totalAmount)+"đ",
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
         )
@@ -295,12 +393,21 @@ fun CategoryHeader(
 @Composable
 fun TransactionItemRow(
     item: GiaoDichvaDanhMuc,
+    viewMode: TransactionViewMode = TransactionViewMode.BY_CATEGORY,
     onClick: () -> Unit
 ) {
     val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
     val locale = Locale.forLanguageTag("vi-VN")
-    val sdf = SimpleDateFormat("dd MMMM yyyy, EEEE", locale)
-    val dateLabel = sdf.format(Date(item.giaodich.date))
+    
+    // Label phụ (Dưới note): 
+    // Nếu xem theo Danh mục -> Hiện ngày
+    // Nếu xem theo Ngày -> Hiện tên danh mục
+    val subLabel = if (viewMode == TransactionViewMode.BY_CATEGORY) {
+        val sdf = SimpleDateFormat("dd MMMM yyyy, EEEE", locale)
+        sdf.format(Date(item.giaodich.date))
+    } else {
+        item.danhmuc?.name ?: "Khác"
+    }
 
     Row(
         modifier = Modifier
@@ -309,44 +416,55 @@ fun TransactionItemRow(
             .padding(vertical = 10.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Icon chính:
+        // Nếu xem theo Danh mục -> Hiện icon Ví
+        // Nếu xem theo Ngày -> Hiện icon Danh mục
         Box(
             modifier = Modifier
                 .size(36.dp)
-                .background(Color(0xFF2C2C2E), CircleShape),
+                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(item.vi?.iconName ?: "👛", fontSize = 16.sp)
+            if (viewMode == TransactionViewMode.BY_CATEGORY) {
+                Text(item.vi?.iconName ?: "👛", fontSize = 16.sp)
+            } else {
+                Text(item.danhmuc?.iconName ?: "📁", fontSize = 16.sp)
+            }
         }
+        
         Spacer(modifier = Modifier.width(12.dp))
+        
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = dateLabel,
-                color = Color.Gray,
+                text = subLabel,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 11.sp
             )
-            if (item.giaodich.note.isNotEmpty()) {
+            Text(
+                text = if (item.giaodich.note.isNotEmpty()) item.giaodich.note else "Không có ghi chú",
+                color = if (item.giaodich.note.isNotEmpty()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 14.sp,
+                maxLines = 1,
+                fontWeight = if (item.giaodich.note.isNotEmpty()) FontWeight.Medium else FontWeight.Normal
+            )
+        }
+        
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                text = "${if (item.giaodich.type == "EXPENSE") "-" else "+"}${currencyFormat.format(item.giaodich.amount)} đ",
+                color = if (item.giaodich.type == "EXPENSE") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            // Nếu xem theo Ngày, hiện thêm icon ví nhỏ bên dưới số tiền để biết tiền từ ví nào
+            if (viewMode == TransactionViewMode.BY_DATE) {
                 Text(
-                    text = item.giaodich.note,
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    maxLines = 1,
-                    fontWeight = FontWeight.Medium
-                )
-            } else {
-                Text(
-                    text = "Không có ghi chú",
-                    color = Color.DarkGray,
-                    fontSize = 14.sp,
-                    maxLines = 1
+                    text = "${item.vi?.iconName ?: "👛"} ${item.vi?.name ?: ""}",
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
-        Text(
-            text = "${if (item.giaodich.type == "EXPENSE") "-" else "+"}${currencyFormat.format(item.giaodich.amount)} đ",
-            color = if (item.giaodich.type == "EXPENSE") Color(0xFFFF5252) else Color(0xFF00BCD4),
-            fontWeight = FontWeight.Bold,
-            fontSize = 15.sp
-        )
     }
 }
 
@@ -369,7 +487,7 @@ fun MonthYearPickerDialog(
     Dialog(onDismissRequest = onDismiss) {
         Card(
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E)),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -380,7 +498,7 @@ fun MonthYearPickerDialog(
             ) {
                 Text(
                     text = "Chọn thời gian",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -393,16 +511,16 @@ fun MonthYearPickerDialog(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     IconButton(onClick = { selectedYear-- }) {
-                        Text("<", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text("<", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                     }
                     Text(
                         text = selectedYear.toString(),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     IconButton(onClick = { selectedYear++ }) {
-                        Text(">", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(">", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -421,7 +539,7 @@ fun MonthYearPickerDialog(
                                 .padding(4.dp)
                                 .aspectRatio(1.5f)
                                 .background(
-                                    if (isSelected) Color(0xFF4CAF50) else Color.Transparent,
+                                    if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                                     RoundedCornerShape(8.dp)
                                 )
                                 .clickable { selectedMonth = month },
@@ -429,7 +547,7 @@ fun MonthYearPickerDialog(
                         ) {
                             Text(
                                 text = months[index],
-                                color = if (isSelected) Color.White else Color.Gray,
+                                color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 13.sp
                             )
                         }
@@ -443,10 +561,10 @@ fun MonthYearPickerDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Hủy", color = Color.Gray)
+                        Text("Hủy", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     TextButton(onClick = { onConfirm(selectedMonth, selectedYear) }) {
-                        Text("Chọn", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
+                        Text("Chọn", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -464,7 +582,7 @@ fun WalletPickerDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = Color(0xFF1A1A1A),
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -474,7 +592,7 @@ fun WalletPickerDialog(
             ) {
                 Text(
                     "Chọn tài khoản",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
@@ -506,7 +624,7 @@ fun WalletPickerDialog(
                     onClick = onDismiss,
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text("Đóng", color = Color(0xFF4CAF50))
+                    Text("Đóng", color = MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -529,11 +647,11 @@ fun WalletItem(
     ) {
         Text(
             text = name,
-            color = if (isSelected) Color(0xFF4CAF50) else Color.White,
+            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp
         )
         if (isSelected) {
-            Icon(Icons.Default.Check, contentDescription = null, tint = Color(0xFF4CAF50))
+            Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
         }
     }
 }

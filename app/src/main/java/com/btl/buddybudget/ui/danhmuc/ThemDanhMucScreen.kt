@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -30,8 +32,14 @@ fun AddCategoryScreen(
     viewModel: ThemDanhMucViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val backgroundColor = Color.Black
-    val cardColor = Color(0xFF1C1C1E)
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.thongBaoLoi) {
+        uiState.thongBaoLoi?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearError()
+        }
+    }
 
     // Xử lý sau khi lưu thành công
     LaunchedEffect(uiState.daLuuThanhCong) {
@@ -41,21 +49,21 @@ fun AddCategoryScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
-        // --- NÚT QUAY VỀ HÌNH TRÒN (Giống AboutScreen) ---
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        // --- NÚT QUAY VỀ HÌNH TRÒN ---
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF1C1C1E))
+                .background(MaterialTheme.colorScheme.surface)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "‹",
-                color = Color(0xFF0A84FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 28.sp,
                 modifier = Modifier.offset(y = (-2).dp)
             )
@@ -67,21 +75,20 @@ fun AddCategoryScreen(
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Tiêu đề căn giữa (Giống hệt AboutScreen)
+            // Tiêu đề căn giữa
             Text(
                 text = "Nhóm mới",
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
             )
 
-            // Bỏ Spacer thừa ở đây để các cụm phía dưới đẩy lên đúng vị trí
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(cardColor)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(16.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -97,25 +104,26 @@ fun AddCategoryScreen(
                     TextField(
                         value = uiState.tenDanhMuc,
                         onValueChange = viewModel::capNhatTen,
-                        placeholder = { Text("Tên nhóm", color = Color.Gray) },
+                        placeholder = { Text("Tên nhóm", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
 
-                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFF2C2C2E))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
 
                 // Loại giao dịch
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    Text("Loại giao dịch", color = Color.White)
-                    Row(modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(Color(0xFF2C2C2E)).padding(4.dp)) {
+                    Text("Loại giao dịch", color = MaterialTheme.colorScheme.onSurface)
+                    Row(modifier = Modifier.clip(RoundedCornerShape(25.dp)).background(MaterialTheme.colorScheme.surfaceVariant).padding(4.dp)) {
                         val isExp = uiState.loaiGiaoDich == KieuGiaoDich.EXPENSE
                         TabItem("Khoản chi", isExp) { viewModel.capNhatLoai(KieuGiaoDich.EXPENSE) }
                         TabItem("Khoản thu", !isExp) { viewModel.capNhatLoai(KieuGiaoDich.INCOME) }
@@ -126,15 +134,15 @@ fun AddCategoryScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Chọn Icon
-            Text("Chọn biểu tượng", color = Color.Gray, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
+            Text("Chọn biểu tượng", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(DanhSachIconChi) { icon ->
                     Box(
                         modifier = Modifier
                             .size(45.dp)
                             .clip(CircleShape)
-                            .background(if (uiState.iconChon == icon) Color.White.copy(0.2f) else Color(0xFF2C2C2E))
-                            .border(if (uiState.iconChon == icon) 2.dp else 0.dp, Color.White, CircleShape)
+                            .background(if (uiState.iconChon == icon) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant)
+                            .border(if (uiState.iconChon == icon) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                             .clickable { viewModel.capNhatIcon(icon) },
                         contentAlignment = Alignment.Center
                     ) {
@@ -146,7 +154,7 @@ fun AddCategoryScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Chọn Màu
-            Text("Chọn màu sắc", color = Color.Gray, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
+            Text("Chọn màu sắc", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(DanhSachMau) { hex ->
                     Box(
@@ -154,7 +162,7 @@ fun AddCategoryScreen(
                             .size(40.dp)
                             .clip(CircleShape)
                             .background(Color(android.graphics.Color.parseColor(hex)))
-                            .border(if (uiState.mauChon == hex) 3.dp else 0.dp, Color.White, CircleShape)
+                            .border(if (uiState.mauChon == hex) 3.dp else 0.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
                             .clickable { viewModel.capNhatMau(hex) }
                     )
                 }
@@ -162,19 +170,25 @@ fun AddCategoryScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            if (uiState.thongBaoLoi != null) {
-                Text(uiState.thongBaoLoi!!, color = Color.Red, fontSize = 14.sp)
-            }
-
             Button(
                 onClick = viewModel::luuDanhMuc,
                 modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp).height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C2C2E)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 shape = RoundedCornerShape(25.dp)
             ) {
-                Text("Lưu", color = Color.White, fontWeight = FontWeight.Bold)
+                Text("Lưu", fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 90.dp)
+        )
     }
 }
 
@@ -183,10 +197,16 @@ fun TabItem(text: String, isSelected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
-            .background(if (isSelected) Color(0xFF48484A) else Color.Transparent)
+            .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
             .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Text(text, color = if (isSelected) Color.White else Color.Gray, fontSize = 13.sp)
+        Text(
+            text, 
+            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant, 
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
+

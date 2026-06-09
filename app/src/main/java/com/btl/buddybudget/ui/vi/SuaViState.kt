@@ -3,7 +3,7 @@ package com.btl.buddybudget.ui.vi
 data class SuaViState(
     val id: Int = 0,
     val name: String = "",
-    val soDu: String = "",
+   //val soDu: String = "",
     val donVi: String = "VND",
     val iconName: String = "ti-wallet",
     val colorHex: String = "#4CAF50",

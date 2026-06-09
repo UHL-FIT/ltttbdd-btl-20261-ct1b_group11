@@ -103,4 +103,8 @@ class SuaDanhMucViewModel(private val repo: Repo) : ViewModel() {
             }
         }
     }
+
+    fun clearError() {
+        _uiState.update { it.copy(thongBaoLoi = null) }
+    }
 }
