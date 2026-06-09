@@ -62,7 +62,7 @@ fun ChonDanhMucScreen(
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
@@ -143,7 +143,7 @@ fun QuanLyDanhMucScreen(
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
@@ -177,7 +177,7 @@ fun QuanLyDanhMucScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .height(48.dp)
-                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(24.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(24.dp))
                     .padding(4.dp)
             ) {
                 Row(modifier = Modifier.fillMaxSize()) {
@@ -190,9 +190,7 @@ fun QuanLyDanhMucScreen(
                             .clickable { selectedTab = 0 },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Khoản chi", color = if (selectedTab ==0 ) MaterialTheme.colorScheme.onPrimaryContainer
-                                                    else
-                                                    MaterialTheme.colorScheme.onSurfaceVariant ,
+                        Text("Khoản chi", color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium)
                     }
                     Box(
@@ -204,9 +202,7 @@ fun QuanLyDanhMucScreen(
                             .clickable { selectedTab = 1 },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Khoản thu",  color = if (selectedTab == 1 ) MaterialTheme.colorScheme.onPrimaryContainer
-                                                     else
-                                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                        Text("Khoản thu",  color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             fontWeight = FontWeight.Medium)
                     }
                 }
@@ -219,7 +215,7 @@ fun QuanLyDanhMucScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(28.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(28.dp))
                     .clickable { onAddCate() }
                     .padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,

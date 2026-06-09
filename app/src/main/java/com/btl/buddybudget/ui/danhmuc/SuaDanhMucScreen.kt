@@ -60,7 +60,7 @@ fun EditCategoryScreen(
             onDismissRequest = { hienThiXacNhanXoa = false },
             title = { Text("Xóa nhóm") },
             text = { Text("Bạn có chắc chắn muốn xóa nhóm '${uiState.tenDanhMuc}' này không?") },
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
             titleContentColor = MaterialTheme.colorScheme.onSurface,
             textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             confirmButton = {
@@ -83,7 +83,7 @@ fun EditCategoryScreen(
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
@@ -103,7 +103,7 @@ fun EditCategoryScreen(
                     .padding(end = 20.dp, top = 20.dp)
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { hienThiXacNhanXoa = true }
                     .align(Alignment.TopEnd),
                 contentAlignment = Alignment.Center
@@ -143,7 +143,7 @@ fun EditCategoryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.surface)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(16.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -177,7 +177,7 @@ fun EditCategoryScreen(
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                         Text("Loại giao dịch", color = MaterialTheme.colorScheme.onSurface)
-                        Row(modifier = Modifier.clip(RoundedCornerShape(25.dp)).background(MaterialTheme.colorScheme.surfaceVariant).padding(4.dp)) {
+                        Row(modifier = Modifier.clip(RoundedCornerShape(25.dp)).background(MaterialTheme.colorScheme.background).padding(4.dp)) {
                             val isExp = uiState.loaiGiaoDich == KieuGiaoDich.EXPENSE
                             TabItem("Khoản chi", isExp) { viewModel.capNhatLoai(KieuGiaoDich.EXPENSE) }
                             TabItem("Khoản thu", !isExp) { viewModel.capNhatLoai(KieuGiaoDich.INCOME) }
@@ -214,7 +214,7 @@ fun EditCategoryScreen(
                                 .size(40.dp)
                                 .clip(CircleShape)
                                 .background(Color(android.graphics.Color.parseColor(hex)))
-                                .border(if (uiState.mauChon == hex) 3.dp else 0.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+                                .border(if (uiState.mauChon == hex) 3.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                                 .clickable { viewModel.capNhatMau(hex) }
                         )
                     }

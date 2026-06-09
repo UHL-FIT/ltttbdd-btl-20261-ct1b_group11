@@ -59,7 +59,7 @@ fun SuaGiaoDichScreen(
             onDismissRequest = { hienThiXacNhanXoa = false },
             title = { Text(text = "Xóa giao dịch", color = MaterialTheme.colorScheme.onSurface) },
             text = { Text(text = "Bạn có chắc chắn muốn xóa giao dịch này không?", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -113,7 +113,7 @@ fun SuaGiaoDichScreen(
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { onCancel() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
@@ -132,7 +132,7 @@ fun SuaGiaoDichScreen(
                 .padding(end = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { hienThiXacNhanXoa = true }
                 .align(Alignment.TopEnd),
             contentAlignment = Alignment.Center
@@ -165,14 +165,14 @@ fun SuaGiaoDichScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(24.dp))
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(16.dp)
             ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(25.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(4.dp)
             ) {
                 Box(

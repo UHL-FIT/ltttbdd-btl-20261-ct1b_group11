@@ -78,7 +78,7 @@ fun TransactionScreen(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { onNavigateToSearch() },
                 contentAlignment = Alignment.Center
             ) {
@@ -98,7 +98,7 @@ fun TransactionScreen(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surface)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable { showMenu = true },
                     contentAlignment = Alignment.Center
                 ) {
@@ -110,9 +110,10 @@ fun TransactionScreen(
                     )
                 }
                 DropdownMenu(
+                    shape = RoundedCornerShape(20.dp),
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     DropdownMenuItem(
                         text = { Text("Xem theo danh mục") },
@@ -148,7 +149,7 @@ fun TransactionScreen(
             ) {
                 Surface(
                     shape = RoundedCornerShape(20.dp),
-                    color = MaterialTheme.colorScheme.surface,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -211,7 +212,7 @@ fun TransactionScreen(
                 item {
                     Card(
                         shape = RoundedCornerShape(25.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
@@ -221,7 +222,7 @@ fun TransactionScreen(
                             ) {
                                 Text("Tiền vào", color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(
-                                    currencyFormat.format(uiState.incomeAmount)+"đ",
+                                    "+"+currencyFormat.format(uiState.incomeAmount)+"đ",
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -232,7 +233,7 @@ fun TransactionScreen(
                             ) {
                                 Text("Tiền ra", color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(
-                                    currencyFormat.format(uiState.expenseAmount)+"đ",
+                                    "-"+currencyFormat.format(uiState.expenseAmount)+"đ",
                                     color = MaterialTheme.colorScheme.error
                                 )
                             }
@@ -242,7 +243,7 @@ fun TransactionScreen(
                                 thickness = 0.5.dp
                             )
                             Text(
-                                text = currencyFormat.format(uiState.incomeAmount - uiState.expenseAmount),
+                                text = currencyFormat.format(uiState.incomeAmount - uiState.expenseAmount)+"đ",
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.align(Alignment.End),
                                 fontWeight = FontWeight.Bold
@@ -265,7 +266,7 @@ fun TransactionScreen(
                                 .fillMaxWidth()
                                 .padding(bottom = 20.dp),
                             shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 if (uiState.viewMode == TransactionViewMode.BY_CATEGORY) {
@@ -422,7 +423,7 @@ fun TransactionItemRow(
         Box(
             modifier = Modifier
                 .size(36.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+                .background(Color(item.vi?.colorHex?.toColorInt() ?: 0xFF808080.toInt()), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             if (viewMode == TransactionViewMode.BY_CATEGORY) {
@@ -487,7 +488,7 @@ fun MonthYearPickerDialog(
     Dialog(onDismissRequest = onDismiss) {
         Card(
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -582,7 +583,7 @@ fun WalletPickerDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface,
+            color = MaterialTheme.colorScheme.surfaceVariant,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -599,7 +600,7 @@ fun WalletPickerDialog(
                 )
 
                 LazyColumn(
-                    modifier = Modifier.fillMaxHeight(0.5f)
+                    modifier = Modifier.heightIn(max = 300.dp)
                 ) {
                     item {
                         WalletItem(

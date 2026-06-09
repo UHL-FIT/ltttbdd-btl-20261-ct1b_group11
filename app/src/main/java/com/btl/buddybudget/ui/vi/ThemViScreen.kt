@@ -50,7 +50,7 @@ fun ThemViScreen(
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
@@ -86,7 +86,7 @@ fun ThemViScreen(
             ) {
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(24.dp)
                 ) {
@@ -206,7 +206,7 @@ fun ThemViScreen(
                                         .size(40.dp)
                                         .clip(CircleShape)
                                         .background(Color(hex.toColorInt()))
-                                        .border(if (state.colorHex == hex) 3.dp else 0.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+                                        .border(if (state.colorHex == hex) 3.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                                         .clickable { viewModel.doiMau(hex) }
                                 )
                             }
@@ -218,7 +218,7 @@ fun ThemViScreen(
 
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(24.dp)
                 ) {

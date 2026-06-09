@@ -54,7 +54,7 @@ fun ViScreen(
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
@@ -73,7 +73,7 @@ fun ViScreen(
                 .padding(end = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { menuExpanded = true }
                 .align(Alignment.TopEnd),
             contentAlignment = Alignment.Center
@@ -81,11 +81,12 @@ fun ViScreen(
             Icon(
                 imageVector = Icons.Default.Edit,
                 contentDescription = "Menu",
-                tint = MaterialTheme.colorScheme.onSurface,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
             )
 
             DropdownMenu(
+                shape = RoundedCornerShape(24.dp),
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -134,7 +135,7 @@ fun ViScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Column(modifier = Modifier.padding(20.dp)) {
                                 val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
@@ -156,7 +157,7 @@ fun ViScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp)
-                                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(28.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(28.dp))
                                 .clickable { onAddWallet() }
                                 .padding(horizontal = 20.dp),
                             verticalAlignment = Alignment.CenterVertically,

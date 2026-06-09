@@ -57,7 +57,7 @@ fun SuaViScreen(
             onDismissRequest = { hienThiXacNhanXoa = false },
             title = { Text(text = "Xóa ví", color = MaterialTheme.colorScheme.onSurface) },
             text = { Text(text = "Bạn có chắc chắn muốn xóa ví '${state.name}' không? Hành động này không thể hoàn tác.", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -83,7 +83,7 @@ fun SuaViScreen(
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { onBack() }
                 .align(Alignment.TopStart),
             contentAlignment = Alignment.Center
@@ -102,7 +102,7 @@ fun SuaViScreen(
                 .padding(end = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { hienThiXacNhanXoa = true }
                 .align(Alignment.TopEnd),
             contentAlignment = Alignment.Center
@@ -137,7 +137,7 @@ fun SuaViScreen(
                 verticalArrangement = Arrangement.Top
             ) {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     shape = RoundedCornerShape(24.dp)
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
@@ -268,7 +268,7 @@ fun SuaViScreen(
 
                 // Card Trạng thái Lưu trữ (Ẩn ví)
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     shape = RoundedCornerShape(24.dp)
                 ) {
                     Row(

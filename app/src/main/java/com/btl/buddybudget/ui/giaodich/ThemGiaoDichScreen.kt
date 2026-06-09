@@ -91,7 +91,7 @@ fun ThemGiaoDichScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(24.dp))
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(16.dp)
             ) {
                 // 1. Khoản chi / Khoản thu
@@ -99,7 +99,7 @@ fun ThemGiaoDichScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(25.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(4.dp)
                 ) {
                     Box(
@@ -113,7 +113,7 @@ fun ThemGiaoDichScreen(
                     ) {
                         Text(
                             "Khoản chi",
-                            color = if (uiState.idExpense) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = if (uiState.idExpense) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -129,7 +129,7 @@ fun ThemGiaoDichScreen(
                     ) {
                         Text(
                             "Khoản thu",
-                            color = if (!uiState.idExpense) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = if (!uiState.idExpense) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -298,7 +298,7 @@ fun ThemGiaoDichScreen(
                 .padding(start = 20.dp, top = 20.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .clickable { 
                     viewModel.resetForm()
                     onCancel() 
