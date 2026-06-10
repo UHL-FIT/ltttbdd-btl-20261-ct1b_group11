@@ -9,6 +9,10 @@ import com.btl.buddybudget.ui.danhmuc.ThemDanhMucViewModel
 import com.btl.buddybudget.ui.vi.SuaViViewModel
 import com.btl.buddybudget.ui.giaodich.SuaGiaoDichViewModel
 import com.btl.buddybudget.ui.giaodich.ThemGiaoDichViewModel
+import com.btl.buddybudget.ui.giaodich.TransactionViewModel
+import com.btl.buddybudget.ui.gioithieu.AboutViewModel
+import com.btl.buddybudget.ui.thongke.ThongKeScreen
+import com.btl.buddybudget.ui.thongke.ThongKeViewModel
 import com.btl.buddybudget.ui.vi.ThemViViewModel
 import com.btl.buddybudget.ui.vi.ViViewModel
 
@@ -43,10 +47,17 @@ class AppViewModelFactory(private val repo: Repo) : ViewModelProvider.Factory {
                 SuaGiaoDichViewModel(repo) as T
             }
 
-            modelClass.isAssignableFrom(com.btl.buddybudget.ui.giaodich.TransactionViewModel::class.java) -> {
-                com.btl.buddybudget.ui.giaodich.TransactionViewModel(repo) as T
+            modelClass.isAssignableFrom(TransactionViewModel::class.java) -> {
+               TransactionViewModel(repo) as T
             }
 
+            modelClass.isAssignableFrom(AboutViewModel::class.java) -> {
+                AboutViewModel(repo) as T
+            }
+
+            modelClass.isAssignableFrom(ThongKeViewModel::class.java) -> {
+                ThongKeViewModel(repo) as T
+            }
 
             else -> throw IllegalArgumentException(
                 "ViewModel không được đăng ký trong Factory: ${modelClass.name}"

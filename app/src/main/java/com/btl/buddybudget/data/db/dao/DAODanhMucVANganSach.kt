@@ -37,6 +37,12 @@ interface DAODanhMuc {
     /** Dùng để kiểm tra seed dữ liệu */
     @Query("SELECT COUNT(*) FROM tbDanhMuc")
     suspend fun getCount(): Int
+
+    @Query("SELECT * FROM tbDanhMuc")
+    suspend fun getAllCategoriesStatic(): List<DanhMuc>
+
+    @Query("DELETE FROM tbDanhMuc")
+    suspend fun deleteAll()
 }
 
 

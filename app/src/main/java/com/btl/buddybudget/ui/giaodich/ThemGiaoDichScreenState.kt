@@ -5,8 +5,8 @@ package com.btl.buddybudget.ui.giaodich
 data class ThemGiaoDichScreenState(
     val idExpense: Boolean = true,
     val amount: String = "",
-    val selectedWalletName: String = "Ví tín dụng",
-    val idVi: Int = 1,
+    val selectedWalletName: String = "Chọn ví",
+    val idVi: Int = 0,
     val selectedGroupName: String = "Chọn nhóm",
     val selectedWalletIcon: String = "💳",
     val selectedWalletColor: String = "#48484A",

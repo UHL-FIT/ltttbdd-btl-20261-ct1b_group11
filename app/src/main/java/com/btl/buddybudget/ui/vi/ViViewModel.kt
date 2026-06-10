@@ -5,11 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.btl.buddybudget.data.repo.Repo
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-
-import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
-
 class ViViewModel(
     val repo: Repo
 ) : ViewModel() {

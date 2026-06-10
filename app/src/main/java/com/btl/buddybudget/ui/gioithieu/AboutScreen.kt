@@ -1,6 +1,15 @@
 package com.btl.buddybudget.ui.gioithieu
 
 import androidx.compose.foundation.clickable
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.btl.buddybudget.ui.home.Screen
 import androidx.compose.foundation.Image
@@ -40,10 +49,58 @@ import androidx.compose.material3.SwitchDefaults
 @Composable
 fun AboutScreen(
     navController : NavController,
+    viewModel: AboutViewModel,
     isDarkTheme: Boolean,
     onThemeChange: (Boolean) -> Unit,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
+    val showImportConfirm by viewModel.showImportConfirm.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
+
+    // Hiển thị Toast thông báo
+    LaunchedEffect(toastMessage) {
+        toastMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearToast()
+        }
+    }
+
+    // Launcher để XUẤT file
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let { viewModel.exportToJson(context, it) }
+    }
+
+    // Launcher để NHẬP file
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { viewModel.onImportFileSelected(it) }
+    }
+
+    // Dialog xác nhận khôi phục
+    if (showImportConfirm) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissImportDialog() },
+            title = { Text("Cảnh báo khôi phục") },
+            text = { Text("Toàn bộ dữ liệu hiện tại trong máy sẽ bị xóa sạch và thay thế bằng dữ liệu từ file sao lưu này. Bạn có chắc chắn muốn tiếp tục?") },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.confirmImport(context) }
+                ) {
+                    Text("Tiếp tục", color = Color.Red, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.dismissImportDialog() }) {
+                    Text("Hủy")
+                }
+            }
+        )
+    }
+
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) { 
 
         // --- NÚT QUAY VỀ HÌNH TRÒN ---
@@ -72,7 +129,7 @@ fun AboutScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Giới thiệu",
+                text = "Cài đặt",
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -143,6 +200,26 @@ fun AboutScreen(
                         .clickable { navController.navigate(Screen.Wallet.route) }
                 ) {
                     InfoRowTextOnly(title = "Ví")
+                }
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+                // --- NÚT XUẤT DỮ LIỆU ---
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { exportLauncher.launch("buddy_budget_backup.json") }
+                ) {
+                    InfoRowTextOnly(title = "Xuất dữ liệu (JSON)")
+                }
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+                // --- NÚT NHẬP DỮ LIỆU ---
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { importLauncher.launch(arrayOf("application/json", "application/octet-stream")) }
+                ) {
+                    InfoRowTextOnly(title = "Nhập dữ liệu (JSON)")
                 }
             }
             Spacer(modifier = Modifier.height(40.dp))

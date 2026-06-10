@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
         DanhMuc::class,
         Vi::class
     ],
-    version = 4, // Nâng lên version 4 để đảm bảo Room xóa DB cũ và tạo lại theo cấu trúc mới
+    version = 4, //
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -64,16 +64,18 @@ abstract class AppDatabase : RoomDatabase() {
 private suspend fun seedDefaultCategories(dao: DAODanhMuc) {
     if (dao.getCount() > 0) return
     dao.insertAll(listOf(
-        DanhMuc(name = "Ăn uống",    iconName = "🍴", colorHex = "#FF6B35", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Di chuyển",  iconName = "🚗", colorHex = "#3B82F6", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Giải trí",   iconName = "🎮", colorHex = "#8B5CF6", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Mua sắm",    iconName = "🛒", colorHex = "#10B981", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Sức khoẻ",   iconName = "🏥", colorHex = "#EF4444", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Giáo dục",   iconName = "🎓", colorHex = "#0EA5E9", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Lương",      iconName = "💰", colorHex = "#22C55E", type = KieuGiaoDich.INCOME,  isDefault = true),
-        DanhMuc(name = "Thưởng",     iconName = "🎁", colorHex = "#FBBF24", type = KieuGiaoDich.INCOME,  isDefault = true),
-        DanhMuc(name = "Khác",       iconName = "📁", colorHex = "#94A3B8", type = KieuGiaoDich.EXPENSE, isDefault = true),
-        DanhMuc(name = "Thay đổi số dư",       iconName = "💸", colorHex = "#94A3B8", type = KieuGiaoDich.INCOME, isDefault = true)
+        DanhMuc(name = "Ăn uống",    iconName = "🍴", colorHex = "#F44336", type = KieuGiaoDich.EXPENSE, isDefault = true), // Đỏ
+        DanhMuc(name = "Di chuyển",  iconName = "🚗", colorHex = "#2196F3", type = KieuGiaoDich.EXPENSE, isDefault = true), // Xanh lam
+        DanhMuc(name = "Giải trí",   iconName = "🎮", colorHex = "#9C27B0", type = KieuGiaoDich.EXPENSE, isDefault = true), // Tím
+        DanhMuc(name = "Mua sắm",    iconName = "🛒", colorHex = "#FF9800", type = KieuGiaoDich.EXPENSE, isDefault = true), // Cam
+        DanhMuc(name = "Sức khoẻ",   iconName = "🏥", colorHex = "#E91E63", type = KieuGiaoDich.EXPENSE, isDefault = true), // Hồng
+        DanhMuc(name = "Giáo dục",   iconName = "🎓", colorHex = "#00BCD4", type = KieuGiaoDich.EXPENSE, isDefault = true), // Xanh lơ (Cyan)
+        DanhMuc(name = "Khác",       iconName = "📁", colorHex = "#607D8B", type = KieuGiaoDich.EXPENSE, isDefault = true), // Xám xanh
+
+        // KHOẢN THU (INCOME)
+        DanhMuc(name = "Lương",      iconName = "💰", colorHex = "#4CAF50", type = KieuGiaoDich.INCOME,  isDefault = true), // Xanh lá
+        DanhMuc(name = "Thưởng",     iconName = "🎁", colorHex = "#FFEB3B", type = KieuGiaoDich.INCOME,  isDefault = true), // Vàng
+        DanhMuc(name = "Thay đổi số dư", iconName = "💸", colorHex = "#795548", type = KieuGiaoDich.INCOME, isDefault = true)  // Nâu
     ))
 }
 
@@ -81,8 +83,8 @@ private suspend fun seedDefaultCategories(dao: DAODanhMuc) {
 private suspend fun seedDefaultWallets(dao: DAOVi) {
     if (dao.layViChuaXoaCount() > 0) return
     dao.insertAll(listOf(
-        Vi(name = "Tiền mặt",    iconName = "💵", colorHex = "#22C55E", sortOrder = 0),
-        Vi(name = "Ngân hàng",   iconName = "🏦", colorHex = "#3B82F6", sortOrder = 1),
-        Vi(name = "Ví điện tử",  iconName = "📱", colorHex = "#8B5CF6", sortOrder = 2)
+        Vi(name = "Tiền mặt",    iconName = "💵", colorHex = "#4CAF50", sortOrder = 0),
+        Vi(name = "Ngân hàng",   iconName = "🏦", colorHex = "#2196F3", sortOrder = 1),
+        Vi(name = "Ví điện tử",  iconName = "📱", colorHex = "#9C27B0", sortOrder = 2)
     ))
 }

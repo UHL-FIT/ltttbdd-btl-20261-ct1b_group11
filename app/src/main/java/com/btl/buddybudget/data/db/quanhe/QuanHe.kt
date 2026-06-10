@@ -6,7 +6,7 @@ import com.btl.buddybudget.data.db.entities.DanhMuc
 import com.btl.buddybudget.data.db.entities.GiaoDich
 import com.btl.buddybudget.data.db.entities.Vi
 
-data class GiaoDichvaDanhMuc(
+data class GiaoDichvaDanhMucvaVi(
     @Embedded val giaodich: GiaoDich,
     @Relation(parentColumn = "idDanhMuc", entityColumn = "id")
     val danhmuc: DanhMuc?,
@@ -30,6 +30,7 @@ data class WalletWithBalance(
 data class ThongKeDanhMuc(
     val id: Int,
     val name: String,
+    val iconName: String,
     val colorHex: String,
     val total: Double,
     val count: Int

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.btl.buddybudget.data.db.KieuGiaoDich
 import androidx.compose.foundation.lazy.items // Rất quan trọng để sửa lỗi chữ items
 import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconChi
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconThu
 import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachMau
 
 @Composable
@@ -189,7 +190,7 @@ fun EditCategoryScreen(
 
                 Text("Chọn biểu tượng", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    items(DanhSachIconChi) { icon ->
+                    items(if(uiState.loaiGiaoDich == KieuGiaoDich.EXPENSE) DanhSachIconChi else DanhSachIconThu) { icon ->
                         Box(
                             modifier = Modifier
                                 .size(45.dp)

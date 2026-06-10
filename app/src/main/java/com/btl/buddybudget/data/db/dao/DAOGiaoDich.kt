@@ -1,8 +1,9 @@
 package com.btl.buddybudget.data.db.dao
 
 import androidx.room.*
+import com.btl.buddybudget.data.db.entities.DanhMuc
 import com.btl.buddybudget.data.db.entities.GiaoDich
-import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
+import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMucvaVi
 import com.btl.buddybudget.data.db.quanhe.ThongKeDanhMuc
 import kotlinx.coroutines.flow.Flow
 
@@ -10,6 +11,9 @@ import kotlinx.coroutines.flow.Flow
 interface DAOGiaoDich {
     @Insert
     suspend fun them(giaoDich: GiaoDich): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(list: List<GiaoDich>)
 
     @Update
     suspend fun sua(giaoDich: GiaoDich)
@@ -30,7 +34,7 @@ interface DAOGiaoDich {
         WHERE v.isArchived = 0
         ORDER BY g.date DESC
     """)
-    fun layTatCa(): Flow<List<GiaoDichvaDanhMuc>>
+    fun layTatCa(): Flow<List<GiaoDichvaDanhMucvaVi>>
 
     @Transaction
     @Query("""
@@ -39,15 +43,15 @@ interface DAOGiaoDich {
         WHERE v.isArchived = 0 AND g.date >= :tu AND g.date < :den 
         ORDER BY g.date DESC
     """)
-    fun layTheoKhoangThoiGian(tu: Long, den: Long): Flow<List<GiaoDichvaDanhMuc>>
+    fun layTheoKhoangThoiGian(tu: Long, den: Long): Flow<List<GiaoDichvaDanhMucvaVi>>
 
     @Transaction
     @Query("SELECT * FROM tbGiaoDich WHERE idVi = :idVi ORDER BY date DESC")
-    fun layTheoVi(idVi: Int): Flow<List<GiaoDichvaDanhMuc>>
+    fun layTheoVi(idVi: Int): Flow<List<GiaoDichvaDanhMucvaVi>>
 
     @Transaction
     @Query("SELECT * FROM tbGiaoDich WHERE idVi = :idVi AND date >= :tu AND date < :den ORDER BY date DESC")
-    fun layTheoViVaThang(idVi: Int, tu: Long, den: Long): Flow<List<GiaoDichvaDanhMuc>>
+    fun layTheoViVaThang(idVi: Int, tu: Long, den: Long): Flow<List<GiaoDichvaDanhMucvaVi>>
 
     @Transaction
     @Query("""
@@ -56,7 +60,7 @@ interface DAOGiaoDich {
         WHERE v.isArchived = 0 AND g.note LIKE '%' || :tuKhoa || '%' 
         ORDER BY g.date DESC
     """)
-    fun timKiem(tuKhoa: String): Flow<List<GiaoDichvaDanhMuc>>
+    fun timKiem(tuKhoa: String): Flow<List<GiaoDichvaDanhMucvaVi>>
 
     @Query("""
         SELECT SUM(g.amount) FROM tbGiaoDich g
@@ -94,12 +98,18 @@ interface DAOGiaoDich {
     fun demTatCa(): Flow<Int>
 
     @Query("""
-        SELECT d.id, d.name, d.colorHex, SUM(g.amount) as total, COUNT(g.id) as count
+        SELECT d.id, d.name, d.iconName, d.colorHex, SUM(g.amount) as total, COUNT(g.id) as count
         FROM tbDanhMuc d
         JOIN tbGiaoDich g ON d.id = g.idDanhMuc
         JOIN tbVi v ON g.idVi = v.id
-        WHERE v.isArchived = 0 AND g.date >= :tu AND g.date < :den
+        WHERE v.isArchived = 0 AND g.type = :type AND g.date >= :tu AND g.date < :den
         GROUP BY d.id
     """)
-    fun thongKeDanhMuc(tu: Long, den: Long): Flow<List<ThongKeDanhMuc>>
+    fun thongKeDanhMuc(type: String, tu: Long, den: Long): Flow<List<ThongKeDanhMuc>>
+
+    @Query("SELECT * FROM tbGiaoDich")
+    suspend fun getAllTransactionsStatic(): List<GiaoDich>
+
+    @Query("DELETE FROM tbGiaoDich")
+    suspend fun deleteAll()
 }

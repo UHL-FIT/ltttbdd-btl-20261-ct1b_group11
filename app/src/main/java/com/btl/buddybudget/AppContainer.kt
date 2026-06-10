@@ -13,9 +13,12 @@ class AppContainer(context: Context) {
     val userSettings by lazy { UserSettings(context) }
 
     // Repository được tạo ra ở đây
-    val repo by lazy { Repo(db.daoGiaoDich(),
-        db.daoDanhMuc() ,
-        db.daoVi()) }
+    val repo by lazy { Repo(
+        db,
+        db.daoGiaoDich(),
+        db.daoDanhMuc(),
+        db.daoVi()
+    ) }
 
     /** Dùng trong Composable: viewModel(factory = container.viewModelFactory) */
     val viewModelFactory by lazy { AppViewModelFactory(repo) }

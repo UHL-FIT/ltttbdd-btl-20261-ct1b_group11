@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,7 +50,6 @@ import com.btl.buddybudget.ui.danhmuc.DanhMucViewModel
 import com.btl.buddybudget.ui.danhmuc.ThemDanhMucViewModel
 import com.btl.buddybudget.ui.gioithieu.AboutScreen
 import com.btl.buddybudget.ui.thongke.ThongKeScreen
-import com.btl.buddybudget.ui.ngansach.NganSachScreen
 import com.btl.buddybudget.ui.vi.ViScreen
 import com.btl.buddybudget.ui.vi.SuaViScreen
 import com.btl.buddybudget.ui.vi.SuaViViewModel
@@ -64,6 +64,7 @@ import com.btl.buddybudget.ui.vi.ThemViScreen
 import com.btl.buddybudget.ui.vi.ThemViViewModel
 import com.btl.buddybudget.ui.vi.ViViewModel
 import androidx.compose.material3.MaterialTheme
+import com.btl.buddybudget.ui.thongke.ThongKeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,10 +136,10 @@ fun HomeScreen(
                     )
 
                     NavigationBarItem(
-                        selected = currentRoute == Screen.Budget.route,
+                        selected = currentRoute == Screen.BieuDoTron.route,
                         onClick = {
-                            if (currentRoute != Screen.Budget.route) {
-                                navController.navigate(Screen.Budget.route)
+                            if (currentRoute != Screen.BieuDoTron.route) {
+                                navController.navigate(Screen.BieuDoTron.route)
                             }
                         },
                         icon = { Icon(imageVector = Icons.Default.PieChart, contentDescription = "Thống kê", modifier = Modifier.size(32.dp)) },
@@ -183,7 +184,7 @@ fun HomeScreen(
         },
         floatingActionButtonPosition = FabPosition.Center
     ) { innerPadding ->
-        val themGiaoDichViewModel: ThemGiaoDichViewModel = viewModel(factory = viewModelFactory)
+
 
         NavHost(
             navController = navController,
@@ -210,20 +211,16 @@ fun HomeScreen(
             }
 
            composable(Screen.BieuDoTron.route) {
+               val thongKeViewModel: ThongKeViewModel = viewModel(factory = viewModelFactory)
                 ThongKeScreen(
-                   onBack = { navController.popBackStack() }
-                )
-            }
-
-
-
-            composable(Screen.Budget.route) {
-                NganSachScreen(
+                    thongKeViewModel,
                     onBack = { navController.popBackStack() }
                 )
             }
 
+
             composable(Screen.AddTransaction.route) {
+                val themGiaoDichViewModel: ThemGiaoDichViewModel = viewModel(factory = viewModelFactory)
                 ThemGiaoDichScreen(
                     viewModel = themGiaoDichViewModel,
                     onCancel = { navController.popBackStack() },
@@ -274,7 +271,13 @@ fun HomeScreen(
             ) { backStackEntry ->
                 val type = backStackEntry.arguments?.getString("type") ?: "EXPENSE"
                 val danhMucViewModel: DanhMucViewModel = viewModel(factory = viewModelFactory)
-                val suaGiaoDichViewModel: SuaGiaoDichViewModel = viewModel(factory = viewModelFactory)
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.EditTransaction.route)
+                }
+                val suaGiaoDichViewModel: SuaGiaoDichViewModel = viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    factory = viewModelFactory
+                )
 
                 com.btl.buddybudget.ui.danhmuc.ChonDanhMucScreen(
                     filterType = type,
@@ -294,20 +297,30 @@ fun HomeScreen(
 
             composable("select_wallet_edit") {
                 val viViewModel: ViViewModel = viewModel(factory = viewModelFactory)
-                val suaGiaoDichViewModel: SuaGiaoDichViewModel = viewModel(factory = viewModelFactory)
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry(Screen.EditTransaction.route)
+                }
+
+                // Instance ViewModelEditTransaction đang dùng
+                val suaGiaoDichViewModel: SuaGiaoDichViewModel = viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    factory = viewModelFactory
+                )
                 com.btl.buddybudget.ui.vi.ChonViScreen(
                     viewModel = viViewModel,
                     onBack = { navController.popBackStack() },
                     onSelect = { wallet ->
-                        suaGiaoDichViewModel.onWalletSelected(wallet.id, wallet.name)
+                        suaGiaoDichViewModel.onWalletSelected(wallet.id, wallet.name, wallet.colorHex, wallet.iconName)
                         navController.popBackStack()
                     }
                 )
             }
 
             composable(Screen.About.route) {
+                val aboutViewModel: com.btl.buddybudget.ui.gioithieu.AboutViewModel = viewModel(factory = viewModelFactory)
                 AboutScreen(
                     navController = navController,
+                    viewModel = aboutViewModel,
                     isDarkTheme = isDarkTheme,
                     onThemeChange = onThemeChange,
                     onBack = { navController.popBackStack() }
@@ -320,7 +333,15 @@ fun HomeScreen(
             ) { backStackEntry ->
                 val type = backStackEntry.arguments?.getString("type") ?: "EXPENSE"
                 val danhMucViewModel: DanhMucViewModel = viewModel(factory = viewModelFactory)
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.AddTransaction.route)
+                }
 
+                // Lấy ViewModel gắn với entry đó
+                val themGiaoDichViewModel: ThemGiaoDichViewModel = viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    factory = viewModelFactory
+                )
                 com.btl.buddybudget.ui.danhmuc.ChonDanhMucScreen(
                     filterType = type,
                     onBack = { navController.popBackStack() },
@@ -383,8 +404,17 @@ fun HomeScreen(
                 )
             }
 
-            composable(Screen.SelectWallet.route) {
+            composable(Screen.SelectWallet.route) {backStackEntry ->
                 val viViewModel: ViViewModel = viewModel(factory = viewModelFactory)
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.AddTransaction.route)
+                }
+
+                // Lấy ViewModel gắn với entry đó
+                val themGiaoDichViewModel: ThemGiaoDichViewModel = viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    factory = viewModelFactory
+                )
                 com.btl.buddybudget.ui.vi.ChonViScreen(
                     viewModel = viViewModel,
                     onBack = { navController.popBackStack() },
@@ -401,8 +431,8 @@ fun HomeScreen(
 
                 ThemViScreen(
                     viewModel = themViViewModel,
-                    onBack = { navController.popBackStack()}
-                    //onSuccess={navController.navigate(Screen.Wallet.route)}
+                    onBack = { navController.popBackStack()},
+                    onSuccess={navController.navigate(Screen.Wallet.route)}
 
                 )
             }

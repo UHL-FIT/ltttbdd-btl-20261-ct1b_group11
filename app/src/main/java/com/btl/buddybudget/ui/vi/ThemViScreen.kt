@@ -31,7 +31,8 @@ import androidx.core.graphics.toColorInt
 @Composable
 fun ThemViScreen(
     onBack: () -> Unit,
-    viewModel: ThemViViewModel
+    viewModel: ThemViViewModel,
+    onSuccess: () -> Unit
 ) {
     val state = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
@@ -251,7 +252,7 @@ fun ThemViScreen(
 
             // --- NÚT LƯU CỐ ĐỊNH PHÍA DƯỚI ---
             Button(
-                onClick = { viewModel.taoVi(onBack) },
+                onClick = { viewModel.taoVi(onSuccess) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp)

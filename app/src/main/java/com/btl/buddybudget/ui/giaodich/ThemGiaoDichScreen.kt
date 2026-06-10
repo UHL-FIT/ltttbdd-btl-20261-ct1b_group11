@@ -22,6 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -151,7 +152,7 @@ fun ThemGiaoDichScreen(
                         Box(
                             modifier = Modifier
                                 .size(32.dp)
-                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                                .background(Color(uiState.selectedWalletColor.toColorInt()), RoundedCornerShape(8.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(uiState.selectedWalletIcon, fontSize = 16.sp)

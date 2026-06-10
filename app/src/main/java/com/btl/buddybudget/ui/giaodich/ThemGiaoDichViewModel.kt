@@ -42,7 +42,7 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
         }
     }
 
-    // Cập nhật ví được chọn (Sau này kết nối DB chọn từ danh sách ví)
+    // Cập nhật ví được chọn (Khi từ trang Chọn ví trả kết quả về)
     fun onWalletSelected(id: Int, name: String, color: String, icon: String) {
         _uiState.update { it.copy(idVi = id, selectedWalletName = name, selectedWalletColor = color, selectedWalletIcon = icon) }
     }
@@ -78,7 +78,12 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
     fun saveTransaction(onSuccess: () -> Unit) {
         val currentState = _uiState.value
         val amountValue = currentState.amount.toDoubleOrNull() ?: 0.0
-        
+
+        if (currentState.idVi <= 0) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng chọn nhóm ví") }
+            return
+        }
+
         if (amountValue <= 0) {
             _uiState.update { it.copy(errorMessage = "Vui lòng nhập số tiền hợp lệ") }
             return
@@ -88,6 +93,7 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
             _uiState.update { it.copy(errorMessage = "Vui lòng chọn nhóm giao dịch") }
             return
         }
+
 
         if (currentState.note.isBlank()) {
             _uiState.update { it.copy(errorMessage = "Vui lòng nhập ghi chú") }

@@ -74,4 +74,10 @@
 
         @Query("SELECT COUNT(*) FROM tbVi WHERE isArchived = 0")
         suspend fun layViChuaXoaCount(): Int
+
+        @Query("SELECT * FROM tbVi")
+        suspend fun getAllWalletsStatic(): List<Vi>
+
+        @Query("DELETE FROM tbVi")
+        suspend fun deleteAll()
     }

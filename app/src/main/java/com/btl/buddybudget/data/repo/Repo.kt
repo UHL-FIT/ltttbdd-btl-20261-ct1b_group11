@@ -8,8 +8,10 @@ import com.btl.buddybudget.data.db.entities.DanhMuc
 import com.btl.buddybudget.data.db.entities.GiaoDich
 import com.btl.buddybudget.data.db.entities.Vi
 import com.btl.buddybudget.data.db.quanhe.ThongKeDanhMuc
-import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
+import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMucvaVi
 import com.btl.buddybudget.data.db.quanhe.WalletWithBalance
+import com.btl.buddybudget.data.dto.BackupData
+import androidx.room.withTransaction
 import kotlinx.coroutines.flow.Flow
 import java.util.Calendar
 import javax.inject.Inject
@@ -25,11 +27,37 @@ import javax.inject.Singleton
  * trong Application class và truyền vào ViewModel qua ViewModelFactory.
  */
 @Singleton
-class Repo   @Inject constructor(
+class Repo @Inject constructor(
+    private val database: com.btl.buddybudget.data.store.AppDatabase,
     private val daoGiaoDich: DAOGiaoDich,
     private val daoDanhMuc:  DAODanhMuc,
     private val daoVi:       DAOVi
 ) {
+    // ════════════════════════════════════════════════════════════════
+    //  BACKUP & RESTORE (Dữ liệu JSON)
+    // ════════════════════════════════════════════════════════════════
+
+    suspend fun getBackupData(): BackupData {
+        return BackupData(
+            wallets = daoVi.getAllWalletsStatic(),
+            categories = daoDanhMuc.getAllCategoriesStatic(),
+            transactions = daoGiaoDich.getAllTransactionsStatic()
+        )
+    }
+
+    suspend fun restoreBackupData(backup: BackupData) {
+        database.withTransaction {
+            // Xóa theo thứ tự để tránh lỗi Foreign Key
+            daoGiaoDich.deleteAll()
+            daoDanhMuc.deleteAll()
+            daoVi.deleteAll()
+
+            // Chèn lại dữ liệu
+            daoVi.insertAll(backup.wallets)
+            daoDanhMuc.insertAll(backup.categories)
+            daoGiaoDich.insertAll(backup.transactions)
+        }
+    }
     // ════════════════════════════════════════════════════════════════
     //  GIAO DỊCH
     // ════════════════════════════════════════════════════════════════
@@ -50,26 +78,26 @@ class Repo   @Inject constructor(
         daoGiaoDich.layTheoId(id)
 
     /** Tất cả giao dịch kèm DanhMuc + Vi */
-    fun layTatCaGiaoDich(): Flow<List<GiaoDichvaDanhMuc>> =
+    fun layTatCaGiaoDich(): Flow<List<GiaoDichvaDanhMucvaVi>> =
         daoGiaoDich.layTatCa()
 
     /** Giao dịch trong một tháng cụ thể */
-    fun layGiaoDichTheoThang(thang: Int, nam: Int): Flow<List<GiaoDichvaDanhMuc>> {
+    fun layGiaoDichTheoThang(thang: Int, nam: Int): Flow<List<GiaoDichvaDanhMucvaVi>> {
         val (tu, den) = khoangThang(thang, nam)
         return daoGiaoDich.layTheoKhoangThoiGian(tu, den)
     }
 
     /** Giao dịch theo ví */
-    fun layGiaoDichTheoVi(idVi: Int): Flow<List<GiaoDichvaDanhMuc>> =
+    fun layGiaoDichTheoVi(idVi: Int): Flow<List<GiaoDichvaDanhMucvaVi>> =
         daoGiaoDich.layTheoVi(idVi)
 
     /** Giao dịch theo ví trong một tháng */
-    fun layGiaoDichTheoViVaThang(idVi: Int, thang: Int, nam: Int): Flow<List<GiaoDichvaDanhMuc>> {
+    fun layGiaoDichTheoViVaThang(idVi: Int, thang: Int, nam: Int): Flow<List<GiaoDichvaDanhMucvaVi>> {
         val (tu, den) = khoangThang(thang, nam)
         return daoGiaoDich.layTheoViVaThang(idVi, tu, den)
     }
 
-    fun timKiemGiaoDich(tuKhoa: String): Flow<List<GiaoDichvaDanhMuc>> =
+    fun timKiemGiaoDich(tuKhoa: String): Flow<List<GiaoDichvaDanhMucvaVi>> =
         daoGiaoDich.timKiem(tuKhoa)
 
     // ════════════════════════════════════════════════════════════════
@@ -104,10 +132,10 @@ class Repo   @Inject constructor(
     fun demTatCaGiaoDich(): Flow<Int> =
         daoGiaoDich.demTatCa()
 
-    /** Thống kê chi theo danh mục — dùng cho biểu đồ tròn */
-    fun thongKeDanhMuc(thang: Int, nam: Int): Flow<List<ThongKeDanhMuc>> {
+    /** Thống kê theo danh mục — dùng cho biểu đồ tròn */
+    fun thongKeDanhMuc(thang: Int, nam: Int, type: String): Flow<List<ThongKeDanhMuc>> {
         val (tu, den) = khoangThang(thang, nam)
-        return daoGiaoDich.thongKeDanhMuc(tu, den)
+        return daoGiaoDich.thongKeDanhMuc(type, tu, den)
     }
 
     // ════════════════════════════════════════════════════════════════

@@ -28,8 +28,10 @@ class SuaGiaoDichViewModel(private val repo: Repo) : ViewModel() {
                     it.copy(
                         idExpense = gd.type == "EXPENSE",
                         amount = gd.amount.toLong().toString(),
-                        selectedWalletName = vi?.name ?: "Ví không xác định",
                         idVi = gd.idVi,
+                        selectedWalletName = vi?.name ?: "Ví không xác định",
+                        selectedWalletColor = vi?.colorHex ?: "#48484A",
+                        selectedWalletIcon = vi?.iconName ?: "👛",
                         selectedGroupName = danhMuc?.name ?: "Chọn nhóm",
                         selectedGroupColor = danhMuc?.colorHex ?: "#48484A",
                         selectedGroupIcon = danhMuc?.iconName ?: "📁",
@@ -59,8 +61,8 @@ class SuaGiaoDichViewModel(private val repo: Repo) : ViewModel() {
         }
     }
 
-    fun onWalletSelected(id: Int, name: String) {
-        _uiState.update { it.copy(idVi = id, selectedWalletName = name) }
+    fun onWalletSelected(id: Int, name: String, color: String, icon: String) {
+        _uiState.update { it.copy(idVi = id, selectedWalletName = name, selectedWalletColor = color, selectedWalletIcon = icon) }
     }
 
     fun onGroupSelected(id: Int, name: String, color: String, icon: String) {
@@ -89,6 +91,11 @@ class SuaGiaoDichViewModel(private val repo: Repo) : ViewModel() {
     fun updateTransaction(onSuccess: () -> Unit) {
         val currentState = _uiState.value
         val amountValue = currentState.amount.toDoubleOrNull() ?: 0.0
+
+        if (currentState.idVi <= 0) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng chọn nhóm ví") }
+            return
+        }
 
         if (amountValue <= 0) {
             _uiState.update { it.copy(errorMessage = "Vui lòng nhập số tiền hợp lệ") }

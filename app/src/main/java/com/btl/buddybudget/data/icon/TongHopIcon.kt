@@ -3,6 +3,7 @@ package com.btl.buddybudget.data.icon
 object TongHopIcon {
     // Danh sách mẫu để người dùng chọn
     // 1. Danh sách icon dành cho KHOẢN THU (Thu nhập, lương, thưởng...)
+
     val DanhSachIconThu = listOf(
         "💰", // Tiền bạc / Lương
         "🎁", // Quà tặng / Thưởng

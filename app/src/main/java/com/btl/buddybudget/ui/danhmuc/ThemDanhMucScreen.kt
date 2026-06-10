@@ -10,8 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.btl.buddybudget.data.db.KieuGiaoDich
 import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconChi
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconThu
 
 import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachMau
 
@@ -136,7 +136,7 @@ fun AddCategoryScreen(
             // Chọn Icon
             Text("Chọn biểu tượng", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.align(Alignment.Start).padding(bottom = 8.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(DanhSachIconChi) { icon ->
+                items(if(uiState.loaiGiaoDich == KieuGiaoDich.EXPENSE) DanhSachIconChi else DanhSachIconThu) { icon ->
                     Box(
                         modifier = Modifier
                             .size(45.dp)

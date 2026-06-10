@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -211,10 +212,10 @@ fun SuaGiaoDichScreen(
                     Box(
                         modifier = Modifier
                             .size(32.dp)
-                            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                            .background(Color(uiState.selectedWalletColor.toColorInt()), RoundedCornerShape(8.dp)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("💳", fontSize = 16.sp)
+                        Text(uiState.selectedWalletIcon, fontSize = 16.sp)
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = uiState.selectedWalletName, color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp)
@@ -346,7 +347,6 @@ fun SuaGiaoDichScreen(
             }
         }
 
-            // Khoảng trống linh hoạt để đẩy nút Lưu xuống dưới cùng
             Spacer(modifier = Modifier.weight(1f))
 
         Button(

@@ -30,7 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.core.graphics.toColorInt
 import com.btl.buddybudget.data.db.TransactionViewMode
 import com.btl.buddybudget.data.db.entities.Vi
-import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
+import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMucvaVi
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.SimpleDateFormat
@@ -116,16 +116,20 @@ fun TransactionScreen(
                     modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Xem theo danh mục") },
-                        leadingIcon = { Icon(Icons.Default.List, null) },
+                        text = { Text("Xem theo danh mục",color = if (uiState.viewMode == TransactionViewMode.BY_CATEGORY)
+                            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
+                        leadingIcon = { Icon(Icons.Default.List, null,tint=if (uiState.viewMode == TransactionViewMode.BY_CATEGORY)
+                            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
                         onClick = {
                             viewModel.onChangeViewMode(TransactionViewMode.BY_CATEGORY)
                             showMenu = false
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Xem theo ngày") },
-                        leadingIcon = { Icon(Icons.Default.DateRange, null) },
+                        text = { Text("Xem theo ngày",color = if (uiState.viewMode == TransactionViewMode.BY_DATE)
+                            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
+                        leadingIcon = { Icon(Icons.Default.DateRange, null,tint=if (uiState.viewMode == TransactionViewMode.BY_DATE)
+                            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
                         onClick = {
                             viewModel.onChangeViewMode(TransactionViewMode.BY_DATE)
                             showMenu = false
@@ -393,7 +397,7 @@ fun DateHeader(
 
 @Composable
 fun TransactionItemRow(
-    item: GiaoDichvaDanhMuc,
+    item: GiaoDichvaDanhMucvaVi,
     viewMode: TransactionViewMode = TransactionViewMode.BY_CATEGORY,
     onClick: () -> Unit
 ) {

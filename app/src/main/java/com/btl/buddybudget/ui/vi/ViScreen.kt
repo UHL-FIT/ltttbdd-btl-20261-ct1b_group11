@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -23,9 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.LayoutDirection
 import com.btl.buddybudget.data.db.quanhe.WalletWithBalance
 import androidx.compose.runtime.*
+import androidx.core.graphics.toColorInt
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
@@ -214,7 +213,7 @@ fun WalletItem(
                 modifier = Modifier
                     .size(52.dp)
                     .background(
-                        color = Color(android.graphics.Color.parseColor(wallet.colorHex)),
+                        color = Color(wallet.colorHex.toColorInt()),
                         shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btl.buddybudget.data.db.KieuGiaoDich
 import com.btl.buddybudget.data.db.TransactionViewMode
-import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMuc
+import com.btl.buddybudget.data.db.quanhe.GiaoDichvaDanhMucvaVi
 import com.btl.buddybudget.data.repo.Repo
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -21,8 +21,8 @@ class TransactionViewModel(private val repo: Repo) : ViewModel() {
     private var selectedYear = currentCalendar.get(Calendar.YEAR)
     private var selectedWalletId: Int? = null
 
-    private val _searchResults = MutableStateFlow<List<GiaoDichvaDanhMuc>>(emptyList())
-    val searchResults: StateFlow<List<GiaoDichvaDanhMuc>> = _searchResults.asStateFlow()
+    private val _searchResults = MutableStateFlow<List<GiaoDichvaDanhMucvaVi>>(emptyList())
+    val searchResults: StateFlow<List<GiaoDichvaDanhMucvaVi>> = _searchResults.asStateFlow()
 
     init {
         loadWallets()
@@ -92,7 +92,7 @@ class TransactionViewModel(private val repo: Repo) : ViewModel() {
         loadTransactions()
     }
 
-    fun deleteTransaction(transaction: GiaoDichvaDanhMuc) {
+    fun deleteTransaction(transaction: GiaoDichvaDanhMucvaVi) {
         viewModelScope.launch {
             repo.xoaGiaoDich(transaction.giaodich)
             loadTransactions()

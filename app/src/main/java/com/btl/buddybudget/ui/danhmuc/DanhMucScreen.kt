@@ -177,7 +177,7 @@ fun QuanLyDanhMucScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .height(48.dp)
-                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(24.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(24.dp))
                     .padding(4.dp)
             ) {
                 Row(modifier = Modifier.fillMaxSize()) {
@@ -186,11 +186,11 @@ fun QuanLyDanhMucScreen(
                             .weight(1f)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (selectedTab == 0) MaterialTheme.colorScheme.background else Color.Transparent)
+                            .background(if (selectedTab == 0) MaterialTheme.colorScheme.primary else Color.Transparent)
                             .clickable { selectedTab = 0 },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Khoản chi", color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        Text("Khoản chi", color =  if (selectedTab == 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium)
                     }
                     Box(
@@ -198,11 +198,11 @@ fun QuanLyDanhMucScreen(
                             .weight(1f)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (selectedTab == 1) MaterialTheme.colorScheme.background else Color.Transparent)
+                            .background(if (selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Transparent)
                             .clickable { selectedTab = 1 },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Khoản thu",  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        Text("Khoản thu", color =  if (selectedTab == 1) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                                             fontWeight = FontWeight.Medium)
                     }
                 }

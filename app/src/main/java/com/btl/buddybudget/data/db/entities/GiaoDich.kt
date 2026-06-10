@@ -43,5 +43,5 @@ data class GiaoDich(
     val type: String, // "EXPENSE" or "INCOME"
     val date: Long = System.currentTimeMillis(),
     val note: String = "",
-    val createdAt: Long = System.currentTimeMillis()
+   // val createdAt: Long = System.currentTimeMillis()
 )
