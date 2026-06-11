@@ -88,6 +88,13 @@ class SuaDanhMucViewModel(private val repo: Repo) : ViewModel() {
 
         viewModelScope.launch {
             try {
+                // Kiểm tra xem có giao dịch nào đang sử dụng danh mục này không
+                val coGiaoDich = repo.coGiaoDichTrongDanhMuc(state.id)
+                if (coGiaoDich) {
+                    _uiState.update { it.copy(thongBaoLoi = "Không thể xóa danh mục đã có giao dịch") }
+                    return@launch
+                }
+
                 val danhMucXoa = DanhMuc(
                     id = state.id,
                     name = state.tenDanhMuc,

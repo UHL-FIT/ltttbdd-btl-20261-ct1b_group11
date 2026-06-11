@@ -74,23 +74,34 @@ class SuaViViewModel(
     // Hàm Xóa Ví khỏi hệ thống
     fun xoaVi(onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true)
-            val viXoa = Vi(
-                id = uiState.id,
-                name = uiState.name,
-                donVi = uiState.donVi,
-                iconName = uiState.iconName,
-                colorHex = uiState.colorHex,
-                isArchived = uiState.isArchived,
-                sortOrder = uiState.sortOrder
-            )
-            val thanhCong = repo.xoaVi(viXoa) 
-            uiState = uiState.copy(isLoading = false)
-            
-            if (thanhCong) {
+            try {
+                uiState = uiState.copy(isLoading = true)
+
+                // Kiểm tra xem có giao dịch nào đang sử dụng ví này không (Theo kiểu danh mục)
+                val coTheXoa = repo.coTheXoaVi(uiState.id)
+                if (!coTheXoa) {
+                    uiState = uiState.copy(
+                        error = "Không thể xóa ví đã có lịch sử chi tiêu",
+                        isLoading = false
+                    )
+                    return@launch
+                }
+
+                val viXoa = Vi(
+                    id = uiState.id,
+                    name = uiState.name,
+                    donVi = uiState.donVi,
+                    iconName = uiState.iconName,
+                    colorHex = uiState.colorHex,
+                    isArchived = uiState.isArchived,
+                    sortOrder = uiState.sortOrder
+                )
+                
+                repo.xoaVi(viXoa)
+                uiState = uiState.copy(isLoading = false)
                 onSuccess()
-            } else {
-                uiState = uiState.copy(error = "Không thể xóa ví vì vẫn còn giao dịch liên quan.")
+            } catch (e: Exception) {
+                uiState = uiState.copy(error = "Lỗi khi xoá: ${e.message}", isLoading = false)
             }
         }
     }

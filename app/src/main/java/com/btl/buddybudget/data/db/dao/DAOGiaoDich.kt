@@ -97,6 +97,9 @@ interface DAOGiaoDich {
     """)
     fun demTatCa(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM tbGiaoDich WHERE idDanhMuc = :idDanhMuc")
+    suspend fun demGiaoDichTheoDanhMuc(idDanhMuc: Int): Int
+
     @Query("""
         SELECT d.id, d.name, d.iconName, d.colorHex, SUM(g.amount) as total, COUNT(g.id) as count
         FROM tbDanhMuc d

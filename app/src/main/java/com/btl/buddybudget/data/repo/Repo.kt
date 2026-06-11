@@ -157,6 +157,9 @@ class Repo @Inject constructor(
     suspend fun layDanhMucTheoId(id: Int): DanhMuc? =
         daoDanhMuc.layDanhMucTheoID(id)
 
+    suspend fun coGiaoDichTrongDanhMuc(idDanhMuc: Int): Boolean =
+        daoGiaoDich.demGiaoDichTheoDanhMuc(idDanhMuc) > 0
+
     suspend fun layTheoTen(name: String): DanhMuc? =
         daoDanhMuc.layTheoTen(name)
 
