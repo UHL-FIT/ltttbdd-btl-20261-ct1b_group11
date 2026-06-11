@@ -224,6 +224,7 @@ fun HomeScreen(
                 ThemGiaoDichScreen(
                     viewModel = themGiaoDichViewModel,
                     onCancel = { navController.popBackStack() },
+                    onSuccess={navController.navigate(Screen.Wallet.route)},
                     onNavigateToSelectGroup = { isExpense ->
                         val type = if (isExpense) "EXPENSE" else "INCOME"
                         navController.navigate(Screen.Category.createRoute(type))

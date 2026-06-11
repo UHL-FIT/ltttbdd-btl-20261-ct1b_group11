@@ -15,5 +15,6 @@ data class ThemGiaoDichScreenState(
     val idDanhMuc: Int = 0,
     val note: String = "",
     val date: Long = System.currentTimeMillis(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val successMessage: String? = null
 )

@@ -10,5 +10,6 @@ data class ThemDanhMucState(
     val iconChon: String = TongHopIcon.DanhSachIconChi[0],
     val mauChon: String = TongHopIcon.DanhSachMau[0],
     val daLuuThanhCong: Boolean = false,
-    val thongBaoLoi: String? = null
+    val thongBaoLoi: String? = null,
+    val successMessage: String? = null
 )

@@ -10,9 +10,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.ImeAction
-
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,9 +43,11 @@ fun AddCategoryScreen(
     }
 
     // Xử lý sau khi lưu thành công
-    LaunchedEffect(uiState.daLuuThanhCong) {
-        if (uiState.daLuuThanhCong) {
-            viewModel.resetTrangThaiLuu()
+    LaunchedEffect(uiState.successMessage) {
+        uiState.successMessage?.let {
+            launch { snackbarHostState.showSnackbar(it) }
+            delay(600)
+            viewModel.clearSuccessMessage()
             onBack()
         }
     }

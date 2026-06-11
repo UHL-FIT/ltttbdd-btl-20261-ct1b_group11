@@ -14,6 +14,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,15 @@ fun ThemViScreen(
         state.error?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.clearError()
+        }
+    }
+
+    LaunchedEffect(state.successMessage) {
+        state.successMessage?.let {
+            launch { snackbarHostState.showSnackbar(it) }
+            delay(600)
+            viewModel.clearSuccessMessage()
+            onSuccess()
         }
     }
 
@@ -252,7 +263,7 @@ fun ThemViScreen(
 
             // --- NÚT LƯU CỐ ĐỊNH PHÍA DƯỚI ---
             Button(
-                onClick = { viewModel.taoVi(onSuccess) },
+                onClick = { viewModel.taoVi() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp)

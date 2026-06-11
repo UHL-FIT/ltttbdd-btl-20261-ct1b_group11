@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +33,7 @@ import java.util.Locale
 fun ThemGiaoDichScreen(
     viewModel: ThemGiaoDichViewModel,
     onCancel: () -> Unit,
+    onSuccess: () -> Unit,
     onNavigateToSelectGroup: (Boolean) -> Unit,
     onNavigateToSelectWallet: () -> Unit
 ) {
@@ -41,6 +44,15 @@ fun ThemGiaoDichScreen(
         uiState.errorMessage?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.clearErrorMessage()
+        }
+    }
+
+    LaunchedEffect(uiState.successMessage) {
+        uiState.successMessage?.let {
+            launch { snackbarHostState.showSnackbar(it) }
+            delay(600)
+            viewModel.clearSuccessMessage()
+            onSuccess()
         }
     }
 
@@ -281,7 +293,7 @@ fun ThemGiaoDichScreen(
 
             // --- NÚT LƯU CỐ ĐỊNH PHÍA DƯỚI ---
             Button(
-                onClick = { viewModel.saveTransaction(onSuccess = { onCancel() }) },
+                onClick = { viewModel.saveTransaction() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp)

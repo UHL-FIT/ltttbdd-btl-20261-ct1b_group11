@@ -10,5 +10,6 @@ data class SuaViState(
     val isArchived: Boolean = false,
     val sortOrder: Int = 0,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val successMessage: String? = null
 )

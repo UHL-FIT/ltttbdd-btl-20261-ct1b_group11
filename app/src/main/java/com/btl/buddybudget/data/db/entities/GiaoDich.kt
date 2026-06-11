@@ -8,8 +8,8 @@ import com.btl.buddybudget.data.db.KieuGiaoDich
 
 /**
  * Khoá ngoại:
- *   - idDanhMuc → danhmuc.id  (SET_DEFAULT khi xoá danh mục)
- *   - idVi      → vi.id       (RESTRICT: không xoá ví khi còn giao dịch)
+ *   - idDanhMuc → danhmuc.id
+ *   - idVi      → vi.id
  */
 @Entity(
     tableName = "tbGiaoDich",
@@ -18,7 +18,7 @@ import com.btl.buddybudget.data.db.KieuGiaoDich
             entity = DanhMuc::class,
             parentColumns = ["id"],
             childColumns = ["idDanhMuc"],
-            onDelete = ForeignKey.SET_DEFAULT
+            onDelete = ForeignKey.RESTRICT
         ),
         ForeignKey(
             entity = Vi::class,

@@ -46,8 +46,9 @@ class SuaViViewModel(
     fun doiIcon(value: String)   { uiState = uiState.copy(iconName = value) }
     fun anVi(value: Boolean)     { uiState = uiState.copy(isArchived = value) }
     fun clearError()             { uiState = uiState.copy(error = null) }
+    fun clearSuccessMessage()    { uiState = uiState.copy(successMessage = null) }
 
-    fun capNhatVi(onSuccess: () -> Unit = {}) {
+    fun capNhatVi() {
         if (uiState.name.isBlank()) {
             uiState = uiState.copy(error = "Tên ví không được để trống")
             return
@@ -66,13 +67,12 @@ class SuaViViewModel(
                 sortOrder = uiState.sortOrder
             )
             repo.suaVi(viCapNhat)
-            uiState = uiState.copy(isLoading = false)
-            onSuccess()
+            uiState = uiState.copy(isLoading = false, successMessage = "Cập nhật ví thành công")
         }
     }
 
     // Hàm Xóa Ví khỏi hệ thống
-    fun xoaVi(onSuccess: () -> Unit = {}) {
+    fun xoaVi() {
         viewModelScope.launch {
             try {
                 uiState = uiState.copy(isLoading = true)
@@ -98,8 +98,7 @@ class SuaViViewModel(
                 )
                 
                 repo.xoaVi(viXoa)
-                uiState = uiState.copy(isLoading = false)
-                onSuccess()
+                uiState = uiState.copy(isLoading = false, successMessage = "Xóa ví thành công")
             } catch (e: Exception) {
                 uiState = uiState.copy(error = "Lỗi khi xoá: ${e.message}", isLoading = false)
             }

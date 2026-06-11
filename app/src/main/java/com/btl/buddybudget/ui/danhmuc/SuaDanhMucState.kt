@@ -12,5 +12,6 @@ data class SuaDanhMucState(
     val daCapNhat: Boolean = false,
     val daXoa: Boolean = false,
     val thongBaoLoi: String? = null,
+    val successMessage: String? = null,
     val isLoading: Boolean = false
 )

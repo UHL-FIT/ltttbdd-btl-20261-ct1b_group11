@@ -75,7 +75,7 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
     }
 
     // Thực hiện lưu giao dịch vào database
-    fun saveTransaction(onSuccess: () -> Unit) {
+    fun saveTransaction() {
         val currentState = _uiState.value
         val amountValue = currentState.amount.toDoubleOrNull() ?: 0.0
 
@@ -111,8 +111,11 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
 
         viewModelScope.launch {
             repo.themGiaoDich(transaction)
-            resetForm()
-            onSuccess()
+            _uiState.update { it.copy(successMessage = "Thêm giao dịch thành công") }
         }
+    }
+
+    fun clearSuccessMessage() {
+        _uiState.update { it.copy(successMessage = null) }
     }
 }

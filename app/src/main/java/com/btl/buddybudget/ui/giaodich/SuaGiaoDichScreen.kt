@@ -16,11 +16,12 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,6 +54,15 @@ fun SuaGiaoDichScreen(
         }
     }
 
+    LaunchedEffect(uiState.successMessage) {
+        uiState.successMessage?.let {
+            launch { snackbarHostState.showSnackbar(it) }
+            delay(600)
+            viewModel.clearSuccessMessage()
+            onCancel()
+        }
+    }
+
     var hienThiXacNhanXoa by remember { mutableStateOf(false) }
 
     if (hienThiXacNhanXoa) {
@@ -65,7 +75,7 @@ fun SuaGiaoDichScreen(
                 TextButton(
                     onClick = {
                         hienThiXacNhanXoa = false
-                        viewModel.deleteTransaction(onSuccess = onCancel)
+                        viewModel.deleteTransaction()
                     }
                 ) {
                     Text("XÓA", color = MaterialTheme.colorScheme.error)
@@ -351,7 +361,7 @@ fun SuaGiaoDichScreen(
 
         Button(
             onClick = {
-                viewModel.updateTransaction(onSuccess = { onCancel() })
+                viewModel.updateTransaction()
             },
             modifier = Modifier
                 .fillMaxWidth()

@@ -18,6 +18,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +51,15 @@ fun SuaViScreen(
         }
     }
 
+    LaunchedEffect(state.successMessage) {
+        state.successMessage?.let {
+            launch { snackbarHostState.showSnackbar(it) }
+            delay(600)
+            viewModel.clearSuccessMessage()
+            onBack()
+        }
+    }
+
     var hienThiXacNhanXoa by remember { mutableStateOf(false) }
 
     // Hộp thoại cảnh báo khi nhấn nút Xóa
@@ -62,7 +73,7 @@ fun SuaViScreen(
                 TextButton(
                     onClick = {
                         hienThiXacNhanXoa = false
-                        viewModel.xoaVi(onSuccess = onBack)
+                        viewModel.xoaVi()
                     }
                 ) {
                     Text("XÓA", color = MaterialTheme.colorScheme.error)
@@ -298,7 +309,7 @@ fun SuaViScreen(
 
             // --- NÚT LƯU CỐ ĐỊNH PHÍA DƯỚI ---
             Button(
-                onClick = { viewModel.capNhatVi(onSuccess = onBack) },
+                onClick = { viewModel.capNhatVi() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp)

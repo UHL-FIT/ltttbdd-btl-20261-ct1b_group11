@@ -26,7 +26,7 @@ class ThemViViewModel(
     fun anVi(value: Boolean)     { uiState = uiState.copy(isArchived = value) }
 
 
-    fun taoVi(onSuccess: () -> Unit = {}) {
+    fun taoVi() {
         if (uiState.name.isBlank()) {
             uiState = uiState.copy(error = "Tên ví không được để trống")
             return
@@ -65,12 +65,15 @@ class ThemViViewModel(
                 )
             }
 
-            uiState = uiState.copy(isLoading = false)
-            onSuccess()
+            uiState = uiState.copy(isLoading = false, successMessage = "Thêm ví thành công")
         }
     }
 
     fun clearError() {
         uiState = uiState.copy(error = null)
+    }
+
+    fun clearSuccessMessage() {
+        uiState = uiState.copy(successMessage = null)
     }
 }

@@ -49,18 +49,20 @@ class ThemDanhMucViewModel(private val repo: Repo) : ViewModel() {
                     isDefault = false
                 )
                 repo.themDanhMuc(danhMucMoi)
-                _uiState.update { it.copy(daLuuThanhCong = true) }
+                _uiState.update { it.copy(daLuuThanhCong = true, successMessage = "Thêm danh mục thành công") }
             } catch (e: Exception) {
                 _uiState.update { it.copy(thongBaoLoi = "Lỗi khi lưu: ${e.message}") }
             }
         }
     }
     
-    fun resetTrangThaiLuu() {
-        _uiState.update { it.copy(daLuuThanhCong = false) }
-    }
+
 
     fun clearError() {
         _uiState.update { it.copy(thongBaoLoi = null) }
+    }
+
+    fun clearSuccessMessage() {
+        _uiState.update { it.copy(successMessage = null) }
     }
 }

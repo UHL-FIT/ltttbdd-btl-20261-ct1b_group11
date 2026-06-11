@@ -72,7 +72,7 @@ class SuaDanhMucViewModel(private val repo: Repo) : ViewModel() {
                     isDefault = state.isDefault
                 )
                 repo.suaDanhMuc(danhMucCapNhat)
-                _uiState.update { it.copy(daCapNhat = true) }
+                _uiState.update { it.copy(daCapNhat = true, successMessage = "Cập nhật danh mục thành công") }
             } catch (e: Exception) {
                 _uiState.update { it.copy(thongBaoLoi = "Lỗi khi cập nhật: ${e.message}") }
             }
@@ -104,7 +104,7 @@ class SuaDanhMucViewModel(private val repo: Repo) : ViewModel() {
                     isDefault = state.isDefault
                 )
                 repo.xoaDanhMuc(danhMucXoa)
-                _uiState.update { it.copy(daXoa = true) }
+                _uiState.update { it.copy(daXoa = true, successMessage = "Xóa danh mục thành công") }
             } catch (e: Exception) {
                 _uiState.update { it.copy(thongBaoLoi = "Lỗi khi xoá: ${e.message}") }
             }
@@ -113,5 +113,9 @@ class SuaDanhMucViewModel(private val repo: Repo) : ViewModel() {
 
     fun clearError() {
         _uiState.update { it.copy(thongBaoLoi = null) }
+    }
+
+    fun clearSuccessMessage() {
+        _uiState.update { it.copy(successMessage = null) }
     }
 }

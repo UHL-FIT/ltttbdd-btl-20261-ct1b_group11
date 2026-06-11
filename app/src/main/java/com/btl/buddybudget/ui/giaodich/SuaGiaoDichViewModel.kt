@@ -88,7 +88,7 @@ class SuaGiaoDichViewModel(private val repo: Repo) : ViewModel() {
         _uiState.update { it.copy(errorMessage = null) }
     }
 
-    fun updateTransaction(onSuccess: () -> Unit) {
+    fun updateTransaction() {
         val currentState = _uiState.value
         val amountValue = currentState.amount.toDoubleOrNull() ?: 0.0
 
@@ -123,15 +123,19 @@ class SuaGiaoDichViewModel(private val repo: Repo) : ViewModel() {
 
         viewModelScope.launch {
             repo.suaGiaoDich(transaction)
-            onSuccess()
+            _uiState.update { it.copy(successMessage = "Cập nhật giao dịch thành công") }
         }
     }
 
-    fun deleteTransaction(onSuccess: () -> Unit) {
+    fun deleteTransaction() {
         val transaction = currentTransaction ?: return
         viewModelScope.launch {
             repo.xoaGiaoDich(transaction)
-            onSuccess()
+            _uiState.update { it.copy(successMessage = "Xóa giao dịch thành công") }
         }
+    }
+
+    fun clearSuccessMessage() {
+        _uiState.update { it.copy(successMessage = null) }
     }
 }
