@@ -49,17 +49,25 @@ class SuaViViewModel(
     fun clearSuccessMessage()    { uiState = uiState.copy(successMessage = null) }
 
     fun capNhatVi() {
-        if (uiState.name.isBlank()) {
+        val tenMoi = uiState.name.trim()
+        if (tenMoi.isBlank()) {
             uiState = uiState.copy(error = "Tên ví không được để trống")
             return
         }
 
-
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
+
+            // Kiểm tra trùng tên với ví khác
+            val existing = repo.layViTheoTen(tenMoi)
+            if (existing != null && existing.id != uiState.id) {
+                uiState = uiState.copy(error = "Tên ví này đã tồn tại", isLoading = false)
+                return@launch
+            }
+
             val viCapNhat = Vi(
                 id = uiState.id,
-                name = uiState.name.trim(),
+                name = tenMoi,
                 donVi = uiState.donVi.ifBlank { "VND" },
                 iconName = uiState.iconName,
                 colorHex = uiState.colorHex,

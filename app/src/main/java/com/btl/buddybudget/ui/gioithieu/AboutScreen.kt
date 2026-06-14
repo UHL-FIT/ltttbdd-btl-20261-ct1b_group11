@@ -51,8 +51,7 @@ fun AboutScreen(
     navController : NavController,
     viewModel: AboutViewModel,
     isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit,
-    onBack: () -> Unit
+    onThemeChange: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     val showImportConfirm by viewModel.showImportConfirm.collectAsState()
@@ -104,23 +103,7 @@ fun AboutScreen(
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) { 
 
         // --- NÚT QUAY VỀ HÌNH TRÒN ---
-        Box(
-            modifier = Modifier
-                .padding(start = 20.dp, top = 20.dp)
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable { onBack() }
-                .align(Alignment.TopStart),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "‹",
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 28.sp,
-                modifier = Modifier.offset(y = (-2).dp)
-            )
-        }
+
 
         Column(
             modifier = Modifier

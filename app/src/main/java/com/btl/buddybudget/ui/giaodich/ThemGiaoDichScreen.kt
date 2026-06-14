@@ -312,8 +312,7 @@ fun ThemGiaoDichScreen(
                 .size(40.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable { 
-                    viewModel.resetForm()
+                .clickable {
                     onCancel() 
                 }
                 .align(Alignment.TopStart),
@@ -328,7 +327,7 @@ fun ThemGiaoDichScreen(
         }
 
 
-        // Snackbar hiển thị cảnh báo (Đặt trong Box để align đúng)
+        // Snackbar hiển thị cảnh báo
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier

@@ -182,7 +182,7 @@ fun EditCategoryScreen(
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        Text("Loại giao dịch", color = MaterialTheme.colorScheme.onSurface)
+                        Text("Loại danh mục", color = MaterialTheme.colorScheme.onSurface)
                         Row(modifier = Modifier.clip(RoundedCornerShape(25.dp)).background(MaterialTheme.colorScheme.background).padding(4.dp)) {
                             val isExp = uiState.loaiGiaoDich == KieuGiaoDich.EXPENSE
                             TabItem("Khoản chi", isExp) { viewModel.capNhatLoai(KieuGiaoDich.EXPENSE) }

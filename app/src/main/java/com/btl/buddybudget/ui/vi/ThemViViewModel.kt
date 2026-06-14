@@ -42,6 +42,14 @@ class ThemViViewModel(
 
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
+
+            // Kiểm tra trùng tên ví
+            val existing = repo.layViTheoTen(uiState.name.trim())
+            if (existing != null) {
+                uiState = uiState.copy(error = "Tên ví này đã tồn tại", isLoading = false)
+                return@launch
+            }
+
             val newWalletId = repo.themVi(
                 Vi(
                     name      = uiState.name.trim(),
@@ -53,7 +61,7 @@ class ThemViViewModel(
             )
 
             if (amount > 0) {
-                val category = repo.layTheoTen("Thay đổi số dư")
+                val category = repo.layDanhMucTheoTen("Thay đổi số dư")
                 repo.themGiaoDich(
                     GiaoDich(
                         amount = amount,

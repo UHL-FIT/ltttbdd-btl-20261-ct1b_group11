@@ -8,6 +8,8 @@ data class SuaDanhMucState(
     val loaiGiaoDich: KieuGiaoDich = KieuGiaoDich.EXPENSE,
     val iconChon: String = "📁",
     val mauChon: String = "#4CAF50",
+    val originalLoai: KieuGiaoDich? = null,
+    val originalIcon: String? = null,
     val isDefault: Boolean = false,
     val daCapNhat: Boolean = false,
     val daXoa: Boolean = false,

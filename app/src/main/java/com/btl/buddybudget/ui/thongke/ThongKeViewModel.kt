@@ -6,6 +6,9 @@ import com.btl.buddybudget.data.db.KieuGiaoDich
 import com.btl.buddybudget.data.repo.Repo
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 class ThongKeViewModel(private val repo: Repo) : ViewModel() {
 
@@ -44,10 +47,29 @@ class ThongKeViewModel(private val repo: Repo) : ViewModel() {
             _uiState.update { it.copy(isLoading = true) }
             repo.thongKeDanhMuc(state.selectedMonth, state.selectedYear, type)
                 .collect { items ->
+                    val total = items.sumOf { it.total }
+                    val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
+                    
+                    val displayItems = items.map { item ->
+                        val percentage = if (total > 0) (item.total / total).toFloat() else 0f
+                        ThongKeDisplayItem(
+                            name = item.name,
+                            iconName = item.iconName,
+                            colorHex = item.colorHex,
+                            total = item.total,
+                            percentage = percentage,
+                            percentageText = "${(percentage * 100).toInt()}%",
+                            sweepAngle = percentage * 360f,
+                            formattedTotal = currencyFormat.format(item.total) + " đ"
+                        )
+                    }
+
                     _uiState.update { 
                         it.copy(
                             isLoading = false,
-                            items = items
+                            items = items,
+                            displayItems = displayItems,
+                            totalAmount = total
                         )
                     }
                 }

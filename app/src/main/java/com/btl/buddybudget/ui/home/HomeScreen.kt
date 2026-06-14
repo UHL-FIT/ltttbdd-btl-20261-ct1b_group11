@@ -213,8 +213,7 @@ fun HomeScreen(
            composable(Screen.BieuDoTron.route) {
                val thongKeViewModel: ThongKeViewModel = viewModel(factory = viewModelFactory)
                 ThongKeScreen(
-                    thongKeViewModel,
-                    onBack = { navController.popBackStack() }
+                    thongKeViewModel
                 )
             }
 
@@ -224,7 +223,7 @@ fun HomeScreen(
                 ThemGiaoDichScreen(
                     viewModel = themGiaoDichViewModel,
                     onCancel = { navController.popBackStack() },
-                    onSuccess={navController.navigate(Screen.Wallet.route)},
+                    onSuccess={navController.navigate(Screen.TransactionHistory.route)},
                     onNavigateToSelectGroup = { isExpense ->
                         val type = if (isExpense) "EXPENSE" else "INCOME"
                         navController.navigate(Screen.Category.createRoute(type))
@@ -323,8 +322,7 @@ fun HomeScreen(
                     navController = navController,
                     viewModel = aboutViewModel,
                     isDarkTheme = isDarkTheme,
-                    onThemeChange = onThemeChange,
-                    onBack = { navController.popBackStack() }
+                    onThemeChange = onThemeChange
                 )
             }
             // Màn hình CHỌN danh mục (khi thêm giao dịch)

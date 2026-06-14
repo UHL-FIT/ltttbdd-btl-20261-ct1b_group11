@@ -14,36 +14,10 @@ class DanhMucViewModel(private val repo: Repo) : ViewModel() {
     private val _uiState = MutableStateFlow(DanhMucScreenState())
     val uiState: StateFlow<DanhMucScreenState> = _uiState.asStateFlow()
 
-    //private var currentFilterType: String? = null
-
     init {
         loadDanhMucs()
     }
-/*
-    fun setFilterType(type: String) {
-        currentFilterType = type
-        _uiState.update { it.copy(filterType = type) }
-        loadDanhMucs()
-    }
 
- */
-
-/*
-    private fun loadDanhMucs() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            repo.layTatCaDanhMuc().collect { list ->
-                val filteredList = if (currentFilterType != null) {
-                    list.filter { it.type.name == currentFilterType }
-                } else {
-                    list
-                }
-                _uiState.update { it.copy(danhMucs = filteredList, isLoading = false) }
-            }
-        }
-    }
-
- */
 
     private fun loadDanhMucs() {
         viewModelScope.launch {

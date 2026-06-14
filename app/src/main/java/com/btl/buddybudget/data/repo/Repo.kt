@@ -71,25 +71,18 @@ class Repo @Inject constructor(
     suspend fun xoaGiaoDich(giaoDich: GiaoDich) =
         daoGiaoDich.xoa(giaoDich)
 
-    suspend fun xoaGiaoDichTheoId(id: Int) =
-        daoGiaoDich.xoaTheoId(id)
+
 
     suspend fun layGiaoDichTheoId(id: Int): GiaoDich? =
         daoGiaoDich.layTheoId(id)
 
-    /** Tất cả giao dịch kèm DanhMuc + Vi */
-    fun layTatCaGiaoDich(): Flow<List<GiaoDichvaDanhMucvaVi>> =
-        daoGiaoDich.layTatCa()
+
 
     /** Giao dịch trong một tháng cụ thể */
     fun layGiaoDichTheoThang(thang: Int, nam: Int): Flow<List<GiaoDichvaDanhMucvaVi>> {
         val (tu, den) = khoangThang(thang, nam)
         return daoGiaoDich.layTheoKhoangThoiGian(tu, den)
     }
-
-    /** Giao dịch theo ví */
-    fun layGiaoDichTheoVi(idVi: Int): Flow<List<GiaoDichvaDanhMucvaVi>> =
-        daoGiaoDich.layTheoVi(idVi)
 
     /** Giao dịch theo ví trong một tháng */
     fun layGiaoDichTheoViVaThang(idVi: Int, thang: Int, nam: Int): Flow<List<GiaoDichvaDanhMucvaVi>> {
@@ -104,33 +97,6 @@ class Repo @Inject constructor(
     //  THỐNG KÊ
     // ════════════════════════════════════════════════════════════════
 
-    fun tinhTongThu(thang: Int, nam: Int): Flow<Double> {
-        val (tu, den) = khoangThang(thang, nam)
-        return daoGiaoDich.tinhTong(KieuGiaoDich.INCOME.name, tu, den)
-    }
-
-    fun tinhTongChi(thang: Int, nam: Int): Flow<Double> {
-        val (tu, den) = khoangThang(thang, nam)
-        return daoGiaoDich.tinhTong(KieuGiaoDich.EXPENSE.name, tu, den)
-    }
-
-    fun tinhChiNhoNhat(thang: Int, nam: Int): Flow<Double> {
-        val (tu, den) = khoangThang(thang, nam)
-        return daoGiaoDich.tinhMin(KieuGiaoDich.EXPENSE.name, tu, den)
-    }
-
-    fun tinhChiLonNhat(thang: Int, nam: Int): Flow<Double> {
-        val (tu, den) = khoangThang(thang, nam)
-        return daoGiaoDich.tinhMax(KieuGiaoDich.EXPENSE.name, tu, den)
-    }
-
-    fun tinhChiTrungBinh(thang: Int, nam: Int): Flow<Double> {
-        val (tu, den) = khoangThang(thang, nam)
-        return daoGiaoDich.tinhTrungBinh(KieuGiaoDich.EXPENSE.name, tu, den)
-    }
-
-    fun demTatCaGiaoDich(): Flow<Int> =
-        daoGiaoDich.demTatCa()
 
     /** Thống kê theo danh mục — dùng cho biểu đồ tròn */
     fun thongKeDanhMuc(thang: Int, nam: Int, type: String): Flow<List<ThongKeDanhMuc>> {
@@ -160,14 +126,9 @@ class Repo @Inject constructor(
     suspend fun coGiaoDichTrongDanhMuc(idDanhMuc: Int): Boolean =
         daoGiaoDich.demGiaoDichTheoDanhMuc(idDanhMuc) > 0
 
-    suspend fun layTheoTen(name: String): DanhMuc? =
+    suspend fun layDanhMucTheoTen(name: String): DanhMuc? =
         daoDanhMuc.layTheoTen(name)
 
-    fun layDanhMucChi(): Flow<List<DanhMuc>> =
-        daoDanhMuc.layDanhMucTheoLoai(KieuGiaoDich.EXPENSE.name)
-
-    fun layDanhMucThu(): Flow<List<DanhMuc>> =
-        daoDanhMuc.layDanhMucTheoLoai(KieuGiaoDich.INCOME.name)
 
 
     // ════════════════════════════════════════════════════════════════
@@ -190,9 +151,6 @@ class Repo @Inject constructor(
         return true
     }
 
-    /** Archive ví thay vì xoá — giữ lại lịch sử giao dịch */
-    suspend fun anVi(vi: Vi) =
-        daoVi.update(vi.copy(isArchived = true))
 
     fun layViDangDung(): Flow<List<Vi>> =
         daoVi.layVicChuaXoa()
@@ -207,6 +165,9 @@ class Repo @Inject constructor(
 
     suspend fun layViTheoId(id: Int): Vi? =
         daoVi.layViTheoID(id)
+
+    suspend fun layViTheoTen(name: String): Vi? =
+        daoVi.layTheoTen(name)
 
     /** Kiểm tra ví có thể xoá không */
     suspend fun coTheXoaVi(idVi: Int): Boolean =

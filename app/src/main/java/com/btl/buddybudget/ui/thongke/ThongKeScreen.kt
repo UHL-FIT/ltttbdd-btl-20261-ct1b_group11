@@ -37,7 +37,6 @@ import kotlin.math.sin
 @Composable
 fun ThongKeScreen(
     viewModel: ThongKeViewModel,
-    onBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -49,8 +48,7 @@ fun ThongKeScreen(
         TopBarSection(
             month = uiState.selectedMonth,
             year = uiState.selectedYear,
-            onDateClick = { viewModel.toggleDatePicker(true) },
-            onBack = onBack
+            onDateClick = { viewModel.toggleDatePicker(true) }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -64,7 +62,7 @@ fun ThongKeScreen(
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-        } else if (uiState.items.isEmpty()) {
+        } else if (uiState.displayItems.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("Không có dữ liệu giao dịch", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
@@ -72,12 +70,12 @@ fun ThongKeScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             // Vẽ biểu đồ dựa trên dữ liệu từ ViewModel
-            PieChartSection(uiState.items)
+            PieChartSection(uiState.displayItems)
 
             Spacer(modifier = Modifier.height(32.dp))
 
             // Vẽ danh sách chi tiết
-            ExpenseListSection(uiState.items)
+            ExpenseListSection(uiState.displayItems)
         }
     }
 
@@ -97,8 +95,7 @@ fun ThongKeScreen(
 fun TopBarSection(
     month: Int,
     year: Int,
-    onDateClick: () -> Unit,
-    onBack: () -> Unit
+    onDateClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -106,22 +103,7 @@ fun TopBarSection(
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .height(56.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable { onBack() }
-                .align(Alignment.CenterStart),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "‹",
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 28.sp,
-                modifier = Modifier.offset(y = (-2).dp)
-            )
-        }
+
 
         Row(
             modifier = Modifier
@@ -202,9 +184,8 @@ fun TabSection(
 }
 
 @Composable
-fun PieChartSection(items: List<ThongKeDanhMuc>) {
+fun PieChartSection(items: List<ThongKeDisplayItem>) {
     val textMeasurer = rememberTextMeasurer()
-    val totalAmount = items.sumOf { it.total }
 
     Box(
         modifier = Modifier
@@ -218,8 +199,7 @@ fun PieChartSection(items: List<ThongKeDanhMuc>) {
             val center = Offset(size.width / 2, size.height / 2)
 
             items.forEach { item ->
-                val percentage = (item.total / totalAmount).toFloat()
-                val sweepAngle = percentage * 360f
+                val sweepAngle = item.sweepAngle
 
                 drawArc(
                     color = Color(item.colorHex.toColorInt()),
@@ -229,7 +209,7 @@ fun PieChartSection(items: List<ThongKeDanhMuc>) {
                     size = size
                 )
 
-                if (percentage > 0.05f) { // Chỉ hiện chữ nếu phần đủ lớn
+                if (item.percentage > 0.05f) { // Chỉ hiện chữ nếu phần đủ lớn
                     val angleInDegrees = startAngle + sweepAngle / 2
                     val angleInRadians = Math.toRadians(angleInDegrees.toDouble())
 
@@ -237,7 +217,7 @@ fun PieChartSection(items: List<ThongKeDanhMuc>) {
                     val x = center.x + textRadius * cos(angleInRadians).toFloat()
                     val y = center.y + textRadius * sin(angleInRadians).toFloat()
 
-                    val text = "${(percentage * 100).toInt()}%"
+                    val text = item.percentageText
                     val textLayoutResult = textMeasurer.measure(
                         text = text,
                         style = TextStyle(
@@ -262,9 +242,7 @@ fun PieChartSection(items: List<ThongKeDanhMuc>) {
 }
 
 @Composable
-fun ExpenseListSection(items: List<ThongKeDanhMuc>) {
-    val totalAmount = items.sumOf { it.total }
-    
+fun ExpenseListSection(items: List<ThongKeDisplayItem>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -273,8 +251,7 @@ fun ExpenseListSection(items: List<ThongKeDanhMuc>) {
             .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         itemsIndexed(items) { index, item ->
-            val percentage = (item.total / totalAmount * 100).toInt()
-            ExpenseListItem(item, percentage)
+            ExpenseListItem(item)
 
             if (index < items.lastIndex) {
                 HorizontalDivider(
@@ -288,9 +265,7 @@ fun ExpenseListSection(items: List<ThongKeDanhMuc>) {
 }
 
 @Composable
-fun ExpenseListItem(item: ThongKeDanhMuc, percentage: Int) {
-    val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
-    
+fun ExpenseListItem(item: ThongKeDisplayItem) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -318,14 +293,14 @@ fun ExpenseListItem(item: ThongKeDanhMuc, percentage: Int) {
                 fontSize = 16.sp
             )
             Text(
-                text = "$percentage%",
+                text = item.percentageText,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp
             )
         }
 
         Text(
-            text = currencyFormat.format(item.total) + " đ",
+            text = item.formattedTotal,
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium

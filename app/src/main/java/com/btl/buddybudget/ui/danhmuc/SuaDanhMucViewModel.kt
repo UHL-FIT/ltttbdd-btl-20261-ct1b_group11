@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btl.buddybudget.data.db.KieuGiaoDich
 import com.btl.buddybudget.data.db.entities.DanhMuc
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconChi
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconThu
 import com.btl.buddybudget.data.repo.Repo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +30,8 @@ class SuaDanhMucViewModel(private val repo: Repo) : ViewModel() {
                         loaiGiaoDich = danhMuc.type,
                         iconChon = danhMuc.iconName,
                         mauChon = danhMuc.colorHex,
+                        originalLoai = danhMuc.type,
+                        originalIcon = danhMuc.iconName,
                         isDefault = danhMuc.isDefault,
                         isLoading = false
                     )
@@ -43,7 +47,17 @@ class SuaDanhMucViewModel(private val repo: Repo) : ViewModel() {
     }
 
     fun capNhatLoai(loai: KieuGiaoDich) {
-        _uiState.update { it.copy(loaiGiaoDich = loai) }
+        _uiState.update { 
+            val newIcon = if (loai == it.originalLoai) {
+                it.originalIcon ?: (if (loai == KieuGiaoDich.EXPENSE) DanhSachIconChi[0] else DanhSachIconThu[0])
+            } else {
+                if (loai == KieuGiaoDich.EXPENSE) DanhSachIconChi[0] else DanhSachIconThu[0]
+            }
+            it.copy(
+                loaiGiaoDich = loai,
+                iconChon = newIcon
+            ) 
+        }
     }
 
     fun capNhatIcon(icon: String) {
@@ -56,16 +70,24 @@ class SuaDanhMucViewModel(private val repo: Repo) : ViewModel() {
 
     fun luuCapNhat() {
         val state = _uiState.value
-        if (state.tenDanhMuc.isBlank()) {
+        val tenMoi = state.tenDanhMuc.trim()
+        if (tenMoi.isBlank()) {
             _uiState.update { it.copy(thongBaoLoi = "Vui lòng nhập tên nhóm") }
             return
         }
 
         viewModelScope.launch {
             try {
+                // Kiểm tra trùng tên với danh mục khác
+                val existing = repo.layDanhMucTheoTen(tenMoi)
+                if (existing != null && existing.id != state.id) {
+                    _uiState.update { it.copy(thongBaoLoi = "Tên nhóm này đã tồn tại") }
+                    return@launch
+                }
+
                 val danhMucCapNhat = DanhMuc(
                     id = state.id,
-                    name = state.tenDanhMuc,
+                    name = tenMoi,
                     iconName = state.iconChon,
                     colorHex = state.mauChon,
                     type = state.loaiGiaoDich,

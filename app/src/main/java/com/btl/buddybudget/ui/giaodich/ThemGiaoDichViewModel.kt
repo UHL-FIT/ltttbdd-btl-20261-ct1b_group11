@@ -29,11 +29,6 @@ class ThemGiaoDichViewModel(private val repo: Repo) : ViewModel() {
         }
     }
 
-    fun resetForm() {
-        _uiState.value = ThemGiaoDichScreenState()
-
-    }
-
     // Thay đổi số tiền nhập vào
     fun onAmountChanged(newAmount: String) {
         // Chỉ cho phép nhập số

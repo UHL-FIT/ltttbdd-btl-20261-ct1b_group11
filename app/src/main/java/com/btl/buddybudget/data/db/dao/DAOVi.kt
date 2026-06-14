@@ -31,6 +31,9 @@
         @Query("SELECT * FROM tbVi WHERE id = :id LIMIT 1")
         suspend fun layViTheoID(id: Int): Vi?
 
+        @Query("SELECT * FROM tbVi WHERE name = :name LIMIT 1")
+        suspend fun layTheoTen(name: String): Vi?
+
         /** Số dư hiện tại = thu - chi */
         @Query("""
             SELECT

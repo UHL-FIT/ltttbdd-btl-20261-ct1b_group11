@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.btl.buddybudget.data.db.KieuGiaoDich
 import com.btl.buddybudget.data.db.entities.DanhMuc
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconChi
+import com.btl.buddybudget.data.icon.TongHopIcon.DanhSachIconThu
 import com.btl.buddybudget.data.repo.Repo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +23,12 @@ class ThemDanhMucViewModel(private val repo: Repo) : ViewModel() {
     }
 
     fun capNhatLoai(loai: KieuGiaoDich) {
-        _uiState.update { it.copy(loaiGiaoDich = loai) }
+        _uiState.update { 
+            it.copy(
+                loaiGiaoDich = loai,
+                iconChon = if (loai == KieuGiaoDich.EXPENSE) DanhSachIconChi[0] else DanhSachIconThu[0]
+            ) 
+        }
     }
 
     fun capNhatIcon(icon: String) {
@@ -33,7 +40,7 @@ class ThemDanhMucViewModel(private val repo: Repo) : ViewModel() {
     }
 
     fun luuDanhMuc() {
-        val ten = _uiState.value.tenDanhMuc
+        val ten = _uiState.value.tenDanhMuc.trim()
         if (ten.isBlank()) {
             _uiState.update { it.copy(thongBaoLoi = "Vui lòng nhập tên nhóm") }
             return
@@ -41,6 +48,13 @@ class ThemDanhMucViewModel(private val repo: Repo) : ViewModel() {
 
         viewModelScope.launch {
             try {
+                // Kiểm tra trùng tên
+                val existing = repo.layDanhMucTheoTen(ten)
+                if (existing != null) {
+                    _uiState.update { it.copy(thongBaoLoi = "Tên nhóm này đã tồn tại") }
+                    return@launch
+                }
+
                 val danhMucMoi = DanhMuc(
                     name = ten,
                     iconName = _uiState.value.iconChon,

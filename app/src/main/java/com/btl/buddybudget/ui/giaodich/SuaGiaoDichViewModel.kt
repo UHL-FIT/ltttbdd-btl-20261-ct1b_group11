@@ -43,7 +43,7 @@ class SuaGiaoDichViewModel(private val repo: Repo) : ViewModel() {
             }
         }
     }
-
+/*
     fun onTransactionTypeChanged(isExpense: Boolean) {
         _uiState.update { 
             it.copy(
@@ -54,6 +54,8 @@ class SuaGiaoDichViewModel(private val repo: Repo) : ViewModel() {
             ) 
         }
     }
+
+ */
 
     fun onAmountChanged(newAmount: String) {
         if (newAmount.all { it.isDigit() } || newAmount.isEmpty()) {
