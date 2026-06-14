@@ -240,18 +240,22 @@ fun TransactionScreen(
                                     "-"+currencyFormat.format(uiState.expenseAmount)+"đ",
                                     color = MaterialTheme.colorScheme.error
                                 )
-                            }
+                            }/*
                             HorizontalDivider(
                                 modifier = Modifier.padding(vertical = 12.dp),
                                 color = MaterialTheme.colorScheme.outlineVariant,
                                 thickness = 0.5.dp
                             )
+                            */
+                            /*
                             Text(
                                 text = currencyFormat.format(uiState.incomeAmount - uiState.expenseAmount)+"đ",
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.align(Alignment.End),
                                 fontWeight = FontWeight.Bold
                             )
+
+                             */
                         }
                     }
                     Spacer(modifier = Modifier.height(24.dp))
@@ -260,7 +264,7 @@ fun TransactionScreen(
                 // DANH SÁCH GIAO DỊCH
                 uiState.groupedTransactions.forEach { (headerName, transactions) ->
                     val totalAmount = transactions.sumOf {
-                        if (it.giaodich.type == "EXPENSE") -it.giaodich.amount else it.giaodich.amount
+                        if (it.giaodich.type == "EXPENSE") -it.giaodich.amount else +it.giaodich.amount
                     }
                     val firstGd = transactions.firstOrNull()
 

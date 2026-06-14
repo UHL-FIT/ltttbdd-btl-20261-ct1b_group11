@@ -92,13 +92,6 @@ class TransactionViewModel(private val repo: Repo) : ViewModel() {
         loadTransactions()
     }
 
-    fun deleteTransaction(transaction: GiaoDichvaDanhMucvaVi) {
-        viewModelScope.launch {
-            repo.xoaGiaoDich(transaction.giaodich)
-            loadTransactions()
-            loadTotalBalance()
-        }
-    }
 
     fun searchTransactions(query: String) {
         if (query.isBlank()) {

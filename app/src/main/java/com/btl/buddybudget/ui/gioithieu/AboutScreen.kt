@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.btl.buddybudget.ui.home.Screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,11 +20,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,18 +37,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.btl.buddybudget.R
-
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import java.io.File
+import java.io.FileOutputStream
+import android.content.Context
+import android.content.Intent
+import androidx.core.content.FileProvider
 
 @Composable
 fun AboutScreen(
-    navController : NavController,
     viewModel: AboutViewModel,
     isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    onNavigateToQuanLyDanhMuc: () -> Unit,
+    onNavigateToQuanLyVi: () -> Unit
 ) {
     val context = LocalContext.current
     val showImportConfirm by viewModel.showImportConfirm.collectAsState()
@@ -100,7 +102,9 @@ fun AboutScreen(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) { 
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)) {
 
         // --- NÚT QUAY VỀ HÌNH TRÒN ---
 
@@ -172,7 +176,7 @@ fun AboutScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navController.navigate(Screen.ManageCategory.route) }
+                        .clickable { onNavigateToQuanLyDanhMuc() }
                 ) {
                     InfoRowTextOnly(title = "Danh Mục")
                 }
@@ -180,7 +184,7 @@ fun AboutScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navController.navigate(Screen.Wallet.route) }
+                        .clickable { onNavigateToQuanLyVi() }
                 ) {
                     InfoRowTextOnly(title = "Ví")
                 }
@@ -200,7 +204,14 @@ fun AboutScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { importLauncher.launch(arrayOf("application/json", "application/octet-stream")) }
+                        .clickable {
+                            importLauncher.launch(
+                                arrayOf(
+                                    "application/json",
+                                    "application/octet-stream"
+                                )
+                            )
+                        }
                 ) {
                     InfoRowTextOnly(title = "Nhập dữ liệu (JSON)")
                 }
@@ -209,7 +220,9 @@ fun AboutScreen(
 
             // --- NÚT HƯỚNG DẪN SỬ DỤNG ---
             Button(
-                onClick = { /* Xử lý hướng dẫn */ },
+                onClick = {
+                    openPdfFromRaw(context, R.raw.hdsd, "hdsd.pdf")
+                },
                 modifier = Modifier
                     .height(46.dp)
                     .widthIn(min = 180.dp),
@@ -219,6 +232,35 @@ fun AboutScreen(
                 Text(text = "Hướng dẫn sử dụng ›", color = MaterialTheme.colorScheme.primary, fontSize = 15.sp)
             }
         }
+    }
+}
+
+fun openPdfFromRaw(context: Context, resId: Int, fileName: String) {
+    try {
+        val file = File(context.cacheDir, fileName)
+        if (!file.exists()) {
+            context.resources.openRawResource(resId).use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
+
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/pdf")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        }
+
+        context.startActivity(Intent.createChooser(intent, "Mở hướng dẫn bằng..."))
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 }
 

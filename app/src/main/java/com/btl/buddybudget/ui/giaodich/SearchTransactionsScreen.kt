@@ -91,7 +91,7 @@ fun SearchTransactionsScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Box(modifier = Modifier.weight(1f)) {
                         if (searchQuery.isEmpty()) {
-                            Text("Tìm kiếm giao dịch...", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
+                            Text("Tìm kiếm giao dịch theo ghi chú...", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
                         }
                         BasicTextField(
                             value = searchQuery,

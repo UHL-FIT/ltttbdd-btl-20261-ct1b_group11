@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.btl.buddybudget.data.db.quanhe.WalletWithBalance
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,8 +123,9 @@ fun WalletSelectItem(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
+                val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
                 Text(
-                    text = "${wallet.soDuHienTai.toLong()} đ",
+                    text = "${currencyFormat.format(wallet.soDuHienTai.toLong())} đ",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )

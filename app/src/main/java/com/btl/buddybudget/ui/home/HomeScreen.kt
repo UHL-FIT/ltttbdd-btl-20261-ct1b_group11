@@ -319,10 +319,11 @@ fun HomeScreen(
             composable(Screen.About.route) {
                 val aboutViewModel: com.btl.buddybudget.ui.gioithieu.AboutViewModel = viewModel(factory = viewModelFactory)
                 AboutScreen(
-                    navController = navController,
                     viewModel = aboutViewModel,
                     isDarkTheme = isDarkTheme,
-                    onThemeChange = onThemeChange
+                    onThemeChange = onThemeChange,
+                    onNavigateToQuanLyDanhMuc = { navController.navigate(Screen.ManageCategory.route) },
+                    onNavigateToQuanLyVi = { navController.navigate(Screen.Wallet.route) }
                 )
             }
             // Màn hình CHỌN danh mục (khi thêm giao dịch)
