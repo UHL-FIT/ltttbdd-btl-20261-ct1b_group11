@@ -99,43 +99,53 @@ class TransactionViewModel(private val repo: Repo) : ViewModel() {
             return
         }
         viewModelScope.launch {
-            repo.timKiemGiaoDich(query).collect { results ->
-                _searchResults.value = results
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                repo.timKiemGiaoDich(query).collect { results ->
+                    _searchResults.value = results
+                    _uiState.update { it.copy(isLoading = false) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = "Lỗi tìm kiếm: ${e.message}") }
             }
         }
     }
 
     private fun loadTransactions() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val transactionsFlow = if (selectedWalletId == null) {
-                repo.layGiaoDichTheoThang(selectedMonth, selectedYear)
-            } else {
-                repo.layGiaoDichTheoViVaThang(selectedWalletId!!, selectedMonth, selectedYear)
-            }
-            
-            transactionsFlow.collect { transactions ->
-                val income = transactions.filter { it.giaodich.type == KieuGiaoDich.INCOME.name }.sumOf { it.giaodich.amount }
-                val expense = transactions.filter { it.giaodich.type == KieuGiaoDich.EXPENSE.name }.sumOf { it.giaodich.amount }
-                
-                val currentViewMode = _uiState.value.viewMode
-                val grouped = if (currentViewMode == TransactionViewMode.BY_CATEGORY) {
-                    // Nhóm theo Danh mục (Category)
-                    transactions.groupBy { it.danhmuc?.name ?: "Khác" }
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val transactionsFlow = if (selectedWalletId == null) {
+                    repo.layGiaoDichTheoThang(selectedMonth, selectedYear)
                 } else {
-                    // Nhóm theo Ngày (Date)
-                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("vi-VN"))
-                    transactions.groupBy { sdf.format(Date(it.giaodich.date)) }
+                    repo.layGiaoDichTheoViVaThang(selectedWalletId!!, selectedMonth, selectedYear)
                 }
+                
+                transactionsFlow.collect { transactions ->
+                    val income = transactions.filter { it.giaodich.type == KieuGiaoDich.INCOME.name }.sumOf { it.giaodich.amount }
+                    val expense = transactions.filter { it.giaodich.type == KieuGiaoDich.EXPENSE.name }.sumOf { it.giaodich.amount }
+                    
+                    val currentViewMode = _uiState.value.viewMode
+                    val grouped = if (currentViewMode == TransactionViewMode.BY_CATEGORY) {
+                        // Nhóm theo Danh mục (Category)
+                        transactions.groupBy { it.danhmuc?.name ?: "Khác" }
+                    } else {
+                        // Nhóm theo Ngày (Date)
+                        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.forLanguageTag("vi-VN"))
+                        transactions.groupBy { sdf.format(Date(it.giaodich.date)) }
+                    }
 
-                _uiState.update { 
-                    it.copy(
-                        isLoading = false,
-                        incomeAmount = income,
-                        expenseAmount = expense,
-                        groupedTransactions = grouped
-                    )
+                    _uiState.update { 
+                        it.copy(
+                            isLoading = false,
+                            incomeAmount = income,
+                            expenseAmount = expense,
+                            groupedTransactions = grouped
+                        )
+                    }
                 }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = "Lỗi tải giao dịch: ${e.message}") }
             }
         }
     }

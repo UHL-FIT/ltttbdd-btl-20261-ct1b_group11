@@ -8,6 +8,8 @@ data class ViScreenState(
 
     val tongTaiSan: Double = 0.0,
 
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+
+    val error: String? = null
 
 )

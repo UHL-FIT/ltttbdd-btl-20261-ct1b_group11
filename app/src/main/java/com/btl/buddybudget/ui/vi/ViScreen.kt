@@ -39,6 +39,13 @@ fun ViScreen(
     val uiState by viviewModel.uiState.collectAsState()
     var showArchived by remember { mutableStateOf(false) }
     var menuExpanded by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            snackbarHostState.showSnackbar(it)
+        }
+    }
 
     val filteredWallets = if (showArchived) {
         uiState.wallets.filter { it.isArchived }
@@ -46,142 +53,158 @@ fun ViScreen(
         uiState.wallets.filter { !it.isArchived }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        // --- NÚT QUAY VỀ HÌNH TRÒN ---
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .padding(start = 20.dp, top = 20.dp)
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable { onBack() }
-                .align(Alignment.TopStart),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "‹",
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 28.sp,
-                modifier = Modifier.offset(y = (-2).dp)
-            )
-        }
-
-        // --- NÚT MENU HÌNH TRÒN ---
-        Box(
-            modifier = Modifier
-                .padding(end = 20.dp, top = 20.dp)
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable { menuExpanded = true }
-                .align(Alignment.TopEnd),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = "Menu",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp)
-            )
-
-            DropdownMenu(
-                shape = RoundedCornerShape(24.dp),
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false },
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Ví đang hoạt động", color = MaterialTheme.colorScheme.onSurface) },
-                    onClick = {
-                        showArchived = false
-                        menuExpanded = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Ví đã ẩn", color = MaterialTheme.colorScheme.onSurface) },
-                    onClick = {
-                        showArchived = true
-                        menuExpanded = false
-                    }
-                )
-            }
-        }
-
-        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            // Tiêu đề căn giữa
-            Text(
-                text = if (showArchived) "Ví đã ẩn" else "Quản lý ví",
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
-            )
+            if (uiState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            } else {
+                // --- NÚT QUAY VỀ HÌNH TRÒN ---
+                Box(
+                    modifier = Modifier
+                        .padding(start = 20.dp, top = 20.dp)
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .clickable { onBack() }
+                        .align(Alignment.TopStart),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "‹",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 28.sp,
+                        modifier = Modifier.offset(y = (-2).dp)
+                    )
+                }
 
-            // SCROLL CONTENT
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(bottom = 24.dp)
-            ) {
-                if (!showArchived) {
-                    // TOTAL CARD
-                    item {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                        ) {
-                            Column(modifier = Modifier.padding(20.dp)) {
-                                val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
-                                Text(text = "Tổng tài sản", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = "${currencyFormat.format(uiState.tongTaiSan.toLong())} đ",
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontSize = 28.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
+                // --- NÚT MENU HÌNH TRÒN ---
+                Box(
+                    modifier = Modifier
+                        .padding(end = 20.dp, top = 20.dp)
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .clickable { menuExpanded = true }
+                        .align(Alignment.TopEnd),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Menu",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+
+                    DropdownMenu(
+                        shape = RoundedCornerShape(24.dp),
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false },
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Ví đang hoạt động", color = MaterialTheme.colorScheme.onSurface) },
+                            onClick = {
+                                showArchived = false
+                                menuExpanded = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Ví đã ẩn", color = MaterialTheme.colorScheme.onSurface) },
+                            onClick = {
+                                showArchived = true
+                                menuExpanded = false
+                            }
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Tiêu đề căn giữa
+                    Text(
+                        text = if (showArchived) "Ví đã ẩn" else "Quản lý ví",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(top = 28.dp, bottom = 20.dp)
+                    )
+
+                    // SCROLL CONTENT
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(bottom = 24.dp)
+                    ) {
+                        if (!showArchived) {
+                            // TOTAL CARD
+                            item {
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(24.dp),
+                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                                ) {
+                                    Column(modifier = Modifier.padding(20.dp)) {
+                                        val currencyFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.forLanguageTag("vi-VN")))
+                                        Text(text = "Tổng tài sản", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text(
+                                            text = "${currencyFormat.format(uiState.tongTaiSan.toLong())} đ",
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            fontSize = 28.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Nút Thêm ví mới (Capsule style)
+                            item {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(56.dp)
+                                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(28.dp))
+                                        .clickable { onAddWallet() }
+                                        .padding(horizontal = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(Icons.Default.Add, null, tint = MaterialTheme.colorScheme.primary)
+                                    Text("  Thêm ví mới", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                                }
                             }
                         }
-                    }
 
-                    // Nút Thêm ví mới (Capsule style)
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(28.dp))
-                                .clickable { onAddWallet() }
-                                .padding(horizontal = 20.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Icon(Icons.Default.Add, null, tint = MaterialTheme.colorScheme.primary)
-                            Text("  Thêm ví mới", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                        item {
+                            Text(
+                                text = if (showArchived) "Danh sách ví ẩn" else "Danh sách ví",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        items(filteredWallets) { wallet ->
+                            WalletItem(
+                                wallet = wallet,
+                                onClick = { onEditWallet(wallet.id) }
+                            )
                         }
                     }
-                }
-
-                item {
-                    Text(
-                        text = if (showArchived) "Danh sách ví ẩn" else "Danh sách ví",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                items(filteredWallets) { wallet ->
-                    WalletItem(
-                        wallet = wallet,
-                        onClick = { onEditWallet(wallet.id) }
-                    )
                 }
             }
         }

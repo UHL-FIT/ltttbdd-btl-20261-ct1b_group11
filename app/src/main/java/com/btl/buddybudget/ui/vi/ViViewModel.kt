@@ -19,27 +19,23 @@ class ViViewModel(
     }
 
     private fun loadWallets() {
-
         viewModelScope.launch {
-
-            combine(
-
-                repo.layViVaSoDu(),
-
-                repo.layTongTaiSan()
-
-            ) { wallets, total ->
-
-                ViScreenState(
-
-                    wallets = wallets,
-
-                    tongTaiSan = total
-
-                )
-            }.collect {
-
-                _uiState.value = it
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                combine(
+                    repo.layViVaSoDu(),
+                    repo.layTongTaiSan()
+                ) { wallets, total ->
+                    ViScreenState(
+                        wallets = wallets,
+                        tongTaiSan = total,
+                        isLoading = false
+                    )
+                }.collect {
+                    _uiState.value = it
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = "Lỗi tải danh sách ví: ${e.message}") }
             }
         }
     }

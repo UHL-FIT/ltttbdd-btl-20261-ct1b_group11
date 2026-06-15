@@ -5,6 +5,7 @@ import java.util.Calendar
 
 data class ThongKeUiState(
     val isLoading: Boolean = false,
+    val errorMessage: String? = null,
     val selectedMonth: Int = Calendar.getInstance().get(Calendar.MONTH) + 1,
     val selectedYear: Int = Calendar.getInstance().get(Calendar.YEAR),
     val isExpenseSelected: Boolean = true,

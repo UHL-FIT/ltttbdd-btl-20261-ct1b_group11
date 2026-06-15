@@ -39,43 +39,55 @@ fun ThongKeScreen(
     viewModel: ThongKeViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopBarSection(
-            month = uiState.selectedMonth,
-            year = uiState.selectedYear,
-            onDateClick = { viewModel.toggleDatePicker(true) }
-        )
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let {
+            snackbarHostState.showSnackbar(it)
+        }
+    }
 
-        Spacer(modifier = Modifier.height(8.dp))
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            TopBarSection(
+                month = uiState.selectedMonth,
+                year = uiState.selectedYear,
+                onDateClick = { viewModel.toggleDatePicker(true) }
+            )
 
-        TabSection(
-            isExpenseSelected = uiState.isExpenseSelected,
-            onTabSelected = { viewModel.onTabSelected(it) }
-        )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        if (uiState.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+            TabSection(
+                isExpenseSelected = uiState.isExpenseSelected,
+                onTabSelected = { viewModel.onTabSelected(it) }
+            )
+
+            if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else if (uiState.displayItems.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Không có dữ liệu giao dịch", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            } else {
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Vẽ biểu đồ dựa trên dữ liệu từ ViewModel
+                PieChartSection(uiState.displayItems)
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Vẽ danh sách chi tiết
+                ExpenseListSection(uiState.displayItems)
             }
-        } else if (uiState.displayItems.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Không có dữ liệu giao dịch", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        } else {
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Vẽ biểu đồ dựa trên dữ liệu từ ViewModel
-            PieChartSection(uiState.displayItems)
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Vẽ danh sách chi tiết
-            ExpenseListSection(uiState.displayItems)
         }
     }
 

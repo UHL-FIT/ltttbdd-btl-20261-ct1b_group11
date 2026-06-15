@@ -67,251 +67,243 @@ fun TransactionScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        // --- NÚT TÌM KIẾM & MENU 3 CHẤM (Góc phải trên cùng) ---
-        Row(
-            modifier = Modifier
-                .padding(end = 16.dp, top = 20.dp)
-                .align(Alignment.TopEnd),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
+        if (uiState.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = MaterialTheme.colorScheme.primary
+            )
+        } else {
+            // --- NÚT TÌM KIẾM & MENU 3 CHẤM (Góc phải trên cùng) ---
+            Row(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .clickable { onNavigateToSearch() },
-                contentAlignment = Alignment.Center
+                    .padding(end = 16.dp, top = 20.dp)
+                    .align(Alignment.TopEnd),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            
-            Spacer(modifier = Modifier.width(8.dp))
-
-            var showMenu by remember { mutableStateOf(false) }
-            Box {
                 Box(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .clickable { showMenu = true },
+                        .clickable { onNavigateToSearch() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More",
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search",
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(20.dp)
                     )
                 }
-                DropdownMenu(
-                    shape = RoundedCornerShape(20.dp),
-                    expanded = showMenu,
-                    onDismissRequest = { showMenu = false },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Xem theo danh mục",color = if (uiState.viewMode == TransactionViewMode.BY_CATEGORY)
-                            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
-                        leadingIcon = { Icon(Icons.Default.List, null,tint=if (uiState.viewMode == TransactionViewMode.BY_CATEGORY)
-                            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
-                        onClick = {
-                            viewModel.onChangeViewMode(TransactionViewMode.BY_CATEGORY)
-                            showMenu = false
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Xem theo ngày",color = if (uiState.viewMode == TransactionViewMode.BY_DATE)
-                            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
-                        leadingIcon = { Icon(Icons.Default.DateRange, null,tint=if (uiState.viewMode == TransactionViewMode.BY_DATE)
-                            MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
-                        onClick = {
-                            viewModel.onChangeViewMode(TransactionViewMode.BY_DATE)
-                            showMenu = false
-                        }
-                    )
-                }
-            }
-        }
+                
+                Spacer(modifier = Modifier.width(8.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Header / Wallet Picker
-            Box(
-                modifier = Modifier
-                    .padding(top = 28.dp, bottom = 12.dp)
-                    .clickable { viewModel.toggleWalletPicker(true) }
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(20.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                var showMenu by remember { mutableStateOf(false) }
+                Box {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .clickable { showMenu = true },
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text("🌐 ", fontSize = 14.sp)
-                        Text(
-                            text = uiState.walletName,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "More",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
                         )
-                        Text(" ↕", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                    }
+                    DropdownMenu(
+                        shape = RoundedCornerShape(20.dp),
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false },
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Xem theo danh mục",color = if (uiState.viewMode == TransactionViewMode.BY_CATEGORY)
+                                MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
+                            leadingIcon = { Icon(Icons.Default.List, null,tint=if (uiState.viewMode == TransactionViewMode.BY_CATEGORY)
+                                MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
+                            onClick = {
+                                viewModel.onChangeViewMode(TransactionViewMode.BY_CATEGORY)
+                                showMenu = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Xem theo ngày",color = if (uiState.viewMode == TransactionViewMode.BY_DATE)
+                                MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
+                            leadingIcon = { Icon(Icons.Default.DateRange, null,tint=if (uiState.viewMode == TransactionViewMode.BY_DATE)
+                                MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant) },
+                            onClick = {
+                                viewModel.onChangeViewMode(TransactionViewMode.BY_DATE)
+                                showMenu = false
+                            }
+                        )
                     }
                 }
             }
 
-            // KHU VỰC SỐ DƯ
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Số dư", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
-                Text(
-                    "${currencyFormat.format(uiState.totalBalance)} đ",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            // BỘ CHỌN THÁNG
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { viewModel.toggleDatePicker(true) }
-                    .padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Tháng ${uiState.selectedMonth}, ${uiState.selectedYear}",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                // CARD BÁO CÁO TỔNG QUAN
-                item {
-                    Card(
-                        shape = RoundedCornerShape(25.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                        modifier = Modifier.fillMaxWidth()
+                // Header / Wallet Picker
+                Box(
+                    modifier = Modifier
+                        .padding(top = 28.dp, bottom = 12.dp)
+                        .clickable { viewModel.toggleWalletPicker(true) }
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(20.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text("Tiền vào", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(
-                                    "+"+currencyFormat.format(uiState.incomeAmount)+"đ",
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text("Tiền ra", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(
-                                    "-"+currencyFormat.format(uiState.expenseAmount)+"đ",
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }/*
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 12.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant,
-                                thickness = 0.5.dp
-                            )
-                            */
-                            /*
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("🌐 ", fontSize = 14.sp)
                             Text(
-                                text = currencyFormat.format(uiState.incomeAmount - uiState.expenseAmount)+"đ",
+                                text = uiState.walletName,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.align(Alignment.End),
-                                fontWeight = FontWeight.Bold
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
                             )
-
-                             */
+                            Text(" ↕", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         }
                     }
-                    Spacer(modifier = Modifier.height(24.dp))
                 }
 
-                // DANH SÁCH GIAO DỊCH
-                uiState.groupedTransactions.forEach { (headerName, transactions) ->
-                    val totalAmount = transactions.sumOf {
-                        if (it.giaodich.type == "EXPENSE") -it.giaodich.amount else +it.giaodich.amount
-                    }
-                    val firstGd = transactions.firstOrNull()
+                // KHU VỰC SỐ DƯ
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Số dư", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                    Text(
+                        "${currencyFormat.format(uiState.totalBalance)} đ",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
+                // BỘ CHỌN THÁNG
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { viewModel.toggleDatePicker(true) }
+                        .padding(vertical = 12.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Tháng ${uiState.selectedMonth}, ${uiState.selectedYear}",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    // CARD BÁO CÁO TỔNG QUAN
                     item {
                         Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 20.dp),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                            shape = RoundedCornerShape(25.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                if (uiState.viewMode == TransactionViewMode.BY_CATEGORY) {
-                                    CategoryHeader(
-                                        categoryName = headerName,
-                                        transactionCount = transactions.size,
-                                        totalAmount = totalAmount,
-                                        iconColor = firstGd?.danhmuc?.colorHex ?: "#808080",
-                                        iconName = firstGd?.danhmuc?.iconName ?: "📁"
-                                    )
-                                } else {
-                                    DateHeader(
-                                        dateLabel = headerName,
-                                        transactionCount = transactions.size,
-                                        totalAmount = totalAmount
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Tiền vào", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(
+                                        "+"+currencyFormat.format(uiState.incomeAmount)+"đ",
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                 }
-
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(vertical = 12.dp),
-                                    color = MaterialTheme.colorScheme.outlineVariant,
-                                    thickness = 1.dp
-                                )
-
-                                // Danh sách giao dịch bên trong
-                                transactions.forEachIndexed { index, transaction ->
-                                    TransactionItemRow(
-                                        item = transaction,
-                                        viewMode = uiState.viewMode,
-                                        onClick = { onEditTransaction(transaction.giaodich.id) }
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Tiền ra", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(
+                                        "-"+currencyFormat.format(uiState.expenseAmount)+"đ",
+                                        color = MaterialTheme.colorScheme.error
                                     )
-                                    if (index < transactions.size - 1) {
-                                        HorizontalDivider(
-                                            modifier = Modifier.padding(horizontal = 40.dp, vertical = 4.dp),
-                                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                                            thickness = 0.5.dp
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    // DANH SÁCH GIAO DỊCH
+                    uiState.groupedTransactions.forEach { (headerName, transactions) ->
+                        val totalAmount = transactions.sumOf {
+                            if (it.giaodich.type == "EXPENSE") -it.giaodich.amount else +it.giaodich.amount
+                        }
+                        val firstGd = transactions.firstOrNull()
+
+                        item {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 20.dp),
+                                shape = RoundedCornerShape(24.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                            ) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    if (uiState.viewMode == TransactionViewMode.BY_CATEGORY) {
+                                        CategoryHeader(
+                                            categoryName = headerName,
+                                            transactionCount = transactions.size,
+                                            totalAmount = totalAmount,
+                                            iconColor = firstGd?.danhmuc?.colorHex ?: "#808080",
+                                            iconName = firstGd?.danhmuc?.iconName ?: "📁"
                                         )
+                                    } else {
+                                        DateHeader(
+                                            dateLabel = headerName,
+                                            transactionCount = transactions.size,
+                                            totalAmount = totalAmount
+                                        )
+                                    }
+
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(vertical = 12.dp),
+                                        color = MaterialTheme.colorScheme.outlineVariant,
+                                        thickness = 1.dp
+                                    )
+
+                                    // Danh sách giao dịch bên trong
+                                    transactions.forEachIndexed { index, transaction ->
+                                        TransactionItemRow(
+                                            item = transaction,
+                                            viewMode = uiState.viewMode,
+                                            onClick = { onEditTransaction(transaction.giaodich.id) }
+                                        )
+                                        if (index < transactions.size - 1) {
+                                            HorizontalDivider(
+                                                modifier = Modifier.padding(horizontal = 40.dp, vertical = 4.dp),
+                                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                                                thickness = 0.5.dp
+                                            )
+                                        }
                                     }
                                 }
                             }

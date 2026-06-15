@@ -21,9 +21,13 @@ class DanhMucViewModel(private val repo: Repo) : ViewModel() {
 
     private fun loadDanhMucs() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            repo.layTatCaDanhMuc().collect { list ->
-                _uiState.update { it.copy(danhMucs = list, isLoading = false) }
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                repo.layTatCaDanhMuc().collect { list ->
+                    _uiState.update { it.copy(danhMucs = list, isLoading = false) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = "Lỗi tải danh mục: ${e.message}") }
             }
         }
     }
