@@ -19,3 +19,8 @@
 - **Phân loại thông minh:** Sắp xếp các khoản chi theo danh mục (ăn uống, di chuyển, giải trí...) để dễ dàng theo dõi.
 - **Thống kê trực quan:** Cung cấp biểu đồ tổng quan giúp người dùng nhận biết thói quen tiêu dùng và điều chỉnh kế hoạch tài chính kịp thời.
 - **Tìm kiếm & Lọc:** Hỗ trợ truy xuất nhanh các giao dịch cũ theo ghi chú và lọc theo tháng và ví.
+---
+
+## 📥 DOWNLOAD APK
+> ### **[➔ NHẤN VÀO ĐÂY ĐỂ TẢI BẢN APK CÀI ĐẶT](https://github.com/Weppy43/BuddyBudget__crt/blob/master/budgetbuddy.apk)**
+> *Dung lượng: ~21MB | Phiên bản: v1.0.0*
