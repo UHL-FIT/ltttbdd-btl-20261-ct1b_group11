@@ -153,6 +153,7 @@ fun QuanLyDanhMucScreen(
         }
     }
 
+
     var selectedTab by remember { mutableIntStateOf(0) }
     val currentType = if (selectedTab == 0) KieuGiaoDich.EXPENSE else KieuGiaoDich.INCOME
     val filteredItems = uiState.danhMucs.filter { it.type == currentType }
