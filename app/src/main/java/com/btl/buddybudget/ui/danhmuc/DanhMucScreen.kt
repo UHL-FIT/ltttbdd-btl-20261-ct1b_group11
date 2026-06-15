@@ -152,15 +152,6 @@ fun QuanLyDanhMucScreen(
             snackbarHostState.showSnackbar(it)
         }
     }
-    
-    // --- CẤU HÌNH STATUS BAR TRẮNG ---
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-        }
-    }
 
     var selectedTab by remember { mutableIntStateOf(0) }
     val currentType = if (selectedTab == 0) KieuGiaoDich.EXPENSE else KieuGiaoDich.INCOME
