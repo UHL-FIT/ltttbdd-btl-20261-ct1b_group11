@@ -1,6 +1,5 @@
 package com.btl.buddybudget.ui.danhmuc
 
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,11 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import com.btl.buddybudget.data.db.KieuGiaoDich
 import com.btl.buddybudget.data.db.entities.DanhMuc
 
@@ -48,16 +45,6 @@ fun ChonDanhMucScreen(
             snackbarHostState.showSnackbar(it)
         }
     }
-
-    // --- CẤU HÌNH STATUS BAR TRẮNG ---
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-        }
-    }
-
 
     val currentType = if (filterType == "INCOME") KieuGiaoDich.INCOME else KieuGiaoDich.EXPENSE
     val filteredItems = uiState.danhMucs.filter { it.type == currentType }
