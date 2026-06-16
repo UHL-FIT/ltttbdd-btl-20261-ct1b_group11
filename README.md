@@ -25,5 +25,5 @@
 ---
 
 ## 📥 DOWNLOAD APK
-> ### **[➔ NHẤN VÀO ĐÂY ĐỂ TẢI BẢN APK CÀI ĐẶT](https://github.com/Weppy43/BuddyBudget__crt/blob/master/budgetbuddy.apk)**
+> ### **[➔ NHẤN VÀO ĐÂY ĐỂ TẢI BẢN APK CÀI ĐẶT](https://github.com/UHL-FIT/ltttbdd-btl-20261-ct1b_group11/blob/main/budgetbuddy.apk)**
 > *Dung lượng: ~21MB | Phiên bản: v1.0.0*
